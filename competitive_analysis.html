@@ -517,12 +517,160 @@
             color: #999;
             font-size: 1.1em;
         }
+
+        /* Breadcrumb styles */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .breadcrumb .separator {
+            color: #ccc;
+        }
+
+        .breadcrumb .current {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Comparison slider styles */
+        .comparison-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-slider-wrapper {
+            display: flex;
+            position: relative;
+        }
+
+        .comparison-item {
+            flex: 1;
+            min-width: 50%;
+            padding: 30px;
+            background: white;
+        }
+
+        .comparison-item:first-child {
+            border-right: 2px solid #eee;
+        }
+
+        .comparison-item h3 {
+            color: #667eea;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .comparison-item .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .comparison-item .feature-list li {
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comparison-item .feature-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .comparison-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .comparison-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background 0.3s ease;
+        }
+
+        .comparison-btn:hover {
+            background: #764ba2;
+        }
+
+        .comparison-btn.active {
+            background: #764ba2;
+            border: 2px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-slider {
+                max-width: 100%;
+            }
+
+            .comparison-item {
+                padding: 20px;
+                font-size: 0.9em;
+            }
+
+            .comparison-item:first-child {
+                border-right: none;
+                border-bottom: 2px solid #eee;
+            }
+
+            .comparison-item h3 {
+                font-size: 1.1em;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎯 Sighthound Redactor - Competitive Analysis Hub</h1>
+            <h1>Sighthound Redactor - Competitive Analysis Hub</h1>
             <p class="subtitle">Desktop-Optimized Web Application for Sales & Marketing Teams</p>
             <div class="meta-info">
                 <span><strong>Last Updated:</strong> April 2026</span>
@@ -531,19 +679,26 @@
             </div>
 
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="switchTab('executive')">📊 Executive Summary</button>
-                <button class="nav-tab" onclick="switchTab('landscape')">🌍 Market Landscape</button>
-                <button class="nav-tab" onclick="switchTab('features')">⚙️ Feature Comparison</button>
-                <button class="nav-tab" onclick="switchTab('pricing')">💰 Pricing Analysis</button>
-                <button class="nav-tab" onclick="switchTab('competitors')">🏢 Competitor Profiles</button>
-                <button class="nav-tab" onclick="switchTab('positioning')">🎯 Positioning Strategy</button>
-                <button class="nav-tab" onclick="switchTab('opportunities')">💡 Market Opportunities</button>
+                <button class="nav-tab active" onclick="switchTab('executive')">Executive Summary</button>
+                <button class="nav-tab" onclick="switchTab('landscape')">Market Landscape</button>
+                <button class="nav-tab" onclick="switchTab('features')">Feature Comparison</button>
+                <button class="nav-tab" onclick="switchTab('pricing')">Pricing Analysis</button>
+                <button class="nav-tab" onclick="switchTab('competitors')">Competitor Profiles</button>
+                <button class="nav-tab" onclick="switchTab('positioning')">Positioning Strategy</button>
+                <button class="nav-tab" onclick="switchTab('opportunities')">Market Opportunities</button>
             </div>
         </header>
 
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a onclick="switchTab('executive')">Home</a>
+            <span class="separator">/</span>
+            <span class="current" id="breadcrumb-section">Executive Summary</span>
+        </div>
+
         <!-- EXECUTIVE SUMMARY -->
         <section id="executive" class="section active">
-            <h2>📊 Executive Summary</h2>
+            <h2>Executive Summary</h2>
             
             <div style="background: #f0f5ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #667eea;">
                 <p><strong>Sighthound Redactor</strong> is an AI-powered redaction solution positioned as an enterprise-grade, on-premise/hybrid deployment platform. The competitive landscape includes <strong>11 primary competitors</strong> ranging from specialized video redaction tools (FastRedaction, MotionDSP) to comprehensive multi-format solutions (CaseGuard, Veritone Redact).</p>
@@ -654,7 +809,7 @@
 
         <!-- MARKET LANDSCAPE -->
         <section id="landscape" class="section">
-            <h2>🌍 Competitive Landscape Overview</h2>
+            <h2>Competitive Landscape Overview</h2>
             
             <div style="margin-bottom: 25px;">
                 <h3>Full Competitor Matrix (11 Solutions)</h3>
@@ -777,7 +932,7 @@
 
         <!-- FEATURE COMPARISON -->
         <section id="features" class="section">
-            <h2>⚙️ Feature Comparison Matrix</h2>
+            <h2>Feature Comparison Matrix</h2>
 
             <h3>Detection & Redaction Capabilities</h3>
             <div class="filters">
@@ -1023,7 +1178,7 @@
 
         <!-- PRICING ANALYSIS -->
         <section id="pricing" class="section">
-            <h2>💰 Pricing Comparison</h2>
+            <h2>Pricing Comparison</h2>
 
             <h3>Pricing Models Overview</h3>
             <div class="filters">
@@ -1162,7 +1317,43 @@
 
         <!-- COMPETITOR PROFILES -->
         <section id="competitors" class="section">
-            <h2>🏢 Detailed Competitor Profiles</h2>
+            <h2>Detailed Competitor Profiles</h2>
+
+            <!-- Comparison Slider Tool -->
+            <div class="comparison-container">
+                <h3 style="color: #667eea; margin-top: 0; margin-bottom: 25px;">Side-by-Side Competitor Comparison</h3>
+                <p style="color: #666; margin-bottom: 20px;">Select two competitors to compare their features, pricing, and capabilities.</p>
+                
+                <div class="comparison-controls">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Competitor 1:</label>
+                        <select id="competitor1Select" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 0.95em;">
+                            <option value="sighthound">Sighthound Redactor</option>
+                            <option value="veritone">Veritone Redact</option>
+                            <option value="caseguard">CaseGuard</option>
+                            <option value="fastredaction">FastRedaction</option>
+                            <option value="motiondsp">MotionDSP</option>
+                            <option value="brighterai">Brighter.ai</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Competitor 2:</label>
+                        <select id="competitor2Select" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 0.95em;">
+                            <option value="veritone">Veritone Redact</option>
+                            <option value="sighthound">Sighthound Redactor</option>
+                            <option value="caseguard">CaseGuard</option>
+                            <option value="fastredaction">FastRedaction</option>
+                            <option value="motiondsp">MotionDSP</option>
+                            <option value="brighterai">Brighter.ai</option>
+                        </select>
+                    </div>
+                    <button class="comparison-btn" onclick="updateComparison()">Compare</button>
+                </div>
+
+                <div class="comparison-slider" id="comparisonSlider" style="display: none; margin-top: 30px;">
+                    <div class="comparison-slider-wrapper" id="comparisonWrapper"></div>
+                </div>
+            </div>
 
             <div class="filters">
                 <div class="filter-group">
@@ -1397,7 +1588,7 @@
 
         <!-- POSITIONING STRATEGY -->
         <section id="positioning" class="section">
-            <h2>🎯 Positioning Strategy</h2>
+            <h2>Positioning Strategy</h2>
 
             <h3>Core Competitive Advantages to Emphasize</h3>
 
@@ -1556,7 +1747,7 @@
 
         <!-- MARKET OPPORTUNITIES -->
         <section id="opportunities" class="section">
-            <h2>💡 Market Gaps & Opportunities</h2>
+            <h2>Market Gaps & Opportunities</h2>
 
             <h3>Underserved Market Segments</h3>
 
@@ -1680,6 +1871,190 @@
     </div>
 
     <script>
+        // Comparison data for all competitors
+        const comparisonData = {
+            sighthound: {
+                name: 'Sighthound Redactor',
+                features: [
+                    'Desktop & Server Hybrid deployment',
+                    'AI-powered detection (6+ types)',
+                    'Offline/Air-gapped capability',
+                    'Unlimited bulk processing',
+                    'REST API for integration',
+                    'Video redaction',
+                    'Audio redaction',
+                    'Image redaction',
+                    'Face detection',
+                    'License plate detection',
+                    'ID detection (new)',
+                    'Document/Screen detection (new)',
+                    'Multi-language UI',
+                    'GDPR/HIPAA/CJIS compliant'
+                ],
+                pricing: '$2,500-3,500/year (unlimited)',
+                deployment: 'Desktop, Server, Cloud, API',
+                strength: 'Hybrid flexibility & unlimited pricing'
+            },
+            veritone: {
+                name: 'Veritone Redact',
+                features: [
+                    'Cloud-native SaaS only',
+                    'GovCloud deployment',
+                    'Automated AI detection',
+                    'Audio transcription',
+                    'Chain of custody tracking',
+                    'Enterprise workflow management',
+                    'Video redaction',
+                    'Face detection',
+                    'License plate detection',
+                    'ID detection',
+                    'Document/Screen detection',
+                    'Batch processing',
+                    'Audit logs',
+                    'CJIS compliance'
+                ],
+                pricing: '$2,400-250K/year (per-hour)',
+                deployment: 'Cloud (Azure GovCloud)',
+                strength: 'Government-grade enterprise features'
+            },
+            caseguard: {
+                name: 'CaseGuard',
+                features: [
+                    'Desktop-based Windows',
+                    'Unlimited file redaction',
+                    '750+ file types supported',
+                    'AI video & audio redaction',
+                    'Document & image redaction',
+                    'Batch processing',
+                    'Scheduled tasks',
+                    'Collaboration workspace',
+                    'OCR for documents',
+                    'Face detection',
+                    'License plate detection',
+                    'ID detection',
+                    'Audit logs',
+                    'Windows-only'
+                ],
+                pricing: '$279-379/month ($3,348-4,548/year)',
+                deployment: 'Windows Desktop/On-Premise',
+                strength: 'Comprehensive multi-format support'
+            },
+            fastredaction: {
+                name: 'FastRedaction',
+                features: [
+                    'Web-based SaaS',
+                    'One-click redaction',
+                    'Automatic face blurring',
+                    'Simple interface',
+                    'Pay-as-you-go pricing',
+                    'FBI CJIS compliance',
+                    'FIPS 140-2 encryption',
+                    'Video redaction only',
+                    'Face detection',
+                    'License plate detection',
+                    'Cloud-only deployment',
+                    'No batch processing',
+                    'Limited manual tools',
+                    'No collaboration tools'
+                ],
+                pricing: '$19/minute ($114,000 for 100 hrs/year)',
+                deployment: 'Cloud (AWS SaaS)',
+                strength: 'Simple one-click interface'
+            },
+            motiondsp: {
+                name: 'MotionDSP (Spotlight)',
+                features: [
+                    'Desktop-only software',
+                    'GPU acceleration',
+                    'Automatic face detection',
+                    'Face tracking',
+                    'Multi-channel audio redaction',
+                    'Forensic Studio for enhancement',
+                    'Simple video interface',
+                    'Affordable pricing',
+                    'Video redaction',
+                    'Audio redaction',
+                    'License plate detection',
+                    'Windows-only',
+                    'No batch processing',
+                    'No API or server deployment'
+                ],
+                pricing: '$164-329/month ($1,968-3,948/year)',
+                deployment: 'Windows Desktop',
+                strength: 'GPU-accelerated video processing'
+            },
+            brighterai: {
+                name: 'Brighter.ai',
+                features: [
+                    'Cloud API/SaaS',
+                    'Deep Natural Anonymization (synthetic)',
+                    'EU-based (GDPR)',
+                    'Cloud, Edge, On-Premise',
+                    'License plate customization',
+                    '99%+ accuracy claims',
+                    'Data utility preservation',
+                    'Video redaction',
+                    'Image redaction',
+                    'Face detection',
+                    'License plate detection',
+                    'Pay-per-use pricing',
+                    'Limited object types (2)',
+                    'No documents or audio'
+                ],
+                pricing: '€25/250 images or 1 hour video',
+                deployment: 'Cloud/Edge/On-Premise',
+                strength: 'Synthetic replacement technology'
+            }
+        };
+
+        function updateComparison() {
+            const comp1 = document.getElementById('competitor1Select').value;
+            const comp2 = document.getElementById('competitor2Select').value;
+            
+            if (comp1 === comp2) {
+                alert('Please select two different competitors');
+                return;
+            }
+
+            const data1 = comparisonData[comp1];
+            const data2 = comparisonData[comp2];
+
+            let html = `
+                <div class="comparison-item">
+                    <h3>${data1.name}</h3>
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: #667eea;">Pricing:</strong> ${data1.pricing}<br>
+                        <strong style="color: #667eea;">Deployment:</strong> ${data1.deployment}
+                    </div>
+                    <ul class="feature-list">`;
+            
+            data1.features.forEach(feature => {
+                html += `<li>${feature}</li>`;
+            });
+            
+            html += `
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h3>${data2.name}</h3>
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: #667eea;">Pricing:</strong> ${data2.pricing}<br>
+                        <strong style="color: #667eea;">Deployment:</strong> ${data2.deployment}
+                    </div>
+                    <ul class="feature-list">`;
+            
+            data2.features.forEach(feature => {
+                html += `<li>${feature}</li>`;
+            });
+            
+            html += `
+                    </ul>
+                </div>`;
+
+            document.getElementById('comparisonWrapper').innerHTML = html;
+            document.getElementById('comparisonSlider').style.display = 'block';
+        }
+
         function switchTab(tabName) {
             // Hide all sections
             const sections = document.querySelectorAll('.section');
@@ -1695,7 +2070,21 @@
                 activeSection.classList.add('active');
                 
                 // Add active class to clicked tab
-                event.target.classList.add('active');
+                if (event && event.target) {
+                    event.target.classList.add('active');
+                }
+                
+                // Update breadcrumb
+                const sectionNames = {
+                    'executive': 'Executive Summary',
+                    'landscape': 'Market Landscape',
+                    'features': 'Feature Comparison',
+                    'pricing': 'Pricing Analysis',
+                    'competitors': 'Competitor Profiles',
+                    'positioning': 'Positioning Strategy',
+                    'opportunities': 'Market Opportunities'
+                };
+                document.getElementById('breadcrumb-section').textContent = sectionNames[tabName] || tabName;
                 
                 // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
