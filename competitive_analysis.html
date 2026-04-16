@@ -19,6 +19,12 @@
             min-height: 100vh;
         }
 
+        body.search-active .section,
+        body.search-active header,
+        body.search-active .breadcrumb {
+            scroll-margin-top: 180px;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -32,6 +38,9 @@
             margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
             border-top: 4px solid #667eea;
+            position: sticky;
+            top: 12px;
+            z-index: 100;
         }
 
         h1 {
@@ -117,6 +126,63 @@
             margin-bottom: 15px;
             font-size: 1.4em;
             font-weight: 600;
+        }
+
+        .sticky-toolbar {
+            position: sticky;
+            top: 160px;
+            z-index: 90;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(102, 126, 234, 0.12);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            padding: 16px 18px;
+            margin-bottom: 20px;
+        }
+
+        .global-search {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .global-search label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .global-search input {
+            flex: 1;
+            min-width: 240px;
+            padding: 10px 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .global-search input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-meta {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .data-card,
+        .positioning-card,
+        .comparison-container,
+        .competitor-card,
+        .pitch-box,
+        .strengths,
+        .weaknesses {
+            background: #f3f4f6;
+            border-radius: 12px;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
         }
 
         .filters {
@@ -228,13 +294,13 @@
         }
 
         .competitor-card {
-            border: 2px solid #eee;
-            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             padding: 25px;
             margin-bottom: 25px;
             transition: all 0.3s ease;
-            background: #fafafa;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: #f3f4f6;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
         }
 
         .competitor-card:hover {
@@ -268,21 +334,22 @@
         }
 
         .strengths {
-            background: #f0f9ff;
+            background: #f3f4f6;
             border-left: 4px solid #28a745;
             padding: 15px;
             margin: 15px 0;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 3px rgba(40, 167, 69, 0.1);
+            border-radius: 12px;
+
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
         }
 
         .weaknesses {
-            background: #fff8f0;
+            background: #f3f4f6;
             border-left: 4px solid #dc3545;
             padding: 15px;
             margin: 15px 0;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 3px rgba(220, 53, 69, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
         }
 
         .strengths h4,
@@ -321,12 +388,13 @@
         }
 
         .pitch-box {
-            background: #f0f0f0;
+            background: #f3f4f6;
             border-left: 4px solid #667eea;
-            padding: 15px;
+            padding: 16px 52px 16px 15px;
             margin: 15px 0;
             border-radius: 4px;
             font-style: italic;
+            position: relative;
         }
 
         .positioning-grid {
@@ -337,12 +405,12 @@
         }
 
         .positioning-card {
-            background: #f8f9fa;
-            border: 2px solid #eee;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
         }
 
         .positioning-card:hover {
@@ -509,6 +577,8 @@
 
         .search-highlight {
             background-color: #fff3cd;
+            border-radius: 4px;
+            padding: 0 2px;
         }
 
         .no-results {
@@ -523,11 +593,17 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 15px 0;
+            padding: 15px 18px;
             margin-bottom: 20px;
             font-size: 0.95em;
             color: #666;
-            border-bottom: 1px solid #eee;
+            border: 1px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 112px;
+            z-index: 95;
         }
 
         .breadcrumb a {
@@ -553,11 +629,11 @@
 
         /* Comparison slider styles */
         .comparison-container {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            padding: 24px;
             margin: 30px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
         }
 
         .comparison-slider {
@@ -647,6 +723,18 @@
         }
 
         @media (max-width: 768px) {
+            header {
+                top: 0;
+                padding: 24px 16px;
+            }
+
+            .sticky-toolbar {
+                top: 140px;
+            }
+
+            .breadcrumb {
+                top: 104px;
+            }
             .comparison-slider {
                 max-width: 100%;
             }
@@ -664,6 +752,61 @@
             .comparison-item h3 {
                 font-size: 1.1em;
             }
+
+        .accordion-toggle {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            text-align: left;
+            font: inherit;
+        }
+
+        .accordion-toggle .accordion-icon {
+            color: #667eea;
+            font-size: 1.1em;
+            transition: transform 0.2s ease;
+        }
+
+        .accordion-content {
+            margin-top: 12px;
+        }
+
+        .is-collapsed .accordion-content {
+            display: none;
+        }
+
+        .is-collapsed .accordion-icon {
+            transform: rotate(-90deg);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+        }
+
+        .copy-btn:hover {
+            background: #eef2ff;
+        }
+
+        .copy-btn.copied {
+            color: #28a745;
+            border-color: #28a745;
+        }
         }
     </style>
 </head>
@@ -688,6 +831,16 @@
                 <button class="nav-tab" onclick="switchTab('opportunities')">Market Opportunities</button>
             </div>
         </header>
+
+        <div class="sticky-toolbar">
+            <div class="global-search">
+                <label for="globalSearch">Global Search</label>
+                <input type="search" id="globalSearch" placeholder="Search competitors, pricing, strengths, pitches, and positioning..." />
+                <button class="btn" type="button" onclick="runGlobalSearch()">Search</button>
+                <button class="btn btn-secondary" type="button" onclick="clearGlobalSearch()">Clear</button>
+                <span class="search-meta" id="searchStatus">Search the hub from here.</span>
+            </div>
+        </div>
 
         <!-- Breadcrumb Navigation -->
         <div class="breadcrumb">
@@ -1321,38 +1474,8 @@
 
             <!-- Comparison Slider Tool -->
             <div class="comparison-container">
-                <h3 style="color: #667eea; margin-top: 0; margin-bottom: 25px;">Side-by-Side Competitor Comparison</h3>
-                <p style="color: #666; margin-bottom: 20px;">Select two competitors to compare their features, pricing, and capabilities.</p>
-                
-                <div class="comparison-controls">
-                    <div style="flex: 1; min-width: 200px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Competitor 1:</label>
-                        <select id="competitor1Select" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 0.95em;">
-                            <option value="sighthound">Sighthound Redactor</option>
-                            <option value="veritone">Veritone Redact</option>
-                            <option value="caseguard">CaseGuard</option>
-                            <option value="fastredaction">FastRedaction</option>
-                            <option value="motiondsp">MotionDSP</option>
-                            <option value="brighterai">Brighter.ai</option>
-                        </select>
-                    </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Competitor 2:</label>
-                        <select id="competitor2Select" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 0.95em;">
-                            <option value="veritone">Veritone Redact</option>
-                            <option value="sighthound">Sighthound Redactor</option>
-                            <option value="caseguard">CaseGuard</option>
-                            <option value="fastredaction">FastRedaction</option>
-                            <option value="motiondsp">MotionDSP</option>
-                            <option value="brighterai">Brighter.ai</option>
-                        </select>
-                    </div>
-                    <button class="comparison-btn" onclick="updateComparison()">Compare</button>
-                </div>
-
-                <div class="comparison-slider" id="comparisonSlider" style="display: none; margin-top: 30px;">
-                    <div class="comparison-slider-wrapper" id="comparisonWrapper"></div>
-                </div>
+                <h3 style="color: #667eea; margin-top: 0; margin-bottom: 12px;">Competitor Navigation</h3>
+                <p style="color: #666; margin-bottom: 0;">Use the simple selector below to jump directly to a competitor profile.</p>
             </div>
 
             <div class="filters">
@@ -1871,210 +1994,39 @@
     </div>
 
     <script>
-        // Comparison data for all competitors
-        const comparisonData = {
-            sighthound: {
-                name: 'Sighthound Redactor',
-                features: [
-                    'Desktop & Server Hybrid deployment',
-                    'AI-powered detection (6+ types)',
-                    'Offline/Air-gapped capability',
-                    'Unlimited bulk processing',
-                    'REST API for integration',
-                    'Video redaction',
-                    'Audio redaction',
-                    'Image redaction',
-                    'Face detection',
-                    'License plate detection',
-                    'ID detection (new)',
-                    'Document/Screen detection (new)',
-                    'Multi-language UI',
-                    'GDPR/HIPAA/CJIS compliant'
-                ],
-                pricing: '$2,500-3,500/year (unlimited)',
-                deployment: 'Desktop, Server, Cloud, API',
-                strength: 'Hybrid flexibility & unlimited pricing'
-            },
-            veritone: {
-                name: 'Veritone Redact',
-                features: [
-                    'Cloud-native SaaS only',
-                    'GovCloud deployment',
-                    'Automated AI detection',
-                    'Audio transcription',
-                    'Chain of custody tracking',
-                    'Enterprise workflow management',
-                    'Video redaction',
-                    'Face detection',
-                    'License plate detection',
-                    'ID detection',
-                    'Document/Screen detection',
-                    'Batch processing',
-                    'Audit logs',
-                    'CJIS compliance'
-                ],
-                pricing: '$2,400-250K/year (per-hour)',
-                deployment: 'Cloud (Azure GovCloud)',
-                strength: 'Government-grade enterprise features'
-            },
-            caseguard: {
-                name: 'CaseGuard',
-                features: [
-                    'Desktop-based Windows',
-                    'Unlimited file redaction',
-                    '750+ file types supported',
-                    'AI video & audio redaction',
-                    'Document & image redaction',
-                    'Batch processing',
-                    'Scheduled tasks',
-                    'Collaboration workspace',
-                    'OCR for documents',
-                    'Face detection',
-                    'License plate detection',
-                    'ID detection',
-                    'Audit logs',
-                    'Windows-only'
-                ],
-                pricing: '$279-379/month ($3,348-4,548/year)',
-                deployment: 'Windows Desktop/On-Premise',
-                strength: 'Comprehensive multi-format support'
-            },
-            fastredaction: {
-                name: 'FastRedaction',
-                features: [
-                    'Web-based SaaS',
-                    'One-click redaction',
-                    'Automatic face blurring',
-                    'Simple interface',
-                    'Pay-as-you-go pricing',
-                    'FBI CJIS compliance',
-                    'FIPS 140-2 encryption',
-                    'Video redaction only',
-                    'Face detection',
-                    'License plate detection',
-                    'Cloud-only deployment',
-                    'No batch processing',
-                    'Limited manual tools',
-                    'No collaboration tools'
-                ],
-                pricing: '$19/minute ($114,000 for 100 hrs/year)',
-                deployment: 'Cloud (AWS SaaS)',
-                strength: 'Simple one-click interface'
-            },
-            motiondsp: {
-                name: 'MotionDSP (Spotlight)',
-                features: [
-                    'Desktop-only software',
-                    'GPU acceleration',
-                    'Automatic face detection',
-                    'Face tracking',
-                    'Multi-channel audio redaction',
-                    'Forensic Studio for enhancement',
-                    'Simple video interface',
-                    'Affordable pricing',
-                    'Video redaction',
-                    'Audio redaction',
-                    'License plate detection',
-                    'Windows-only',
-                    'No batch processing',
-                    'No API or server deployment'
-                ],
-                pricing: '$164-329/month ($1,968-3,948/year)',
-                deployment: 'Windows Desktop',
-                strength: 'GPU-accelerated video processing'
-            },
-            brighterai: {
-                name: 'Brighter.ai',
-                features: [
-                    'Cloud API/SaaS',
-                    'Deep Natural Anonymization (synthetic)',
-                    'EU-based (GDPR)',
-                    'Cloud, Edge, On-Premise',
-                    'License plate customization',
-                    '99%+ accuracy claims',
-                    'Data utility preservation',
-                    'Video redaction',
-                    'Image redaction',
-                    'Face detection',
-                    'License plate detection',
-                    'Pay-per-use pricing',
-                    'Limited object types (2)',
-                    'No documents or audio'
-                ],
-                pricing: '€25/250 images or 1 hour video',
-                deployment: 'Cloud/Edge/On-Premise',
-                strength: 'Synthetic replacement technology'
-            }
-        };
-
-        function updateComparison() {
-            const comp1 = document.getElementById('competitor1Select').value;
-            const comp2 = document.getElementById('competitor2Select').value;
-            
-            if (comp1 === comp2) {
-                alert('Please select two different competitors');
-                return;
-            }
-
-            const data1 = comparisonData[comp1];
-            const data2 = comparisonData[comp2];
-
-            let html = `
-                <div class="comparison-item">
-                    <h3>${data1.name}</h3>
-                    <div style="margin-bottom: 15px;">
-                        <strong style="color: #667eea;">Pricing:</strong> ${data1.pricing}<br>
-                        <strong style="color: #667eea;">Deployment:</strong> ${data1.deployment}
-                    </div>
-                    <ul class="feature-list">`;
-            
-            data1.features.forEach(feature => {
-                html += `<li>${feature}</li>`;
-            });
-            
-            html += `
-                    </ul>
-                </div>
-                <div class="comparison-item">
-                    <h3>${data2.name}</h3>
-                    <div style="margin-bottom: 15px;">
-                        <strong style="color: #667eea;">Pricing:</strong> ${data2.pricing}<br>
-                        <strong style="color: #667eea;">Deployment:</strong> ${data2.deployment}
-                    </div>
-                    <ul class="feature-list">`;
-            
-            data2.features.forEach(feature => {
-                html += `<li>${feature}</li>`;
-            });
-            
-            html += `
-                    </ul>
-                </div>`;
-
-            document.getElementById('comparisonWrapper').innerHTML = html;
-            document.getElementById('comparisonSlider').style.display = 'block';
+        function escapeRegExp(value) {
+            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-        function switchTab(tabName) {
-            // Hide all sections
+        function clearHighlights() {
+            document.querySelectorAll('.search-highlight').forEach((mark) => {
+                const parent = mark.parentNode;
+                if (!parent) return;
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            });
+        }
+
+        function switchTab(tabName, clickedElement = null) {
             const sections = document.querySelectorAll('.section');
             sections.forEach(section => section.classList.remove('active'));
-            
-            // Remove active class from all tabs
+
             const tabs = document.querySelectorAll('.nav-tab');
             tabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Show selected section
+
             const activeSection = document.getElementById(tabName);
             if (activeSection) {
                 activeSection.classList.add('active');
-                
-                // Add active class to clicked tab
-                if (event && event.target) {
-                    event.target.classList.add('active');
+
+                if (clickedElement) {
+                    clickedElement.classList.add('active');
+                } else {
+                    const matchingTab = Array.from(tabs).find(tab => tab.getAttribute('onclick') && tab.getAttribute('onclick').includes(`'${tabName}'`));
+                    if (matchingTab) {
+                        matchingTab.classList.add('active');
+                    }
                 }
-                
-                // Update breadcrumb
+
                 const sectionNames = {
                     'executive': 'Executive Summary',
                     'landscape': 'Market Landscape',
@@ -2085,10 +2037,12 @@
                     'opportunities': 'Market Opportunities'
                 };
                 document.getElementById('breadcrumb-section').textContent = sectionNames[tabName] || tabName;
-                
-                // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+        }
+
+        function switchTab(tabName) {
+            switchTab(tabName, typeof event !== 'undefined' ? event.target : null);
         }
 
         function scrollToCompetitor() {
@@ -2101,6 +2055,168 @@
                 }
             }
         }
+
+        function runGlobalSearch() {
+            const input = document.getElementById('globalSearch');
+            const status = document.getElementById('searchStatus');
+            const query = input.value.trim();
+            clearHighlights();
+
+            if (!query) {
+                status.textContent = 'Enter a search term to scan the hub.';
+                document.body.classList.remove('search-active');
+                return;
+            }
+
+            const regex = new RegExp(escapeRegExp(query), 'gi');
+            const sections = Array.from(document.querySelectorAll('.section'));
+            let firstMatchSection = null;
+            let matchCount = 0;
+
+            sections.forEach((section) => {
+                if (!firstMatchSection && regex.test(section.textContent)) {
+                    firstMatchSection = section;
+                }
+                regex.lastIndex = 0;
+            });
+
+            if (firstMatchSection) {
+                switchTab(firstMatchSection.id);
+            }
+
+            const activeSection = document.querySelector('.section.active');
+            if (!activeSection) {
+                status.textContent = 'No searchable section is active.';
+                return;
+            }
+
+            const walker = document.createTreeWalker(activeSection, NodeFilter.SHOW_TEXT, {
+                acceptNode(node) {
+                    if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+                    if (node.parentElement && ['SCRIPT', 'STYLE', 'BUTTON', 'SELECT', 'OPTION'].includes(node.parentElement.tagName)) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+
+            const textNodes = [];
+            while (walker.nextNode()) {
+                textNodes.push(walker.currentNode);
+            }
+
+            textNodes.forEach((node) => {
+                if (!regex.test(node.nodeValue)) {
+                    regex.lastIndex = 0;
+                    return;
+                }
+                regex.lastIndex = 0;
+                const fragment = document.createDocumentFragment();
+                let lastIndex = 0;
+                node.nodeValue.replace(regex, (match, offset) => {
+                    const before = node.nodeValue.slice(lastIndex, offset);
+                    if (before) fragment.appendChild(document.createTextNode(before));
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-highlight';
+                    mark.textContent = match;
+                    fragment.appendChild(mark);
+                    matchCount += 1;
+                    lastIndex = offset + match.length;
+                    return match;
+                });
+                const after = node.nodeValue.slice(lastIndex);
+                if (after) fragment.appendChild(document.createTextNode(after));
+                node.parentNode.replaceChild(fragment, node);
+            });
+
+            document.body.classList.toggle('search-active', matchCount > 0);
+
+            if (matchCount > 0) {
+                const firstHighlight = document.querySelector('.section.active .search-highlight');
+                if (firstHighlight) {
+                    firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                status.textContent = `${matchCount} match${matchCount === 1 ? '' : 'es'} found in ${document.getElementById('breadcrumb-section').textContent}.`;
+            } else {
+                status.textContent = 'No matches found.';
+            }
+        }
+
+        function clearGlobalSearch() {
+            const input = document.getElementById('globalSearch');
+            const status = document.getElementById('searchStatus');
+            input.value = '';
+            clearHighlights();
+            document.body.classList.remove('search-active');
+            status.textContent = 'Search the hub from here.';
+        }
+
+        function setupAccordions() {
+            document.querySelectorAll('.strengths, .weaknesses').forEach((block) => {
+                const heading = block.querySelector('h4');
+                const list = block.querySelector('ul');
+                if (!heading || !list || block.dataset.accordionReady === 'true') return;
+
+                const title = heading.textContent;
+                const content = document.createElement('div');
+                content.className = 'accordion-content';
+                content.appendChild(list);
+
+                const toggle = document.createElement('button');
+                toggle.type = 'button';
+                toggle.className = 'accordion-toggle';
+                toggle.innerHTML = `<span>${title}</span><span class="accordion-icon">▾</span>`;
+                toggle.addEventListener('click', () => {
+                    block.classList.toggle('is-collapsed');
+                });
+
+                heading.remove();
+                block.appendChild(toggle);
+                block.appendChild(content);
+                block.classList.add('is-collapsed');
+                block.dataset.accordionReady = 'true';
+            });
+        }
+
+        function setupCopyButtons() {
+            document.querySelectorAll('.pitch-box').forEach((block) => {
+                if (block.querySelector('.copy-btn')) return;
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'copy-btn';
+                button.title = 'Copy to clipboard';
+                button.setAttribute('aria-label', 'Copy to clipboard');
+                button.innerHTML = '⧉';
+                button.addEventListener('click', async () => {
+                    try {
+                        await navigator.clipboard.writeText(block.innerText.trim());
+                        button.classList.add('copied');
+                        button.innerHTML = '✓';
+                        setTimeout(() => {
+                            button.classList.remove('copied');
+                            button.innerHTML = '⧉';
+                        }, 1500);
+                    } catch (error) {
+                        button.innerHTML = '!';
+                    }
+                });
+                block.appendChild(button);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAccordions();
+            setupCopyButtons();
+
+            const searchInput = document.getElementById('globalSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        runGlobalSearch();
+                    }
+                });
+            }
+        });
 
         // Feature filter functionality
         const featureFilter = document.getElementById('featureFilter');
