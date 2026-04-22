@@ -1,0 +1,840 @@
+<div class="container">
+        <header>
+            <h1><i data-lucide="shield-check"></i> Sighthound Redactor</h1>
+            <h1 style="font-size: 1.6em; color: #2c5282;"><i data-lucide="bar-chart-3"></i> Competitive Analysis Hub</h1>
+            <p class="subtitle">AI-Powered Video, Audio & Image Redaction Solutions - Market Analysis for Sales & Marketing</p>
+            <div class="meta-info">
+                <span><strong>Last Updated:</strong> April 16, 2026</span>
+                <span><strong>Latest Version:</strong> Sighthound Redactor v7.0.6</span>
+                <span><strong>Competitors Analyzed:</strong> 23 Primary Solutions</span>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('pricing-calculator', this)">Pricing Calculator</button>
+                <button class="nav-tab" onclick="switchTab('executive', this)">Executive Summary</button>
+                <button class="nav-tab" onclick="switchTab('product', this)">Product Updates</button>
+                <button class="nav-tab" onclick="switchTab('icp', this)">ICP & Personas</button>
+                <button class="nav-tab" onclick="switchTab('competitors', this)">Competitor Profiles</button>
+                <button class="nav-tab" onclick="switchTab('features', this)">Feature Comparison</button>
+                <button class="nav-tab" onclick="switchTab('pricing', this)">Pricing Analysis</button>
+                <button class="nav-tab" onclick="switchTab('positioning', this)">Positioning Strategy</button>
+                <button class="nav-tab" onclick="switchTab('discovery', this)">Discovery Questions</button>
+            </div>
+        </header>
+
+        <section id="pricing-calculator" class="section active">
+            <h2><i data-lucide="calculator"></i> Pricing Calculator</h2>
+            <div class="page-wrap">
+                <div class="tool-badge">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="5" cy="5" r="4" fill="#4CAF50"/>
+                    </svg>
+                    Sighthound Redactor <span>·</span> Competitive Analysis Tool
+                </div>
+
+                <h1 class="section-title">Find your <em>right plan</em>,<br>instantly.</h1>
+                <p class="section-sub">
+                    Answer four questions and get an instant Sighthound Redactor tier recommendation —
+                    plus a side-by-side comparison with the top alternatives for your use case.
+                </p>
+
+                <div class="calc-card">
+
+                    <!-- Card header -->
+                    <div class="calc-header">
+                        <div class="calc-header-icon">
+                            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+                        </div>
+                        <div class="calc-header-text">
+                            <h2>Pricing Model Estimator</h2>
+                            <p>Based on live Sighthound Redactor pricing · Updated 2026</p>
+                        </div>
+                    </div>
+
+                    <!-- Form body -->
+                    <div class="calc-body">
+                        <div class="inputs-grid">
+
+                            <div class="field">
+                                <label for="userCount">Concurrent users <span class="req">*</span></label>
+                                <select id="userCount">
+                                    <option value="">— Select users —</option>
+                                    <option value="1">1 user (desktop, single machine)</option>
+                                    <option value="2-5">2–5 concurrent users</option>
+                                    <option value="6-10">6–10 concurrent users</option>
+                                    <option value="11+">11+ concurrent users</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="deploymentType">Deployment preference <span class="req">*</span></label>
+                                <select id="deploymentType">
+                                    <option value="">— Select deployment —</option>
+                                    <option value="desktop">Desktop (single machine)</option>
+                                    <option value="server">Server / On-Premise</option>
+                                    <option value="cloud">Private Cloud (AWS, Azure, GCP)</option>
+                                    <option value="airgapped">Air-Gapped / Isolated Network</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="apiNeeded">API / automation needed <span class="req">*</span></label>
+                                <select id="apiNeeded">
+                                    <option value="">— Select API needs —</option>
+                                    <option value="no">No – manual redaction only</option>
+                                    <option value="yes-automation">Yes – automate redaction workflows</option>
+                                    <option value="yes-oem">Yes – OEM / third-party integration</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="pcIndustry">Industry / use case <span class="req">*</span></label>
+                                <select id="pcIndustry">
+                                    <option value="">— Select industry —</option>
+                                    <option value="lawenforcement">Law Enforcement</option>
+                                    <option value="government">Government / Public Sector</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="legal">Legal & Corporate</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="action-row">
+                            <button type="button" class="btn-calc" id="calcBtn" onclick="calculatePricing()">
+                                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+                                Calculate My Plan
+                            </button>
+                            <button type="button" class="btn-reset" id="resetBtn" onclick="resetPricingCalc()">
+                                ↺ Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Output section -->
+                    <hr class="calc-divider" id="outputDivider" style="display:none;" />
+                    <section id="output-section" aria-live="polite">
+
+                        <!-- Tier result -->
+                        <div class="tier-result" id="tierResult">
+                            <div>
+                                <div class="tier-badge" id="tierBadge"></div>
+                            </div>
+                            <div class="tier-info">
+                                <div class="tier-name" id="tierName"></div>
+                                <div class="tier-price" id="tierPrice"></div>
+                                <p class="tier-explanation" id="tierExplanation"></p>
+                                <div class="tier-features" id="tierFeatures"></div>
+                            </div>
+                        </div>
+
+                        <!-- Comparison table -->
+                        <div class="comparison-wrap">
+                            <div class="comparison-title">How Sighthound Redactor compares</div>
+                            <table class="comparison-table" id="compTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tool</th>
+                                        <th>Pricing Model</th>
+                                        <th>Scales With</th>
+                                        <th>Best For</th>
+                                        <th>Sighthound Advantage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="compTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- CTA buttons -->
+                        <div class="cta-row">
+                            <a class="btn-primary" href="https://www.redactor.com/schedule-demo" target="_blank" rel="noopener">
+                                Schedule a Demo →
+                            </a>
+                            <a class="btn-secondary" href="https://www.redactor.com/contact-us" target="_blank" rel="noopener">
+                                Talk to Sales
+                            </a>
+                        </div>
+
+                    </section>
+
+                    <!-- Footer note -->
+                    <div class="calc-footer">
+                        Pricing based on published rates at <a href="https://www.redactor.com/pricing" target="_blank" rel="noopener">redactor.com/pricing</a>.
+                        Enterprise pricing scales with deployment type, number of concurrent users, and infrastructure.
+                        Redactor does <strong>not</strong> charge per-video or per-minute.
+                        All subscriptions are billed annually.
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="executive" class="section">
+            <h2><i data-lucide="clipboard-list"></i> Executive Summary</h2>
+            <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #2c5282;">
+                <p><strong>Sighthound Redactor v7.0.6</strong> (released March 2026) is a hybrid desktop/server AI-powered redaction solution positioned for enterprise deployment. The competitive landscape includes <strong>14 primary competitors</strong> ranging from specialized video tools to comprehensive multi-format solutions.</p>
+            </div>
+
+            <h3><i data-lucide="pie-chart"></i> Key Market Segments</h3>
+            <div class="positioning-grid">
+                <div class="card">
+                    <h4><i data-lucide="shield"></i> Law Enforcement & Public Safety</h4>
+                    <p><strong>Primary market.</strong> Bodycam footage, FOIA compliance, chain of custody.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="scale"></i> Legal & Compliance Teams</h4>
+                    <p><strong>Growing segment.</strong> Discovery, deposition, evidence handling.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="landmark"></i> Government Agencies</h4>
+                    <p>FOIA/GDPR compliance, classified material handling, multi-office deployment.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="heart-pulse"></i> Healthcare</h4>
+                    <p>HIPAA compliance, PHI redaction, research footage anonymization.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="plane"></i> Drone & Aerial Surveillance</h4>
+                    <p><strong>Emerging segment.</strong> Border security, aerial footage anonymization, and UAV-based evidence redaction.</p>
+                </div>
+            </div>
+
+            <h3><i data-lucide="sparkles"></i> Redactor Feature Highlights</h3>
+            <div class="positioning-grid">
+                <div class="card">
+                    <h4><i data-lucide="video"></i> Video Redaction</h4>
+                    <p>Automatically detect and redact heads, people, vehicles, and license plates, now expanded to detect IDs, screens, and documents in media.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="scan-face"></i> Face & Head Detection</h4>
+                    <p>AI-powered face and head tracking with automatic blurring across video frames.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="mic-off"></i> Audio Redaction</h4>
+                    <p>Detect and mute sensitive spoken content automatically or with manual control.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="file-text"></i> ID & Document Detection</h4>
+                    <p>Identify IDs, passports, screens, and sensitive documents in video and images.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="car"></i> License Plate Recognition</h4>
+                    <p>Automatically detect and redact vehicle license plates across footage.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="layers"></i> Batch Processing</h4>
+                    <p>Process hundreds of videos simultaneously with server-grade throughput.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="server"></i> Deployment Flexibility</h4>
+                    <p>Desktop, server, Docker, or air-gapped — works on your network, your rules.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="product" class="section">
+            <h2><i data-lucide="package"></i> Sighthound Redactor - Latest Product Information</h2>
+            <h3><i data-lucide="file-text"></i> Release Notes & Resources</h3>
+            <div style="background: #edf2f7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0366d6;">
+                <p>For the latest updates, feature announcements, and deprecation notices, see the official <a href="https://docs.redactor.com/release-notes/" target="_blank" style="color: #2c5282; font-weight: 600; text-decoration: underline;">Redactor Release Notes</a>.</p>
+            </div>
+            <h3><i data-lucide="tag"></i> Product Updates</h3>
+            <div class="version-selector-wrapper">
+                <label for="versionSelector" class="version-selector-label">Select a version to view details:</label>
+                <select id="versionSelector" class="version-selector" onchange="updateVersionDetails()">
+                    <option value="v7.0.6" selected>v7.0.6 — March 2026</option>
+                    <option value="v7.0.5">v7.0.5 — February 2026</option>
+                    <option value="v7.0.3">v7.0.3 — January 2026</option>
+                    <option value="v7.0.0">v7.0.0 — December 2025</option>
+                </select>
+            </div>
+            <div id="versionDetails" class="version-details" aria-live="polite"></div>
+        </section>
+
+        <section id="icp" class="section">
+            <h2><i data-lucide="users"></i> Ideal Customer Profiles & Buyer Personas</h2>
+            <div class="icp-filters-row">
+                <div class="icp-filter-group">
+                    <label for="industryFilter" class="version-selector-label"><i data-lucide="building"></i> Industry</label>
+                    <select id="industryFilter" class="version-selector" onchange="filterIcp()">
+                        <option value="all">All Industries</option>
+                        <option value="law-enforcement">Law Enforcement</option>
+                        <option value="government">Government</option>
+                        <option value="healthcare-legal">Healthcare & Legal</option>
+                    </select>
+                </div>
+                <div class="icp-filter-group">
+                    <label for="buyerTypeFilter" class="version-selector-label"><i data-lucide="user-round"></i> Buyer Type</label>
+                    <select id="buyerTypeFilter" class="version-selector" onchange="filterIcp()">
+                        <option value="all">All Buyer Types</option>
+                        <option value="end-user">End User / Operator</option>
+                        <option value="compliance">Compliance / Records Officer</option>
+                        <option value="it">IT / Technical Gatekeeper</option>
+                        <option value="executive">Executive / Budget Owner</option>
+                    </select>
+                </div>
+            </div>
+            <h3><i data-lucide="user-check"></i> Ideal Customer Profile (ICP)</h3>
+            <div class="accordion-item icp-accordion" data-industry="law-enforcement">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="shield"></i> Primary ICP: Mid-to-Large Law Enforcement Agencies</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Organization Size:</strong> 50-500+ personnel</li>
+                            <li><strong>Annual Budget:</strong> $50K-$200K</li>
+                            <li><strong>Pain Point:</strong> High volume of bodycam/CCTV footage; manual redaction bottleneck</li>
+                            <li><strong>Technical Requirements:</strong> On-premise network control, offline capability, CJIS compliance</li>
+                            <li><strong>Decision Criteria:</strong> Cost-per-deployment, unlimited processing, batch scalability, audit trails</li>
+                            <li><strong>The Trigger Event:</strong> FOIA lawsuit, public records request surge, or departmental audit revealing redaction liability</li>
+                            <li><strong>Current Technology Environment:</strong> Windows desktops, on-premise servers, evidence management systems, and limited cloud adoption</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item icp-accordion" data-industry="government">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="landmark"></i> Secondary ICP: Government & Justice Agencies</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Organization Size:</strong> Any size (Federal to local)</li>
+                            <li><strong>Annual Budget:</strong> $100K-$500K+</li>
+                            <li><strong>Pain Point:</strong> FOIA request backlogs, air-gapped networks, compliance complexity</li>
+                            <li><strong>Technical Requirements:</strong> Air-gapped support, FedRAMP/CJIS compliance, multi-office deployment</li>
+                            <li><strong>Decision Criteria:</strong> Security posture, compliance certifications, support SLAs, multi-year contracts</li>
+                            <li><strong>The Trigger Event:</strong> Inspector general review, public scrutiny, or policy changes around privacy and disclosure</li>
+                            <li><strong>Current Technology Environment:</strong> Fragmented legacy systems, tightly controlled access, and formal procurement-based IT environments</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item icp-accordion" data-industry="healthcare-legal">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="heart-pulse"></i> Tertiary ICP: Healthcare & Legal Organizations</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Organization Size:</strong> 20-500+ personnel</li>
+                            <li><strong>Annual Budget:</strong> $20K-$100K</li>
+                            <li><strong>Pain Point:</strong> HIPAA/GDPR compliance, discovery redaction, evidence handling</li>
+                            <li><strong>Technical Requirements:</strong> On-premise deployment, audit trails, data governance</li>
+                            <li><strong>Decision Criteria:</strong> Compliance readiness, ease of use, professional support, training</li>
+                            <li><strong>The Trigger Event:</strong> Audit preparation, major discovery request, or incident response after a sensitive disclosure risk</li>
+                            <li><strong>Current Technology Environment:</strong> EHR or document management systems, compliance-heavy approval processes, and restricted data movement policies</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3><i data-lucide="user-circle"></i> Detailed Buyer Personas</h3>
+            <div class="accordion-item persona-accordion" data-buyer-type="end-user">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="badge"></i> Detective/Evidence Manager (Law Enforcement)</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p><strong>Role:</strong> Processes 50-500 videos/month for FOIA/discovery</p>
+                        <p><strong>Pain Points:</strong> Manual redaction takes 4-8 hours per video; overwhelming backlog</p>
+                        <p><strong>Needs:</strong> One-click automation, batch processing, reliable results</p>
+                        <p><strong>Buying Influence:</strong> Recommends to supervisor; budget authority limited</p>
+                        <p><strong>Success Metric:</strong> Reduction in redaction time from days to hours</p>
+                        <p><strong>Their Daily Frustrations:</strong> Repetitive manual work, incomplete auto-detection, and deadline pressure from records requests</p>
+                        <p><strong>Their Key Motivations:</strong> Faster case handling, lower backlog, and more confidence in release-ready evidence</p>
+                        <p><strong>Common Objections:</strong> Will it miss faces, can I still manually control output, and how long will training take?</p>
+                        <p><strong>The "Magic Words" (Talk Track):</strong> AI-assisted control, batch-ready workflow, faster FOIA turnaround, and human review built in</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item persona-accordion" data-buyer-type="compliance">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="file-check"></i> Records/Compliance Officer (Government)</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p><strong>Role:</strong> Ensures FOIA/GDPR compliance across multiple departments</p>
+                        <p><strong>Pain Points:</strong> Inconsistent redaction standards; compliance risk; manual oversight</p>
+                        <p><strong>Needs:</strong> Auditable process, consistent results, multi-office support</p>
+                        <p><strong>Buying Influence:</strong> High—department decision-maker</p>
+                        <p><strong>Success Metric:</strong> Zero redaction failures; 100% audit trail</p>
+                        <p><strong>Their Daily Frustrations:</strong> Audit prep, exception handling, and chasing process consistency across teams</p>
+                        <p><strong>Their Key Motivations:</strong> Lower legal exposure, policy compliance, and repeatable redaction standards</p>
+                        <p><strong>Common Objections:</strong> How do we validate consistency, does it support our compliance controls, and can it scale across departments?</p>
+                        <p><strong>The "Magic Words" (Talk Track):</strong> Full audit trail, standardized redaction, compliance-ready deployment, and secure governance</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item persona-accordion" data-buyer-type="compliance">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="scale"></i> Legal/eDiscovery Manager (Law Firms & Corporates)</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p><strong>Role:</strong> Manages discovery redaction for high-stakes cases</p>
+                        <p><strong>Pain Points:</strong> Tight FOIA deadlines; accidental disclosure liability</p>
+                        <p><strong>Needs:</strong> Fast turnaround, defensible process, professional support</p>
+                        <p><strong>Buying Influence:</strong> High—owns budget for legal tech</p>
+                        <p><strong>Success Metric:</strong> On-time delivery; zero litigation risk</p>
+                        <p><strong>Their Daily Frustrations:</strong> Late-stage review cycles, manual QC, and pressure to reduce disclosure risk</p>
+                        <p><strong>Their Key Motivations:</strong> Defensible workflows, faster production, and reduced review burden</p>
+                        <p><strong>Common Objections:</strong> Can this support our timeline, is the process defensible, and what happens if detection misses something?</p>
+                        <p><strong>The "Magic Words" (Talk Track):</strong> Litigation-ready output, defensible AI workflow, rapid turnaround, and review-friendly controls</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item persona-accordion" data-buyer-type="compliance">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="stethoscope"></i> Compliance/Privacy Officer (Healthcare)</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p><strong>Role:</strong> Ensures HIPAA compliance in research/operations</p>
+                        <p><strong>Pain Points:</strong> Manual redaction is error-prone; audit risk; cost overruns</p>
+                        <p><strong>Needs:</strong> HIPAA-certified tool, audit logs, on-premise support</p>
+                        <p><strong>Buying Influence:</strong> High—owns compliance budget</p>
+                        <p><strong>Success Metric:</strong> Zero PHI exposures; full compliance documentation</p>
+                        <p><strong>Their Daily Frustrations:</strong> Preparing evidence of controls, reviewing exceptions, and avoiding PHI leakage in sensitive media</p>
+                        <p><strong>Their Key Motivations:</strong> Passing audits, reducing breach risk, and keeping sensitive data in approved environments</p>
+                        <p><strong>Common Objections:</strong> Where does data live, how is compliance documented, and can this fit our internal approval model?</p>
+                        <p><strong>The "Magic Words" (Talk Track):</strong> On-premise control, compliance documentation, audit-ready logs, and protected PHI workflows</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item persona-accordion" data-buyer-type="it">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="lock"></i> IT/Security Director (Enterprise)</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p><strong>Role:</strong> Approves software for deployment across organization</p>
+                        <p><strong>Pain Points:</strong> Cloud security concerns; vendor lock-in; integration complexity</p>
+                        <p><strong>Needs:</strong> On-premise option, API support, SSO, security certifications</p>
+                        <p><strong>Buying Influence:</strong> High—technical gatekeeper</p>
+                        <p><strong>Success Metric:</strong> Seamless integration; zero security incidents</p>
+                        <p><strong>Their Daily Frustrations:</strong> Security reviews, conflicting deployment requirements, and integration gaps</p>
+                        <p><strong>Their Key Motivations:</strong> Reduced risk, architectural fit, and long-term operational stability</p>
+                        <p><strong>Common Objections:</strong> Will it fit our environment, does it support identity controls, and what happens in offline deployments?</p>
+                        <p><strong>The "Magic Words" (Talk Track):</strong> Hybrid deployment, API-first, offline capable, and enterprise security controls</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item persona-accordion" data-buyer-type="executive">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <h4><i data-lucide="wallet"></i> CFO/Budget Decision-Maker</h4>
+                    <span class="accordion-toggle">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <p><strong>Role:</strong> Final approval on software spend</p>
+                        <p><strong>Pain Points:</strong> Per-minute/per-file pricing models are unpredictable</p>
+                        <p><strong>Needs:</strong> Transparent pricing, ROI calculation, cost savings proof</p>
+                        <p><strong>Buying Influence:</strong> Highest—controls budget</p>
+                        <p><strong>Success Metric:</strong> 50%+ savings vs. manual redaction or competitor</p>
+                        <p><strong>Their Daily Frustrations:</strong> Budget variance, opaque vendor pricing, and difficulty forecasting usage-based costs</p>
+                        <p><strong>Their Key Motivations:</strong> Predictable spend, measurable ROI, and productivity gains without headcount growth</p>
+                        <p><strong>Common Objections:</strong> Is the fixed cost justified, what is the payback period, and how does it compare to manual labor?</p>
+                        <p><strong>The "Magic Words" (Talk Track):</strong> Transparent annual pricing, unlimited processing, lower total cost, and faster ROI</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="competitors" class="section">
+            <h2><i data-lucide="building-2"></i> Competitor Profiles & Social Links</h2>
+            <div class="version-selector-wrapper">
+                <label for="competitorSelector" class="version-selector-label"><i data-lucide="building-2"></i> Select a competitor profile to view:</label>
+                <select id="competitorSelector" class="version-selector" onchange="filterCompetitorProfiles()">
+                    <option value="all" selected>All Competitors</option>
+                    <option value="pimloc">Pimloc (Secure Redact)</option>
+                    <option value="vidizmo">VIDIZMO / Redactor.ai</option>
+                    <option value="facit">Facit Data Systems</option>
+                    <option value="suspect">Suspect Technologies</option>
+                    <option value="redactable">Redactable</option>
+                    <option value="extract">Extract Systems</option>
+                    <option value="idox">iDox.ai</option>
+                    <option value="everlaw">Everlaw</option>
+                    <option value="transperfect">TransPerfect</option>
+                    <option value="veritone">Veritone Redact</option>
+                    <option value="caseguard">CaseGuard Studio</option>
+                    <option value="fastredaction">FastRedaction</option>
+                    <option value="motiondsp">MotionDSP Spotlight</option>
+                    <option value="clipr">CLIPr</option>
+                    <option value="assemblyai">AssemblyAI</option>
+                    <option value="lantero">Lantero Redact</option>
+                </select>
+            </div>
+            <div class="competitor-profile" data-competitor="pimloc">
+            <h3><i data-lucide="shield"></i> Pimloc (Secure Redact)</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Privacy-First Redaction Solutions</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud/On-Premise</p><div class="social-links"><a href="https://pimloc.com" class="social-link" target="_blank">Pimloc</a><a href="https://secureredact.ai" class="social-link" target="_blank">Secure Redact</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Privacy-focused architecture, flexible deployment options</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Limited public information, smaller market presence</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Established market presence, broader feature set, transparent pricing</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="vidizmo">
+            <h3><i data-lucide="video"></i> VIDIZMO / Redactor.ai</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Media Management & Redaction Platform</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud</p><div class="social-links"><a href="https://redactor.ai" class="social-link" target="_blank">Redactor.ai</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Media asset management integration, enterprise-focused</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Cloud-only, less transparent on pricing</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Deployment flexibility, clearer pricing model</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="facit">
+            <h3><i data-lucide="database"></i> Facit Data Systems</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>AI-Powered Data Redaction</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud/On-Premise</p><div class="social-links"><a href="https://facit.ai" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Hybrid deployment option, AI-driven detection</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Limited public market visibility</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Broader use case coverage, stronger law enforcement positioning</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="suspect">
+            <h3><i data-lucide="search"></i> Suspect Technologies</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Specialized Redaction Tools</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> On-Premise/Cloud</p><div class="social-links"><a href="https://suspecttech.com" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Flexible deployment, technical focus</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Smaller player, less market penetration</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Market presence, feature depth, enterprise support</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="redactable">
+            <h3><i data-lucide="file-text"></i> Redactable</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Web-Based Document & Media Redaction</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud SaaS</p><div class="social-links"><a href="https://redactable.com" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> User-friendly interface, document-focused</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Cloud-only, limited video capabilities</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Video specialization, deployment options, multi-format support</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="extract">
+            <h3><i data-lucide="filter"></i> Extract Systems</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Data Extraction & Redaction Solutions</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> On-Premise</p><div class="social-links"><a href="https://extractsystems.com" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> On-premise focus, data extraction capabilities</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Limited video focus, smaller market presence</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Video expertise, broader format support, AI capabilities</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="idox">
+            <h3><i data-lucide="file-search"></i> iDox.ai</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>AI Document Intelligence & Redaction</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud</p><div class="social-links"><a href="https://idox.ai" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Document intelligence focus, AI-driven</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Cloud-only, document-centric rather than video-focused</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Video/audio specialization, hybrid deployment, multi-format</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="everlaw">
+            <h3><i data-lucide="gavel"></i> Everlaw</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Legal Tech Platform with Redaction</h4><p><strong>Pricing:</strong> Custom pricing (enterprise) | <strong>Deployment:</strong> Cloud SaaS</p><div class="social-links"><a href="https://everlaw.com" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Broad legal tech ecosystem, established enterprise player</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Redaction is secondary feature, primarily eDiscovery-focused, cloud-only</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Specialized video redaction, deployment flexibility, law enforcement focus</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="transperfect">
+            <h3><i data-lucide="globe"></i> TransPerfect</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Global Language Services with Legal Tech</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Enterprise SaaS</p><div class="social-links"><a href="https://transperfect.com" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Multinational support, global compliance expertise, enterprise scale</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Broad services dilute redaction focus, higher service costs, enterprise-only</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Specialized redaction tool, cost-effectiveness, direct software deployment</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="veritone">
+            <h3><i data-lucide="cloud"></i> Veritone Redact</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Enterprise Cloud SaaS for Law Enforcement</h4><p><strong>Pricing:</strong> $2,400-$250K+/year | <strong>Deployment:</strong> Azure GovCloud (Cloud-only)</p><div class="social-links"><a href="https://www.linkedin.com/company/veritone/" class="social-link" target="_blank">LinkedIn</a><a href="https://www.facebook.com/veritone" class="social-link" target="_blank">Facebook</a><a href="https://www.veritone.com/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Enterprise workflow, CJIS compliance, audio transcription with keyword search, chain of custody</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Cloud-only (no on-premise), highest pricing tier, steep learning curve, limited offline capability</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Cost (50-60% less), deployment flexibility, offline support, ID/document detection</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="caseguard">
+            <h3><i data-lucide="briefcase"></i> CaseGuard Studio</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Comprehensive Multi-Format Desktop Redaction</h4><p><strong>Pricing:</strong> $279-$379/month | <strong>Deployment:</strong> Windows Desktop/On-Premise</p><div class="social-links"><a href="https://www.linkedin.com/company/caseguard-studio/" class="social-link" target="_blank">LinkedIn</a><a href="https://www.facebook.com/caseguard/" class="social-link" target="_blank">Facebook</a><a href="https://caseguard.com/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Desktop-based, unlimited file redaction, 750+ file formats, batch processing</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Windows-only, no API, requires high-performance GPU, pricing increases with team size</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Video specialization, server deployment, REST API, newer AI capabilities</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="fastredaction">
+            <h3><i data-lucide="zap"></i> FastRedaction</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Web-Based SaaS with Pay-Per-Minute Pricing</h4><p><strong>Pricing:</strong> $19/minute + $1 (no subscriptions) | <strong>Deployment:</strong> Cloud (AWS)</p><div class="social-links"><a href="https://www.linkedin.com/company/fastredaction/" class="social-link" target="_blank">LinkedIn</a><a href="https://www.fastredaction.com/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Simple one-click interface, automatic face blurring, CJIS/FIPS compliant, no subscriptions</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Pay-per-minute becomes expensive at scale ($1,140/hour), cloud-only, no document redaction</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Cost at scale (unlimited vs. $19/min), batch processing, broader feature set</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="motiondsp">
+            <h3><i data-lucide="film"></i> MotionDSP Spotlight</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Specialist Video Redaction for Forensics</h4><p><strong>Pricing:</strong> $164-$329/month | <strong>Deployment:</strong> Windows Desktop</p><div class="social-links"><a href="https://www.linkedin.com/company/motiondsp/" class="social-link" target="_blank">LinkedIn</a><a href="https://www.motiondsp.com/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Excellent GPU acceleration, automatic face tracking, multi-channel audio, forensic-focused</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Windows-only desktop, no server/cloud deployment, no document redaction, no API</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Deployment flexibility, multi-format support, batch processing, multi-user teams</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="clipr">
+            <h3><i data-lucide="scissors"></i> CLIPr</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>AI-Powered Video Redaction Platform</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud/On-Premise Hybrid</p><div class="social-links"><a href="https://www.clipr.ai/clipr-redaction" class="social-link" target="_blank">Product Page</a><a href="https://www.clipr.ai/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Modern AI video tooling, flexible deployment story, and strong workflow positioning around video content operations</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Less transparent pricing, lower law-enforcement specificity, and less visible positioning around broad evidentiary compliance workflows</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Transparent pricing, government/law-enforcement fit, offline support, and broader compliance-led messaging</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="assemblyai">
+            <h3><i data-lucide="headphones"></i> AssemblyAI</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Developer-First Audio Intelligence API</h4><p><strong>Pricing:</strong> Usage-based API pricing | <strong>Deployment:</strong> Cloud API</p><div class="social-links"><a href="https://www.assemblyai.com/pricing" class="social-link" target="_blank">Pricing</a><a href="https://www.assemblyai.com/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Strong speech-to-text stack, developer-friendly API, and good fit for audio-centric automation workflows</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Not a complete video/image redaction suite, cloud-first, and usage-based economics can grow quickly</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> End-to-end visual redaction, multi-format workflow, predictable annual pricing, and offline or on-premise deployment</p></div>
+            </div>
+            <div class="competitor-profile" data-competitor="lantero">
+            <h3><i data-lucide="shield-check"></i> Lantero Redact</h3>
+            <div class="card" style="border-left: 4px solid #2c5282; margin-bottom: 20px;"><h4>Privacy-Focused Redaction Platform</h4><p><strong>Pricing:</strong> Custom pricing | <strong>Deployment:</strong> Cloud SaaS</p><div class="social-links"><a href="https://lantero.se/en/redact" class="social-link" target="_blank">Product Page</a><a href="https://lantero.se/en/" class="social-link" target="_blank">Website</a></div><div class="strength-box" style="margin-top: 15px;"><strong>✓ Strengths:</strong> Privacy-first positioning, GDPR-oriented messaging, and European market relevance</div><div class="weakness-box"><strong>✗ Weaknesses:</strong> Less visible hybrid deployment depth, limited public pricing, and weaker North American public-safety positioning</div><p style="margin-top: 15px;"><strong>Sighthound Wins On:</strong> Hybrid deployment, deeper law-enforcement and government use cases, and stronger feature breadth across evidence workflows</p></div>
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <h2><i data-lucide="table"></i> Feature Comparison Matrix</h2>
+            <h3><i data-lucide="arrow-left-right"></i> Side-by-Side Competitor Comparison Tool</h3>
+            <div class="comparison-slider">
+                <p style="margin-bottom: 15px; font-weight: 600; color: #1a3a52;">Compare two solutions across face, audio, video, document, and deployment capabilities.</p>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;"><label for="compareA" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c5282;">Solution A</label><select id="compareA" onchange="updateComparison()" style="width: 100%; padding: 8px; border: 2px solid #cbd5e0; border-radius: 5px; font-size: 0.9em;"><option value="sighthound">Sighthound Redactor</option><option value="veritone">Veritone Redact</option><option value="caseguard">CaseGuard Studio</option><option value="fastredaction">FastRedaction</option><option value="motiondsp">MotionDSP Spotlight</option><option value="clipr">CLIPr</option><option value="assemblyai">AssemblyAI</option><option value="lantero">Lantero Redact</option><option value="pimloc">Pimloc Secure Redact</option><option value="vidizmo">VIDIZMO Redactor.ai</option><option value="facit">Facit Data Systems</option><option value="suspect">Suspect Technologies</option><option value="redactable">Redactable</option><option value="extract">Extract Systems</option><option value="idox">iDox.ai</option><option value="everlaw">Everlaw</option><option value="transperfect">TransPerfect</option></select></div>
+                    <div style="flex: 1; min-width: 200px;"><label for="compareB" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c5282;">Solution B</label><select id="compareB" onchange="updateComparison()" style="width: 100%; padding: 8px; border: 2px solid #cbd5e0; border-radius: 5px; font-size: 0.9em;"><option value="veritone">Veritone Redact</option><option value="sighthound">Sighthound Redactor</option><option value="caseguard">CaseGuard Studio</option><option value="fastredaction">FastRedaction</option><option value="motiondsp">MotionDSP Spotlight</option><option value="clipr">CLIPr</option><option value="assemblyai">AssemblyAI</option><option value="lantero">Lantero Redact</option><option value="pimloc">Pimloc Secure Redact</option><option value="vidizmo">VIDIZMO Redactor.ai</option><option value="facit">Facit Data Systems</option><option value="suspect">Suspect Technologies</option><option value="redactable">Redactable</option><option value="extract">Extract Systems</option><option value="idox">iDox.ai</option><option value="everlaw">Everlaw</option><option value="transperfect">TransPerfect</option></select></div>
+                </div>
+                <div id="comparisonResult" style="margin-top: 20px;"></div>
+            </div>
+            <hr style="border: none; border-top: 1px solid #cbd5e0; margin: 28px 0 8px 0;">
+            <h3><i data-lucide="list-filter"></i> Full Feature Matrix</h3>
+            <h3><i data-lucide="filter"></i> Filter by Company</h3>
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterFeatureCompany('all', this)">All Companies</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Sighthound', this)">Sighthound</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Veritone', this)">Veritone</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('CaseGuard', this)">CaseGuard</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('FastRedaction', this)">FastRedaction</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('MotionDSP', this)">MotionDSP</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('CLIPr', this)">CLIPr</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('AssemblyAI', this)">AssemblyAI</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Lantero', this)">Lantero Redact</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Pimloc', this)">Pimloc</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('VIDIZMO', this)">VIDIZMO</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Facit', this)">Facit</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Suspect', this)">Suspect Tech</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Redactable', this)">Redactable</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Extract', this)">Extract Systems</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('iDox', this)">iDox.ai</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('Everlaw', this)">Everlaw</button>
+                <button class="filter-btn" onclick="filterFeatureCompany('TransPerfect', this)">TransPerfect</button>
+            </div>
+            <h3><i data-lucide="columns-2"></i> Side-by-Side Comparisons Filter</h3>
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="filterComparisonType('all', this)">All</button>
+                <button class="filter-btn" onclick="filterComparisonType('face', this)">Face</button>
+                <button class="filter-btn" onclick="filterComparisonType('audio', this)">Audio</button>
+                <button class="filter-btn" onclick="filterComparisonType('video', this)">Video</button>
+                <button class="filter-btn" onclick="filterComparisonType('document', this)">Document</button>
+                <button class="filter-btn" onclick="filterComparisonType('deployment', this)">Deployment</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="featureTable">
+                    <thead><tr><th>Feature</th><th>Sighthound</th><th>Veritone</th><th>CaseGuard</th><th>FastRedaction</th><th>MotionDSP</th><th>CLIPr</th><th>AssemblyAI</th><th>Lantero</th><th>Pimloc</th><th>VIDIZMO</th><th>Facit</th><th>Suspect</th><th>Redactable</th><th>Extract</th><th>iDox</th><th>Everlaw</th><th>TransPerfect</th></tr></thead>
+                    <tbody>
+                        <tr data-feature-type="face video document" class="object-categories-row"><td><div class="object-categories-label" onclick="toggleObjectCategories(this)" onkeydown="handleObjectCategoriesKey(event, this)" role="button" tabindex="0" aria-expanded="false"><span class="object-categories-arrow">▶</span><strong>Object Categories</strong><span class="object-categories-hint">(click to expand)</span></div><div class="object-categories-details" hidden>Faces &amp; Heads | IDs &amp; Passports | Vehicles | License Plates | Documents &amp; Screens | Audio Segments</div></td><td><span class="icon-check">✓</span> Full Suite</td><td><span class="icon-check">✓</span> Multi-Object</td><td><span class="icon-check">✓</span> Full Suite</td><td><span class="icon-partial">⚠</span> Faces + Plates</td><td><span class="icon-partial">⚠</span> Faces + Plates</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-cross">✗</span> Audio Only</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-partial">⚠</span> Partial Suite</td><td><span class="icon-partial">⚠</span> Faces Only</td><td><span class="icon-check">✓</span> Multi-Object</td><td><span class="icon-partial">⚠</span> Faces Only</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-partial">⚠</span> Docs Only</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-partial">⚠</span> Docs + Faces</td><td><span class="icon-partial">⚠</span> Limited Suite</td></tr>
+                        <tr data-feature-type="audio"><td><strong>Audio Redaction</strong></td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-check">✓</span> Strong</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td></tr>
+                        <tr data-feature-type="video"><td><strong>Batch Processing</strong></td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td></tr>
+                        <tr data-feature-type="video"><td><strong>Undo/Redo (v7.0.3)</strong></td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-cross">✗</span> No</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="pricing" class="section">
+            <h2><i data-lucide="dollar-sign"></i> Pricing Analysis & ROI</h2>
+            <h3><i data-lucide="tag"></i> Pricing Models Overview</h3>
+            <div class="positioning-grid">
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> Sighthound Redactor</h4>
+                    <p><strong>Model:</strong> Tiered annual subscriptions + unlimited processing</p>
+                    <p><strong>Free Plan:</strong> $0 (24-hour access, up to 2 minutes, 1 user)</p>
+                    <p><strong>Pro Plan:</strong> $2,500/year (unlimited video length, 1 user, desktop install)</p>
+                    <p><strong>Enterprise Plan:</strong> $3,500/year (1-5 users, multi-user, server install)</p>
+                    <p><strong>Custom Plan:</strong> Custom pricing (teams, developers, API integration)</p>
+                    <p><strong>Sweet Spot:</strong> Solo professionals to large enterprises</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> Veritone Redact</h4>
+                    <p><strong>Model:</strong> Tiered annual subscriptions — contact vendor for quote</p>
+                    <p><strong>Pricing Behavior:</strong> Scales rapidly from entry tier to enterprise deployments with support and overage add-ons</p>
+                    <p><strong>Sweet Spot:</strong> Enterprise cloud deployments</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> CaseGuard Studio</h4>
+                    <p><strong>Model:</strong> Monthly per-seat licensing — scales with user count</p>
+                    <p><strong>Pricing Behavior:</strong> Per-seat costs scale fast at 3+ users</p>
+                    <p><strong>Sweet Spot:</strong> Small-to-medium desktop teams</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> FastRedaction</h4>
+                    <p><strong>Model:</strong> Pay-per-minute — costs rise significantly at high video volume</p>
+                    <p><strong>Pricing Behavior:</strong> Low upfront cost, but compounds quickly as video volume grows</p>
+                    <p><strong>Sweet Spot:</strong> Occasional light users (2-10 videos/month)</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> MotionDSP Spotlight</h4>
+                    <p><strong>Model:</strong> Monthly per-seat desktop licensing — scales with user count</p>
+                    <p><strong>Pricing Behavior:</strong> Subscription grows with each additional operator</p>
+                    <p><strong>Sweet Spot:</strong> Forensic analysts on Windows desktops</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> AssemblyAI</h4>
+                    <p><strong>Model:</strong> Usage-based API pricing — scales with processing volume</p>
+                    <p><strong>Pricing Behavior:</strong> Per-minute API billing grows rapidly with heavy audio workloads</p>
+                    <p><strong>Sweet Spot:</strong> Developers integrating audio intelligence</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> Enterprise eDiscovery Platforms</h4>
+                    <p><strong>Model:</strong> Custom enterprise contracts — quote-based annual pricing</p>
+                    <p><strong>Pricing Behavior:</strong> Bundled into broader legal tech suites; redaction is a secondary feature within much larger contracts</p>
+                    <p><strong>Examples:</strong> Everlaw, TransPerfect</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> Cloud SaaS Redaction Platforms</h4>
+                    <p><strong>Model:</strong> Custom SaaS subscriptions — contact vendor for quote</p>
+                    <p><strong>Pricing Behavior:</strong> Cloud-hosted tiers typically priced by seats, storage, or usage bands</p>
+                    <p><strong>Examples:</strong> VIDIZMO/Redactor.ai, Redactable, Lantero Redact, iDox.ai</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="dollar-sign"></i> Hybrid & On-Premise Specialists</h4>
+                    <p><strong>Model:</strong> Custom deployment-based pricing — contact vendor for quote</p>
+                    <p><strong>Pricing Behavior:</strong> Costs vary with deployment footprint, modules, and support tier</p>
+                    <p><strong>Examples:</strong> Pimloc, Facit Data Systems, Suspect Technologies, CLIPr, Extract Systems</p>
+                </div>
+            </div>
+
+            <h3><i data-lucide="eye-off"></i> Hidden Costs & TCO Analysis</h3>
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <h4 style="color: #856404; margin-top: 0;"><i data-lucide="alert-triangle"></i> Watch Out For These Hidden Costs</h4>
+                <ul style="margin: 15px 0 0 20px;">
+                    <li><strong>Processing Overages:</strong> FastRedaction's pay-per-minute model compounds significantly at high video volume; Veritone adds per-file overages on top of annual tiers</li>
+                    <li><strong>User Seats:</strong> CaseGuard's monthly per-seat licensing scales fast as you add operators</li>
+                    <li><strong>Deployment & Migration:</strong> Cloud-only solutions require infrastructure upgrades</li>
+                    <li><strong>Training & Onboarding:</strong> Enterprise solutions may cost $5K-$20K</li>
+                    <li><strong>Premium Support Tiers:</strong> Often $5K-$50K+ annually</li>
+                    <li><strong>API Integration Fees:</strong> Custom integration can be expensive</li>
+                </ul>
+            </div>
+
+            <h3><i data-lucide="calculator"></i> Annual TCO Examples (200 videos/month, 3 users)</h3>
+            <div class="positioning-grid">
+                <div class="card" style="border-left: 4px solid #22863a;">
+                    <h4 style="color: #22863a;"><i data-lucide="check-circle"></i> Sighthound (Enterprise)</h4>
+                    <p><strong>Base License:</strong> $3,500 (enterprise, 1-5 users)<br><strong>Processing:</strong> $0 (unlimited)<br><strong>Support:</strong> Email + Private Slack</p>
+                    <p style="border-top: 2px solid #e2e8f0; padding-top: 10px; margin-top: 10px;"><strong>Total: $3,500/year</strong><br><em>$1.46 per video</em></p>
+                </div>
+                <div class="card" style="border-left: 4px solid #fd7e14;">
+                    <h4 style="color: #fd7e14;"><i data-lucide="alert-circle"></i> FastRedaction</h4>
+                    <p><strong>Base License:</strong> None (pay-per-minute model)<br><strong>Processing (2,400 videos):</strong> Pay-per-minute — costs rise significantly at high video volume<br><strong>Support:</strong> Basic</p>
+                    <p style="border-top: 2px solid #e2e8f0; padding-top: 10px; margin-top: 10px;"><strong>Total:</strong> At high volume, costs scale rapidly — significantly higher than flat-rate alternatives</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #cb2431;">
+                    <h4 style="color: #cb2431;"><i data-lucide="x-circle"></i> CaseGuard (3 users)</h4>
+                    <p><strong>Base License (3 seats):</strong> Monthly per-seat licensing — scales with user count<br><strong>Processing:</strong> Included<br><strong>Support:</strong> Included</p>
+                    <p style="border-top: 2px solid #e2e8f0; padding-top: 10px; margin-top: 10px;"><strong>Total:</strong> Per-seat costs scale fast at 3+ users — significantly higher than flat-rate alternatives</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #2c5282;">
+                    <h4 style="color: #2c5282;"><i data-lucide="arrow-right"></i> Veritone Mid-Tier</h4>
+                    <p><strong>Base License:</strong> Tiered annual subscription — contact vendor for quote<br><strong>Overages & Support:</strong> Per-file overages plus premium support tiers<br><strong>Training:</strong> Additional enterprise onboarding fees</p>
+                    <p style="border-top: 2px solid #e2e8f0; padding-top: 10px; margin-top: 10px;"><strong>Total:</strong> At enterprise tier, costs scale rapidly — significantly higher than flat-rate alternatives</p>
+                </div>
+            </div>
+
+            <h3><i data-lucide="message-square"></i> Sales Talking Points & Rebuttals</h3>
+            <div class="strength-box">
+                <h4 style="margin-top: 0;"><i data-lucide="swords"></i> vs. FastRedaction: "Significantly cheaper at scale"</h4>
+                <p><strong>Prospect says:</strong> "FastRedaction is cheaper upfront."</p>
+                <p><strong>Your answer:</strong> FastRedaction uses pay-per-minute pricing, so costs rise significantly at high video volume. Sighthound Enterprise is a flat $3,500/year with unlimited processing — a flat annual pricing advantage that delivers substantial savings from year one. Significantly higher per-video costs add up fast on per-minute models.</p>
+            </div>
+            <div class="strength-box">
+                <h4 style="margin-top: 0;"><i data-lucide="swords"></i> vs. CaseGuard: "Flexibility scales better"</h4>
+                <p><strong>Prospect says:</strong> "CaseGuard is desktop, we need servers too."</p>
+                <p><strong>Your answer:</strong> CaseGuard is Windows-only and uses monthly per-seat licensing — per-seat costs scale fast at 3+ users, and every new operator adds another monthly seat. Sighthound runs on desktop, Linux, Docker, or offline. One license, multiple deployments.</p>
+            </div>
+            <div class="strength-box">
+                <h4 style="margin-top: 0;"><i data-lucide="swords"></i> vs. Veritone: "Enterprise-grade, not enterprise-priced"</h4>
+                <p><strong>Prospect says:</strong> "Veritone is the enterprise standard."</p>
+                <p><strong>Your answer:</strong> Veritone's entry tier is misleading — real deployments rely on tiered annual subscriptions that scale rapidly with added support tiers and per-file overages. Sighthound Enterprise is just $3,500/year for 1-5 users with unlimited processing — a flat annual pricing advantage, plus deployment flexibility (Veritone is cloud-only).</p>
+            </div>
+
+            <h3><i data-lucide="help-circle"></i> FAQ: Common Price Objections</h3>
+            <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2c5282;">
+                <h4 style="color: #1a3a52; margin-top: 0;"><i data-lucide="help-circle"></i> Q: "Our budget is only $10K."</h4>
+                <p><strong>A:</strong> Sighthound Enterprise is just $3.5K/year for 1-5 users with unlimited processing. That leaves $6.5K for training, deployment, or integration. Manual redaction at scale costs far more in labor.</p>
+                <hr style="border: none; border-top: 1px solid #cbd5e0; margin: 15px 0;">
+                <h4 style="color: #1a3a52;"><i data-lucide="help-circle"></i> Q: "Why not just hire contractors?"</h4>
+                <p><strong>A:</strong> Manual redaction is $200K-$400K/year (50+ contractors). AI is auditable, repeatable, and defensible—contractors introduce compliance risk.</p>
+                <hr style="border: none; border-top: 1px solid #cbd5e0; margin: 15px 0;">
+                <h4 style="color: #1a3a52;"><i data-lucide="help-circle"></i> Q: "Does Sighthound work on-premise?"</h4>
+                <p><strong>A:</strong> Yes. Windows, Linux, Docker, or air-gapped networks. Many government agencies use us in completely offline environments.</p>
+            </div>
+        </section>
+
+        <section id="positioning" class="section">
+            <h2><i data-lucide="target"></i> Positioning Strategy & Sales Messages</h2>
+            
+            <h3><i data-lucide="megaphone"></i> Elevator Pitch</h3>
+            <div style="background: linear-gradient(135deg, #0056b3 0%, #004085 100%); color: #ffffff; padding: 25px; border-radius: 8px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);">
+                <p style="font-size: 1.15em; line-height: 1.7; margin: 0; color: #ffffff;">
+                    <strong style="color: #ffffff;">"Sighthound Redactor automates tedious redaction work—faces, audio, IDs, documents, license plates—in bulk while maintaining full control. Purpose-built for law enforcement and government, with unlimited processing at a fixed annual price, no cloud lock-in, and full audit trails."</strong>
+                </p>
+            </div>
+
+            <h3><i data-lucide="award"></i> Core Differentiators</h3>
+            <div class="positioning-grid">
+                <div class="card" style="border-left: 4px solid #0056b3; background: #f0f4f9;">
+                    <h4 style="color: #0056b3; margin-top: 0;"><i data-lucide="server"></i> 1. Hybrid Deployment</h4>
+                    <p>Desktop, server, cloud, or offline—your choice. Works in air-gapped networks.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #0056b3; background: #f0f4f9;">
+                    <h4 style="color: #0056b3; margin-top: 0;"><i data-lucide="piggy-bank"></i> 2. Fixed Annual Pricing</h4>
+                    <p>Unlimited processing. No surprises. No per-video cost decisions.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #0056b3; background: #f0f4f9;">
+                    <h4 style="color: #0056b3; margin-top: 0;"><i data-lucide="layers"></i> 3. Multi-Format</h4>
+                    <p>Faces, audio, IDs, documents, license plates—all in one tool.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #0056b3; background: #f0f4f9;">
+                    <h4 style="color: #0056b3; margin-top: 0;"><i data-lucide="code"></i> 4. REST API</h4>
+                    <p>Integrates with evidence systems. No manual uploads.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #0056b3; background: #f0f4f9;">
+                    <h4 style="color: #0056b3; margin-top: 0;"><i data-lucide="clipboard-check"></i> 5. Audit Trail</h4>
+                    <p>CJIS-compliant, chain of custody, full logging.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #0056b3; background: #f0f4f9;">
+                    <h4 style="color: #0056b3; margin-top: 0;"><i data-lucide="graduation-cap"></i> 6. Zero Learning Curve</h4>
+                    <p>Drag-and-drop interface. Productive on day one.</p>
+                </div>
+            </div>
+
+            <h3><i data-lucide="alert-triangle"></i> Competitor Traps to Exploit</h3>
+            <div style="background: #fce4e4; border-left: 4px solid #cb2431; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <h4 style="color: #cb2431;"><i data-lucide="alert-triangle"></i> Veritone's "Enterprise" Trap</h4>
+                <p>Entry tier is misleading — tiered annual subscriptions scale rapidly with added support tiers and per-file overages. Ask for a detailed TCO to expose the true enterprise price.</p>
+            </div>
+            <div style="background: #fce4e4; border-left: 4px solid #cb2431; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <h4 style="color: #cb2431;"><i data-lucide="alert-triangle"></i> FastRedaction's "Pay-Per-Use" Trap</h4>
+                <p>Pay-per-minute — costs rise significantly at high video volume. Ask: "How many videos/year?" Sighthound's flat annual pricing advantage wins at scale every time.</p>
+            </div>
+            <div style="background: #fce4e4; border-left: 4px solid #cb2431; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <h4 style="color: #cb2431;"><i data-lucide="alert-triangle"></i> CaseGuard's "All-in-One" Trap</h4>
+                <p>Desktop-only, no API, and monthly per-seat licensing — per-seat costs scale fast at 3+ users. Sighthound's flat pricing wins.</p>
+            </div>
+
+            <h3><i data-lucide="flame"></i> Kill Phrases vs. Better Alternatives</h3>
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <h4 style="color: #856404;"><i data-lucide="ban"></i> Don't Say These</h4>
+                <ul style="margin: 10px 0 0 20px; font-size: 0.9em;">
+                    <li>"It's AI-powered redaction." → Say: "Computer vision detects faces, documents, IDs in seconds—no manual work."</li>
+                    <li>"Our pricing is competitive." → Say: "Our flat annual pricing stays predictable, while per-minute models like FastRedaction's see costs rise significantly at high video volume."</li>
+                    <li>"We support the cloud." → Say: "Deploy on-premise, Linux, Docker, or air-gapped networks."</li>
+                    <li>"It's enterprise-grade." → Say: "CJIS-compliant, full audit trails, chain-of-custody logging."</li>
+                    <li>"We're cheaper." → Say: "At your current manual redaction cost, we pay for ourselves in 2-3 months."</li>
+                </ul>
+            </div>
+
+            <h3><i data-lucide="trophy"></i> Winning Talk Tracks</h3>
+            <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2c5282;">
+                <h4 style="color: #1a3a52; margin-top: 0;"><i data-lucide="search"></i> Evaluating FastRedaction?</h4>
+                <p>"I understand the appeal, but at 200+ videos/month their pay-per-minute model costs rise significantly at high video volume. Sighthound Enterprise is just $3,500/year for 1-5 users with unlimited processing — a flat annual pricing advantage. Can I show you the math?"</p>
+                <hr style="border: none; border-top: 1px solid #cbd5e0; margin: 15px 0;">
+                <h4 style="color: #1a3a52;"><i data-lucide="refresh-cw"></i> Already on Veritone?</h4>
+                <p>"Start small: run 100 redactions on Sighthound and compare. You'll find the workflow is faster and our flat annual pricing is significantly lower than Veritone's enterprise tiers. Many customers run both during migration."</p>
+                <hr style="border: none; border-top: 1px solid #cbd5e0; margin: 15px 0;">
+                <h4 style="color: #1a3a52;"><i data-lucide="cloud-off"></i> IT says "No cloud"?</h4>
+                <p>"Perfect—Sighthound runs entirely on-premise or in air-gapped networks. We're built for government IT. Windows, Linux, Docker, or isolated servers. Zero internet dependency."</p>
+                <hr style="border: none; border-top: 1px solid #cbd5e0; margin: 15px 0;">
+                <h4 style="color: #1a3a52;"><i data-lucide="wallet"></i> Budget is tight?</h4>
+                <p>"What's your current manual redaction cost? If you're spending 40 hours/month at $25/hour, that's $12K/year just in labor. Sighthound pays for itself in 3 months through time savings. Let's start with a pilot."</p>
+            </div>
+        </section>
+
+        <section id="discovery" class="section">
+            <h2><i data-lucide="help-circle"></i> Discovery Questions</h2>
+            <p style="color: #374151; font-size: 1em; line-height: 1.6; margin-bottom: 20px;">Use these targeted questions before demos and discovery calls to qualify prospects and surface pain points. Filter by industry or pricing model.</p>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0 24px 0; padding: 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
+                <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
+                    <label for="discoveryIndustryFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="building"></i> Industry</label>
+                    <select id="discoveryIndustryFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
+                        <option value="all">All Industries</option>
+                        <option value="law-enforcement">Law Enforcement</option>
+                        <option value="government">Government</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="legal-corporate">Legal &amp; Corporate</option>
+                    </select>
+                </div>
+                <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
+                    <label for="discoveryPricingFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="dollar-sign"></i> Pricing Model</label>
+                    <select id="discoveryPricingFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
+                        <option value="all">All Models</option>
+                        <option value="single">Single License</option>
+                        <option value="enterprise">Enterprise</option>
+                        <option value="multi-user">Multi-User</option>
+                        <option value="api">API &amp; Embedded</option>
+                    </select>
+                </div>
+            </div>
+            <div id="discoveryContextLabel" style="margin: 0 0 14px 0; font-size: 0.9em; color: #6b7280; font-weight: 500;" aria-live="polite"></div>
+            <div id="discoveryQuestionsContainer" aria-live="polite"></div>
+        </section>
+    </div>
+
+    <button id="scrollToTopBtn" class="scroll-to-top" onclick="scrollToTop()">↑ Back to Top</button>
