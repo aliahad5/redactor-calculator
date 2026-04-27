@@ -684,10 +684,8 @@ function saveMarketingResources() {
 function getFilteredMarketingResources() {
     var query = getMarketingInputValue('resourceSearch').toLowerCase();
     var categoryFilter = getMarketingInputValue('resourceCategoryFilter') || 'all';
-    var assetFilter = getMarketingInputValue('resourceAssetTypeFilter') || 'all';
     return marketingResources.filter(function(resource) {
         var categoryMatch = categoryFilter === 'all' || resource.category === categoryFilter;
-        var assetMatch = assetFilter === 'all' || resource.assetType === assetFilter || (assetFilter === 'file' && resource.uploaded);
         var searchable = [
             resource.title,
             resource.url,
@@ -698,7 +696,7 @@ function getFilteredMarketingResources() {
             resource.fileName
         ].join(' ').toLowerCase();
         var queryMatch = !query || searchable.indexOf(query) !== -1;
-        return categoryMatch && assetMatch && queryMatch;
+        return categoryMatch && queryMatch;
     });
 }
 
@@ -804,7 +802,7 @@ function refreshMarketingViewButtons() {
 }
 
 function resetMarketingResourceFilters() {
-    ['resourceSearch', 'resourceCategoryFilter', 'resourceAssetTypeFilter'].forEach(function(id) {
+    ['resourceSearch', 'resourceCategoryFilter'].forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) { return; }
         el.value = id === 'resourceSearch' ? '' : 'all';
