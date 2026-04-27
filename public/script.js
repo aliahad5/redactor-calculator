@@ -736,7 +736,7 @@ function renderMarketingResourceSection(category, items) {
     html += '<span class="accordion-toggle">▼</span></div>';
     html += '<div class="accordion-content"><div class="accordion-content-inner">';
     if (!items.length) {
-        html += '<div class="resource-empty">No resources match this section yet. Add one above or reset filters.</div>';
+        html += '<div class="resource-empty">No resources match this section yet. Adjust filters or reset the resource view.</div>';
     } else if (marketingResourceView === 'table') {
         html += renderMarketingResourceTable(items);
     } else {
