@@ -508,12 +508,32 @@ var MARKETING_RESOURCE_STORAGE_KEY = 'redactorMarketingResources.v1';
 var marketingResourceView = 'card';
 var marketingResources = [];
 var marketingUploadedFiles = {};
+var youtubeRedactionFilters = ['all'];
+var YOUTUBE_REDACTION_FILTERS = [
+    { value: 'all', label: 'All' },
+    { value: 'face', label: 'Face' },
+    { value: 'license-plate', label: 'License Plate' },
+    { value: 'people', label: 'People' },
+    { value: 'vehicle', label: 'Vehicle' },
+    { value: 'audio', label: 'Audio' },
+    { value: 'custom', label: 'Custom' },
+    { value: 'general', label: 'General' }
+];
+var YOUTUBE_REDACTION_TYPE_KEYWORD_MAP = [
+    { value: 'face', label: 'Face / Head', keywords: ['face', 'faces', 'head', 'heads'] },
+    { value: 'license-plate', label: 'License Plate', keywords: ['license plate', 'license plates', 'alpr', 'lpr', 'number plate'] },
+    { value: 'people', label: 'People / Full Body', keywords: ['people', 'person', 'body', 'full body'] },
+    { value: 'vehicle', label: 'Vehicle', keywords: ['vehicle', 'vehicles', 'car', 'cars', 'truck', 'trucks', 'bus', 'buses', 'motorcycle', 'motorcycles', 'motorbike', 'motorbikes'] },
+    { value: 'audio', label: 'Audio / Speech', keywords: ['audio', 'speech', 'voice', 'transcribe', 'transcription', 'language', 'podcast'] },
+    { value: 'custom', label: 'Custom / Manual', keywords: ['custom', 'manual', 'auto-tracking', 'tracking', 'invert selection', 'selection', 'static redaction', 'objects list', 'bounding boxes', 'style', 'mosaic', 'pixelate', 'fill'] },
+    { value: 'general', label: 'General / Other', keywords: ['overview', 'install', 'webinar', 'live stream', 'security', 'surveillance', 'compliance', 'bulk', 'media', 'project', 'light mode', 'dark mode', 'auto detection'] }
+];
 var marketingResourceCategories = [
     { value: 'website', label: 'Website Pages', icon: 'globe-2' },
     { value: 'blog', label: 'Blog Content', icon: 'newspaper' },
     { value: 'case-studies', label: 'Case Studies', icon: 'briefcase-business' },
     { value: 'datasheets', label: 'Datasheets / PDFs', icon: 'file-text' },
-    { value: 'videos', label: 'Videos (YouTube / demos)', icon: 'play-circle' },
+    { value: 'videos', label: 'YouTube Demo Videos', icon: 'play-circle' },
     { value: 'social', label: 'Social Media Links', icon: 'share-2' },
     { value: 'sales-assets', label: 'Sales Assets (if added later)', icon: 'badge-dollar-sign' }
 ];
@@ -541,10 +561,38 @@ var MARKETING_SEED_RESOURCES = [
     { id: 'seed-blog-top-tools', title: 'Top 5 Video Redaction Tools', url: 'https://www.redactor.com/blog/top-5-video-redaction-tools', category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'SEO', notes: 'Competitive SEO article for evaluation traffic.', source: 'seed' },
     { id: 'seed-case-surveillance-discovery', title: 'Case Study: Surveillance Discovery', url: 'https://www.redactor.com/post/case-study-surveillance-discovery', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Social proof', notes: 'Customer proof point for high-accuracy redaction.', source: 'seed' },
     { id: 'seed-case-bodycam', title: 'Bodycam Footage Redaction Case Study', url: 'https://www.redactor.com/blog/a-bodycam-footage-redaction-solution-customizable-for-a-range-of-uses', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Law enforcement', notes: 'Bodycam and evidence redaction customer story.', source: 'seed' },
-    { id: 'seed-demo-video-page', title: 'Watch Redactor Demo', url: 'https://www.redactor.com/demo-video', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'Demo', notes: 'Short Redactor demo page.', source: 'seed' },
-    { id: 'seed-watch-demo-page', title: 'Watch Demo Landing Page', url: 'https://www.redactor.com/watch-demo', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'Demo', notes: 'Demo-focused landing page.', source: 'seed' },
-    { id: 'seed-youtube-license-plate', title: 'License Plate Redaction Tutorial', url: 'https://www.youtube.com/watch?v=ahp3E7QSQlM', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'How-to', notes: 'YouTube tutorial for license plate redaction.', source: 'seed' },
-    { id: 'seed-youtube-playlist', title: 'Beginner Guide YouTube Playlist', url: 'https://www.youtube.com/playlist?list=PLBBpx2rua99gmb6QX6DJUmRlj8SITFOGq', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'How-to', notes: 'Beginner Redactor tutorial playlist.', source: 'seed' },
+    { id: 'seed-youtube-7lQzauchZiQ', title: "How to Keep One Person Visible While Redacting Others | Redactor Tutorial", url: "https://www.youtube.com/watch?v=7lQzauchZiQ", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "7lQzauchZiQ", thumbnail: "https://i.ytimg.com/vi/7lQzauchZiQ/hqdefault.jpg", publishDate: "Apr 22, 2026", viewCount: "11 views", duration: "1:47" },
+    { id: 'seed-youtube-Wn307am44xs', title: "How to Install Sighthound Redactor Desktop", url: "https://www.youtube.com/watch?v=Wn307am44xs", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "Wn307am44xs", thumbnail: "https://i.ytimg.com/vi/Wn307am44xs/hqdefault.jpg", publishDate: "Dec 17, 2025", viewCount: "44 views", duration: "0:40" },
+    { id: 'seed-youtube-fWkQNyP12m0', title: "Choosing the Right Redaction Style: Mosaic, Pixelate, Blur, Fill | Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=fWkQNyP12m0", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "fWkQNyP12m0", thumbnail: "https://i.ytimg.com/vi/fWkQNyP12m0/hqdefault.jpg", publishDate: "Sep 12, 2025", viewCount: "22 views", duration: "2:02" },
+    { id: 'seed-youtube-_U5L-TC4i1A', title: "How to use Invert Selection in Sighthound Redactor | Beginner’s Guide", url: "https://www.youtube.com/watch?v=_U5L-TC4i1A", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "_U5L-TC4i1A", thumbnail: "https://i.ytimg.com/vi/_U5L-TC4i1A/hqdefault.jpg", publishDate: "Sep 12, 2025", viewCount: "9 views", duration: "1:26" },
+    { id: 'seed-youtube-0aCvouJqVe4', title: "How to Redact Audio using Sighthound Redactor | Beginner’s Guide", url: "https://www.youtube.com/watch?v=0aCvouJqVe4", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "0aCvouJqVe4", thumbnail: "https://i.ytimg.com/vi/0aCvouJqVe4/hqdefault.jpg", publishDate: "Aug 26, 2025", viewCount: "18 views", duration: "2:23" },
+    { id: 'seed-youtube-cR6KOL5WG-E', title: "How to Redact Audio in a Video using Sighthound Redactor | Beginner’s Guide", url: "https://www.youtube.com/watch?v=cR6KOL5WG-E", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "cR6KOL5WG-E", thumbnail: "https://i.ytimg.com/vi/cR6KOL5WG-E/hqdefault.jpg", publishDate: "Aug 26, 2025", viewCount: "18 views", duration: "1:33" },
+    { id: 'seed-youtube-g0Axono3Bf0', title: "How to Auto-Transcribe Audio in a Video | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=g0Axono3Bf0", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "g0Axono3Bf0", thumbnail: "https://i.ytimg.com/vi/g0Axono3Bf0/hqdefault.jpg", publishDate: "Aug 6, 2025", viewCount: "14 views", duration: "1:15" },
+    { id: 'seed-youtube-J1ImsF6bnEo', title: "How to Blur License Plates in an Image Automatically | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=J1ImsF6bnEo", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "J1ImsF6bnEo", thumbnail: "https://i.ytimg.com/vi/J1ImsF6bnEo/hqdefault.jpg", publishDate: "Aug 6, 2025", viewCount: "14 views", duration: "0:45" },
+    { id: 'seed-youtube-5P2Atc3joss', title: "How to Redact People in an Image Automatically | Sighthound Redactor | Beginner’s Guide", url: "https://www.youtube.com/watch?v=5P2Atc3joss", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "5P2Atc3joss", thumbnail: "https://i.ytimg.com/vi/5P2Atc3joss/hqdefault.jpg", publishDate: "Jul 28, 2025", viewCount: "8 views", duration: "1:00" },
+    { id: 'seed-youtube-ABZGM0LltLw', title: "How to Redact Faces in an Image Automatically | Sighthound Redactor | Beginner’s Guide", url: "https://www.youtube.com/watch?v=ABZGM0LltLw", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "ABZGM0LltLw", thumbnail: "https://i.ytimg.com/vi/ABZGM0LltLw/hqdefault.jpg", publishDate: "Jul 28, 2025", viewCount: "19 views", duration: "1:01" },
+    { id: 'seed-youtube-iB_OeRWbpPE', title: "How to Redact Vehicles in a Video Automatically | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=iB_OeRWbpPE", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "iB_OeRWbpPE", thumbnail: "https://i.ytimg.com/vi/iB_OeRWbpPE/hqdefault.jpg", publishDate: "Jul 15, 2025", viewCount: "10 views", duration: "0:46" },
+    { id: 'seed-youtube-PTM2oKQx5H0', title: "How to Blur People in Video Automatically | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=PTM2oKQx5H0", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "PTM2oKQx5H0", thumbnail: "https://i.ytimg.com/vi/PTM2oKQx5H0/hqdefault.jpg", publishDate: "Jul 15, 2025", viewCount: "24 views", duration: "0:46" },
+    { id: 'seed-youtube-L3lO6ruf4Z4', title: "How to Blur Faces in Video Automatically | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=L3lO6ruf4Z4", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "L3lO6ruf4Z4", thumbnail: "https://i.ytimg.com/vi/L3lO6ruf4Z4/hqdefault.jpg", publishDate: "Jul 15, 2025", viewCount: "50 views", duration: "0:59" },
+    { id: 'seed-youtube-HOYxEhqMZmw', title: "How to Blur License Plates in Video Automatically | Sighthound Redactor Tutorial  | Beginner's Guide", url: "https://www.youtube.com/watch?v=HOYxEhqMZmw", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "HOYxEhqMZmw", thumbnail: "https://i.ytimg.com/vi/HOYxEhqMZmw/hqdefault.jpg", publishDate: "Jul 15, 2025", viewCount: "18 views", duration: "0:37" },
+    { id: 'seed-youtube-_Ddd9w4-VTA', title: "Sighthound Redactor Overview | AI Video Redaction for Privacy & Compliance", url: "https://www.youtube.com/watch?v=_Ddd9w4-VTA", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "_Ddd9w4-VTA", thumbnail: "https://i.ytimg.com/vi/_Ddd9w4-VTA/hqdefault.jpg", publishDate: "May 20, 2025", viewCount: "171 views", duration: "1:51" },
+    { id: 'seed-youtube-xLB1biBgnqw', title: "Sighthound Redactor Overview | AI Video Redaction for Privacy & Compliance", url: "https://www.youtube.com/watch?v=xLB1biBgnqw", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "xLB1biBgnqw", thumbnail: "https://i.ytimg.com/vi/xLB1biBgnqw/hqdefault.jpg", publishDate: "May 1, 2025", viewCount: "167 views", duration: "4:16" },
+    { id: 'seed-youtube-BMRCaOpmAsg', title: "How AI at Sighthound is Redefining Security and Surveillance | Sighthound Audio Podcast Series", url: "https://www.youtube.com/watch?v=BMRCaOpmAsg", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "BMRCaOpmAsg", thumbnail: "https://i.ytimg.com/vi/BMRCaOpmAsg/hqdefault.jpg", publishDate: "Nov 11, 2024", viewCount: "87 views", duration: "15:00" },
+    { id: 'seed-youtube-JJ5nBYjml6s', title: "Privacy Compliance Beyond Words: Image & Audio Redaction | Webinar | Sighthound Redactor [3-28-2024]", url: "https://www.youtube.com/watch?v=JJ5nBYjml6s", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "JJ5nBYjml6s", thumbnail: "https://i.ytimg.com/vi/JJ5nBYjml6s/hqdefault.jpg", publishDate: "Apr 9, 2024", viewCount: "47 views", duration: "51:37" },
+    { id: 'seed-youtube-TIhmZjzppMw', title: "How to Switch Language with Multi-Language Feature | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=TIhmZjzppMw", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "TIhmZjzppMw", thumbnail: "https://i.ytimg.com/vi/TIhmZjzppMw/hqdefault.jpg", publishDate: "Feb 5, 2024", viewCount: "34 views", duration: "0:41" },
+    { id: 'seed-youtube-2fgzx3PDfA4', title: "How to Execute Bulk Auto Detection | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=2fgzx3PDfA4", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "2fgzx3PDfA4", thumbnail: "https://i.ytimg.com/vi/2fgzx3PDfA4/hqdefault.jpg", publishDate: "Feb 5, 2024", viewCount: "38 views", duration: "1:05" },
+    { id: 'seed-youtube-d3BVTe0WlBQ', title: "How to Add Multiple Videos and Images in Bulk | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=d3BVTe0WlBQ", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "d3BVTe0WlBQ", thumbnail: "https://i.ytimg.com/vi/d3BVTe0WlBQ/hqdefault.jpg", publishDate: "Feb 2, 2024", viewCount: "31 views", duration: "0:42" },
+    { id: 'seed-youtube-tPLhxc8ViMI', title: "How to Process Bulk Auto Detection | Sighthound Redactor | Beginner's Guide to Easy Redaction", url: "https://www.youtube.com/watch?v=tPLhxc8ViMI", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "tPLhxc8ViMI", thumbnail: "https://i.ytimg.com/vi/tPLhxc8ViMI/hqdefault.jpg", publishDate: "Feb 2, 2024", viewCount: "61 views", duration: "1:05" },
+    { id: 'seed-youtube-wDG-y8k_l6g', title: "How to Redact Audio From Your Project | Sighthound Redactor | Beginner's Guide to Easy Redaction", url: "https://www.youtube.com/watch?v=wDG-y8k_l6g", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "wDG-y8k_l6g", thumbnail: "https://i.ytimg.com/vi/wDG-y8k_l6g/hqdefault.jpg", publishDate: "Feb 2, 2024", viewCount: "61 views", duration: "0:40" },
+    { id: 'seed-youtube-0LFmhyQDnUg', title: "How to Toggle Between Light and Dark Mode | Sighthound Redactor | Beginner's Guide to Easy Redaction", url: "https://www.youtube.com/watch?v=0LFmhyQDnUg", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "0LFmhyQDnUg", thumbnail: "https://i.ytimg.com/vi/0LFmhyQDnUg/hqdefault.jpg", publishDate: "Jan 15, 2024", viewCount: "35 views", duration: "0:32" },
+    { id: 'seed-youtube-inj0gOkINYM', title: "How to Remove Bounding Boxes Using Objects List | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=inj0gOkINYM", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "inj0gOkINYM", thumbnail: "https://i.ytimg.com/vi/inj0gOkINYM/hqdefault.jpg", publishDate: "Jan 15, 2024", viewCount: "98 views", duration: "1:43" },
+    { id: 'seed-youtube-MF155Yh6wf8', title: "How to Redact Faces From Video | Sighthound Redactor | Beginner's Guide to Easy Redaction", url: "https://www.youtube.com/watch?v=MF155Yh6wf8", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "MF155Yh6wf8", thumbnail: "https://i.ytimg.com/vi/MF155Yh6wf8/hqdefault.jpg", publishDate: "Jan 15, 2024", viewCount: "236 views", duration: "1:31" },
+    { id: 'seed-youtube-Oeq4R7DRhLE', title: "How to do Custom Redaction with Auto-Tracking | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=Oeq4R7DRhLE", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "Oeq4R7DRhLE", thumbnail: "https://i.ytimg.com/vi/Oeq4R7DRhLE/hqdefault.jpg", publishDate: "Jan 11, 2024", viewCount: "102 views", duration: "1:18" },
+    { id: 'seed-youtube-ahp3E7QSQlM', title: "How to Redact License Plates | Sighthound Redactor | Beginner's Guide to Easy Redaction", url: "https://www.youtube.com/watch?v=ahp3E7QSQlM", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "ahp3E7QSQlM", thumbnail: "https://i.ytimg.com/vi/ahp3E7QSQlM/hqdefault.jpg", publishDate: "Jan 10, 2024", viewCount: "84 views", duration: "1:38" },
+    { id: 'seed-youtube-dGct8X1wqAg', title: "How to Apply Static Redaction | Sighthound Redactor | Beginner's Guide to Easy Redaction", url: "https://www.youtube.com/watch?v=dGct8X1wqAg", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "dGct8X1wqAg", thumbnail: "https://i.ytimg.com/vi/dGct8X1wqAg/hqdefault.jpg", publishDate: "Jan 9, 2024", viewCount: "81 views", duration: "1:13" },
+    { id: 'seed-youtube-qtGGfXahoJU', title: "How to Add Media to Your Redactor Project | Sighthound Redactor | Beginner's Guide", url: "https://www.youtube.com/watch?v=qtGGfXahoJU", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "qtGGfXahoJU", thumbnail: "https://i.ytimg.com/vi/qtGGfXahoJU/hqdefault.jpg", publishDate: "Jan 9, 2024", viewCount: "157 views", duration: "1:05" },
+    { id: 'seed-youtube-channel', title: 'Sighthound YouTube Channel', url: 'https://www.youtube.com/@SighthoundInc', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Official Sighthound YouTube channel.', source: 'seed', platform: 'youtube' },
+    { id: 'seed-twitter-x', title: 'Sighthound Twitter / X', url: 'https://twitter.com/sighthoundinc', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Twitter / X presence.', source: 'seed', platform: 'x' },
     { id: 'seed-linkedin-showcase', title: 'Sighthound Redactor LinkedIn Showcase', url: 'https://www.linkedin.com/showcase/sighthound-redactor/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Redactor-specific LinkedIn showcase page.', source: 'seed' },
     { id: 'seed-linkedin-company', title: 'Sighthound LinkedIn Company Page', url: 'https://www.linkedin.com/company/sighthound-inc-/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound company LinkedIn page.', source: 'seed' },
     { id: 'seed-facebook', title: 'Sighthound Facebook', url: 'https://www.facebook.com/sighthoundinc/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Facebook presence.', source: 'seed' },
@@ -566,6 +614,149 @@ function getMarketingCategoryLabel(value) {
 
 function getMarketingAssetLabel(type) {
     return marketingAssetLabels[type] || 'Website / Landing Page';
+}
+
+function getYouTubeVideoId(url) {
+    var value = String(url || '');
+    var match = value.match(/[?&]v=([^&]+)/) || value.match(/youtu\.be\/([^?&]+)/);
+    return match ? match[1] : '';
+}
+
+function getYouTubeRedactionTypes(title) {
+    var normalized = String(title || '').toLowerCase();
+    var matches = [];
+    YOUTUBE_REDACTION_TYPE_KEYWORD_MAP.forEach(function(rule) {
+        var matched = rule.keywords.some(function(keyword) {
+            return normalized.indexOf(keyword) !== -1;
+        });
+        if (matched && matches.indexOf(rule.value) === -1) { matches.push(rule.value); }
+    });
+    return matches.length ? matches : ['general'];
+}
+
+function getYouTubeRedactionLabel(value) {
+    for (var i = 0; i < YOUTUBE_REDACTION_TYPE_KEYWORD_MAP.length; i += 1) {
+        if (YOUTUBE_REDACTION_TYPE_KEYWORD_MAP[i].value === value) {
+            return YOUTUBE_REDACTION_TYPE_KEYWORD_MAP[i].label;
+        }
+    }
+    return 'General / Other';
+}
+
+function isYouTubeFilterActive(value) {
+    return youtubeRedactionFilters.indexOf(value) !== -1;
+}
+
+function getYouTubeFilteredResources(items) {
+    if (isYouTubeFilterActive('all')) { return items; }
+    return items.filter(function(item) {
+        var types = item.redactionTypes && item.redactionTypes.length ? item.redactionTypes : getYouTubeRedactionTypes(item.title);
+        return youtubeRedactionFilters.some(function(filter) { return types.indexOf(filter) !== -1; });
+    });
+}
+
+function toggleYouTubeRedactionFilter(value) {
+    if (value === 'all') {
+        youtubeRedactionFilters = ['all'];
+    } else {
+        youtubeRedactionFilters = youtubeRedactionFilters.filter(function(item) { return item !== 'all'; });
+        if (youtubeRedactionFilters.indexOf(value) === -1) {
+            youtubeRedactionFilters.push(value);
+        } else {
+            youtubeRedactionFilters = youtubeRedactionFilters.filter(function(item) { return item !== value; });
+        }
+        if (!youtubeRedactionFilters.length) { youtubeRedactionFilters = ['all']; }
+    }
+    renderMarketingResources();
+}
+
+function renderYouTubeRedactionFilterBar(items) {
+    var counts = { all: items.length };
+    items.forEach(function(item) {
+        var types = item.redactionTypes && item.redactionTypes.length ? item.redactionTypes : getYouTubeRedactionTypes(item.title);
+        types.forEach(function(type) { counts[type] = (counts[type] || 0) + 1; });
+    });
+    var html = '<div class="youtube-filter-panel" aria-label="Filter YouTube demo videos by redaction type">';
+    html += '<div class="youtube-filter-heading"><strong>Filter by redaction type</strong><span>Multi-select supported</span></div>';
+    html += '<div class="youtube-filter-buttons">';
+    YOUTUBE_REDACTION_FILTERS.forEach(function(filter) {
+        var active = isYouTubeFilterActive(filter.value);
+        html += "<button type=\"button\" class=\"youtube-filter-btn" + (active ? " active" : "") + "\" aria-pressed=\"" + (active ? "true" : "false") + "\" onclick=\"toggleYouTubeRedactionFilter('" + escapeHtml(filter.value) + "')\">" + escapeHtml(filter.label) + "<span>" + escapeHtml(counts[filter.value] || 0) + "</span></button>";
+    });
+    html += '</div>';
+    html += '<p class="youtube-filter-note">Rule-based title mapping: Face=head/face; License Plate=license plate/ALPR/LPR; People=people/person/body; Vehicle=vehicle/car/truck/bus/motorcycle; Audio=audio/speech/voice/transcribe/language; Custom=custom/manual/tracking/selection/static/style/mosaic/pixelate/fill; General=overview/install/webinar/podcast/compliance/bulk/media.</p>';
+    html += '</div>';
+    return html;
+}
+
+function renderYouTubeVideoGrid(items) {
+    if (!items.length) {
+        return '<div class="resource-empty">No YouTube demo videos match the selected redaction type filters.</div>';
+    }
+    return '<div class="youtube-video-grid">' + items.map(renderYouTubeVideoCard).join('') + '</div>';
+}
+
+function renderYouTubeVideoCard(resource) {
+    var url = escapeHtml(resource.url);
+    var title = escapeHtml(resource.title);
+    var thumbnail = escapeHtml(resource.thumbnail || '');
+    var duration = resource.duration ? '<span class="youtube-duration">' + escapeHtml(resource.duration) + '</span>' : '';
+    var meta = [];
+    if (resource.publishDate) { meta.push('<span>' + escapeHtml(resource.publishDate) + '</span>'); }
+    if (resource.viewCount) { meta.push('<span>' + escapeHtml(resource.viewCount) + '</span>'); }
+    var types = resource.redactionTypes && resource.redactionTypes.length ? resource.redactionTypes : getYouTubeRedactionTypes(resource.title);
+    var typeHtml = types.map(function(type) {
+        return '<span class="resource-pill youtube-type-pill">' + escapeHtml(getYouTubeRedactionLabel(type)) + '</span>';
+    }).join('');
+    var html = '<article class="resource-card youtube-video-card">';
+    html += '<a class="youtube-thumbnail-link" href="' + url + '" target="_blank" rel="noopener" aria-label="Watch ' + title + ' on YouTube">';
+    if (thumbnail) { html += '<img src="' + thumbnail + '" alt="Thumbnail for ' + title + '" loading="lazy" />'; }
+    html += '<span class="youtube-play-icon" aria-hidden="true">&#9654;</span>' + duration + '</a>';
+    html += '<div class="resource-card-top"><span class="resource-pill">YouTube Demo</span>' + typeHtml + '</div>';
+    html += '<h4>' + renderMarketingResourceTitleLink(resource, url, title) + '</h4>';
+    if (meta.length) { html += '<div class="youtube-video-meta">' + meta.join('') + '</div>'; }
+    html += '<p class="resource-url" title="' + url + '">' + url + '</p>';
+    html += "<div class=\"resource-card-actions\"><a class=\"resource-link-btn primary\" href=\"" + url + "\" target=\"_blank\" rel=\"noopener\"><i data-lucide=\"play-circle\"></i> Watch on YouTube</a><button type=\"button\" class=\"resource-copy-btn\" onclick=\"copyMarketingResourceUrl('" + escapeHtml(resource.id) + "', this)\"><i data-lucide=\"copy\"></i> Copy URL</button></div>";
+    html += '</article>';
+    return html;
+}
+
+function getSocialPlatform(resource) {
+    var haystack = [resource.platform, resource.title, resource.url].join(' ').toLowerCase();
+    if (haystack.indexOf('youtube') !== -1 || haystack.indexOf('youtu.be') !== -1) { return { value: 'youtube', label: 'YouTube' }; }
+    if (haystack.indexOf('linkedin') !== -1) { return { value: 'linkedin', label: 'LinkedIn' }; }
+    if (haystack.indexOf('twitter') !== -1 || haystack.indexOf('x.com') !== -1 || haystack.indexOf('/x') !== -1) { return { value: 'x', label: 'Twitter / X' }; }
+    if (haystack.indexOf('facebook') !== -1) { return { value: 'facebook', label: 'Facebook' }; }
+    if (haystack.indexOf('instagram') !== -1) { return { value: 'instagram', label: 'Instagram' }; }
+    return { value: 'generic', label: 'Social media' };
+}
+
+function renderSocialIcon(resource) {
+    var platform = getSocialPlatform(resource);
+    var base = '<svg class="resource-social-icon resource-social-icon-' + escapeHtml(platform.value) + '" viewBox="0 0 24 24" role="img" aria-label="' + escapeHtml(platform.label) + '" focusable="false">';
+    var close = '</svg>';
+    if (platform.value === 'youtube') {
+        return base + '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" fill="currentColor" />' + close;
+    }
+    if (platform.value === 'linkedin') {
+        return base + '<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm6.2 0H13v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21h-4V9Z" fill="currentColor" />' + close;
+    }
+    if (platform.value === 'x') {
+        return base + '<path d="M13.8 10.2 21 2h-1.7l-6.2 7.1L8.1 2H2.3l7.6 10.8L2.3 22H4l6.7-7.7L16.1 22h5.8l-8.1-11.8Zm-2.4 2.7-.8-1.1L4.5 3.3h2.8l4.8 6.8.8 1.1 6.6 9.4h-2.8l-5.3-7.7Z" fill="currentColor" />' + close;
+    }
+    if (platform.value === 'facebook') {
+        return base + '<path d="M14 8.3V6.6c0-.8.5-1 1.1-1H18V2h-3.9C10.7 2 9 4.1 9 6.2v2.1H6v4h3V22h4v-9.7h3.3l.5-4H14Z" fill="currentColor" />' + close;
+    }
+    if (platform.value === 'instagram') {
+        return base + '<path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 4.3a3.7 3.7 0 1 1 0 7.4 3.7 3.7 0 0 1 0-7.4Zm0 2a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4.9-3.1a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8Z" fill="currentColor" />' + close;
+    }
+    return base + '<path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.9 6h-2.7a15.4 15.4 0 0 0-1-3.1A8.1 8.1 0 0 1 16.9 8ZM12 4.1c.4.6.9 1.9 1.2 3.9h-2.4c.3-2 .8-3.3 1.2-3.9ZM4.3 14a8.7 8.7 0 0 1 0-4h3.1a17.2 17.2 0 0 0 0 4H4.3Zm2.8 2h2.7c.3 1.4.7 2.5 1 3.1A8.1 8.1 0 0 1 7.1 16Zm2.7-8H7.1a8.1 8.1 0 0 1 3.7-3.1 15.4 15.4 0 0 0-1 3.1Zm2.2 11.9c-.4-.6-.9-1.9-1.2-3.9h2.4c-.3 2-.8 3.3-1.2 3.9Zm1.6-5.9h-3.2a15.1 15.1 0 0 1 0-4h3.2a15.1 15.1 0 0 1 0 4Zm-.4 5.1c.3-.6.7-1.7 1-3.1h2.7a8.1 8.1 0 0 1-3.7 3.1ZM16.6 14a17.2 17.2 0 0 0 0-4h3.1a8.7 8.7 0 0 1 0 4h-3.1Z" fill="currentColor" />' + close;
+}
+
+function renderMarketingResourceTitleLink(resource, url, title) {
+    var socialIcon = resource.category === 'social' ? renderSocialIcon(resource) : '';
+    var ariaLabel = resource.category === 'social' ? ' aria-label="Open ' + escapeHtml(getSocialPlatform(resource).label + ': ' + resource.title) + '"' : '';
+    return '<a href="' + url + '" target="_blank" rel="noopener"' + ariaLabel + '>' + socialIcon + '<span>' + title + '</span></a>';
 }
 
 function getMarketingInputValue(id) {
@@ -620,7 +811,8 @@ function inferMarketingAssetType(resource) {
 
 function sanitizeMarketingResource(resource) {
     if (!resource) { return null; }
-    var title = String(resource.title || '').trim().slice(0, 80);
+    var rawTitle = String(resource.title || '').trim();
+    var title = rawTitle.slice(0, resource.category === 'videos' || resource.youtubeId ? 160 : 80);
     var url = String(resource.url || '').trim();
     if (!title || !url) { return null; }
     var category = getMarketingCategory(resource.category || 'website').value;
@@ -639,9 +831,26 @@ function sanitizeMarketingResource(resource) {
         fileName: resource.fileName || '',
         fileSize: resource.fileSize || 0,
         fileType: resource.fileType || '',
-        createdAt: resource.createdAt || new Date().toISOString()
+        createdAt: resource.createdAt || new Date().toISOString(),
+        platform: String(resource.platform || '').trim(),
+        youtubeId: String(resource.youtubeId || '').trim(),
+        thumbnail: String(resource.thumbnail || '').trim(),
+        publishDate: String(resource.publishDate || '').trim(),
+        viewCount: String(resource.viewCount || '').trim(),
+        duration: String(resource.duration || '').trim(),
+        redactionTypes: Array.isArray(resource.redactionTypes) ? resource.redactionTypes.slice() : []
     };
     sanitized.assetType = sanitized.assetType || inferMarketingAssetType(sanitized);
+    if (sanitized.category === 'videos') {
+        sanitized.redactionTypes = getYouTubeRedactionTypes(sanitized.title);
+        if (!sanitized.youtubeId) { sanitized.youtubeId = getYouTubeVideoId(sanitized.url); }
+        if (!sanitized.thumbnail && sanitized.youtubeId) {
+            sanitized.thumbnail = 'https://i.ytimg.com/vi/' + sanitized.youtubeId + '/hqdefault.jpg';
+        }
+    }
+    if (sanitized.category === 'social' && !sanitized.platform) {
+        sanitized.platform = getSocialPlatform(sanitized).value;
+    }
     return sanitized;
 }
 
@@ -710,14 +919,18 @@ function renderMarketingResources() {
     });
     var totalCount = document.getElementById('resourceTotalCount');
     var summary = document.getElementById('resourceSummary');
-    if (totalCount) { totalCount.textContent = marketingResources.length; }
-    if (summary) {
-        summary.textContent = 'Showing ' + filtered.length + ' of ' + marketingResources.length + ' resources';
-    }
-    container.innerHTML = visibleCategories.map(function(category) {
+    var renderedCount = 0;
+    var renderedHtml = visibleCategories.map(function(category) {
         var items = filtered.filter(function(resource) { return resource.category === category.value; });
+        if (category.value === 'videos') { items = getYouTubeFilteredResources(items); }
+        renderedCount += items.length;
         return renderMarketingResourceSection(category, items);
     }).join('');
+    if (totalCount) { totalCount.textContent = marketingResources.length; }
+    if (summary) {
+        summary.textContent = 'Showing ' + renderedCount + ' of ' + marketingResources.length + ' resources';
+    }
+    container.innerHTML = renderedHtml;
     refreshMarketingViewButtons();
     if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
@@ -728,9 +941,13 @@ function renderMarketingResourceSection(category, items) {
     var html = '<div id="resource-section-' + escapeHtml(category.value) + '" class="accordion-item resource-category-accordion active">';
     html += '<div class="accordion-header resource-category-header" onclick="toggleAccordion(this)">';
     html += '<div class="resource-category-title"><i data-lucide="' + escapeHtml(category.icon) + '"></i><h4>' + escapeHtml(category.label) + '<span class="resource-count-pill">' + items.length + '</span></h4></div>';
-    html += '<span class="accordion-toggle">▼</span></div>';
+    html += '<span class=\"accordion-toggle\">&#9660;</span></div>';
     html += '<div class="accordion-content"><div class="accordion-content-inner">';
-    if (!items.length) {
+    if (category.value === 'videos') {
+        var allVideoItems = getFilteredMarketingResources().filter(function(resource) { return resource.category === 'videos'; });
+        html += renderYouTubeRedactionFilterBar(allVideoItems);
+        html += marketingResourceView === 'table' ? renderMarketingResourceTable(items) : renderYouTubeVideoGrid(items);
+    } else if (!items.length) {
         html += '<div class="resource-empty">No resources match this section yet. Adjust filters or reset the resource view.</div>';
     } else if (marketingResourceView === 'table') {
         html += renderMarketingResourceTable(items);
@@ -750,7 +967,7 @@ function renderMarketingResourceCard(resource) {
     var download = resource.uploaded ? '<a class="resource-link-btn secondary" href="' + url + '" download="' + escapeHtml(resource.fileName || resource.title) + '"><i data-lucide="download"></i> Download</a>' : '';
     var html = '<article class="resource-card">';
     html += '<div class="resource-card-top"><span class="resource-pill">' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</span></div>';
-    html += '<h4><a href="' + url + '" target="_blank" rel="noopener">' + title + '</a></h4>';
+    html += '<h4>' + renderMarketingResourceTitleLink(resource, url, title) + '</h4>';
     html += '<p class="resource-url" title="' + url + '">' + url + '</p>';
     html += '<div class="resource-card-meta"><span class="resource-pill">' + escapeHtml(getMarketingCategoryLabel(resource.category)) + '</span>' + tagHtml + fileMeta + sizeMeta + '</div>';
     if (resource.notes) {
@@ -767,7 +984,7 @@ function renderMarketingResourceTable(items) {
         var url = escapeHtml(resource.url);
         var download = resource.uploaded ? '<a class="resource-link-btn secondary" href="' + url + '" download="' + escapeHtml(resource.fileName || resource.title) + '">Download</a>' : '';
         html += '<tr>';
-        html += '<td><a href="' + url + '" target="_blank" rel="noopener">' + escapeHtml(resource.title) + '</a></td>';
+        html += '<td>' + renderMarketingResourceTitleLink(resource, url, escapeHtml(resource.title)) + '</td>';
         html += '<td><p class="resource-url" title="' + url + '">' + url + '</p></td>';
         html += '<td>' + escapeHtml(getMarketingCategoryLabel(resource.category)) + '</td>';
         html += '<td>' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</td>';
@@ -807,6 +1024,7 @@ function resetMarketingResourceFilters() {
         if (!el) { return; }
         el.value = id === 'resourceSearch' ? '' : 'all';
     });
+    youtubeRedactionFilters = ['all'];
     renderMarketingResources();
 }
 
@@ -965,24 +1183,6 @@ function fallbackCopyMarketingText(text) {
     document.body.removeChild(textarea);
 }
 
-function jumpToMarketingResourceSection(categoryValue) {
-    if (!categoryValue) { return; }
-    var filter = document.getElementById('resourceCategoryFilter');
-    if (filter && filter.value !== 'all' && filter.value !== categoryValue) {
-        filter.value = categoryValue;
-        renderMarketingResources();
-    }
-    setTimeout(function() {
-        var section = document.getElementById('resource-section-' + categoryValue);
-        if (section) {
-            if (!section.classList.contains('active')) { section.classList.add('active'); }
-            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        var jump = document.getElementById('resourceSectionJump');
-        if (jump) { jump.value = ''; }
-    }, 0);
-}
-
 function formatMarketingFileSize(bytes) {
     if (!bytes) { return ''; }
     var units = ['B', 'KB', 'MB', 'GB'];
@@ -1026,7 +1226,7 @@ if (typeof window !== 'undefined') {
     window.addMarketingResource = addMarketingResource;
     window.clearMarketingResourceForm = clearMarketingResourceForm;
     window.copyMarketingResourceUrl = copyMarketingResourceUrl;
-    window.jumpToMarketingResourceSection = jumpToMarketingResourceSection;
+    window.toggleYouTubeRedactionFilter = toggleYouTubeRedactionFilter;
 
     // Initialization: run after the DOM / page hydrates
     function __redactorInit() {
