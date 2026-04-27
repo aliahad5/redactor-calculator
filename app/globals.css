@@ -1737,6 +1737,131 @@ a:hover {
     color: var(--fg-2);
     border: 1px solid var(--border-subtle);
 }
+
+.blog-filter-panel {
+    padding: 16px;
+    margin-bottom: 18px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+}
+
+.blog-filter-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.blog-filter-heading strong {
+    color: var(--sh-navy);
+    font-size: 0.95em;
+}
+
+.blog-filter-heading span,
+.blog-filter-note {
+    color: var(--fg-3);
+    font-size: 0.8em;
+}
+
+.blog-filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.blog-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 13px;
+    background: var(--bg-raised);
+    color: var(--fg-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-button);
+    font-family: var(--font-sans);
+    font-size: 0.86em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard);
+}
+
+.blog-filter-btn:hover,
+.blog-filter-btn.active {
+    background: var(--sh-blurple);
+    border-color: var(--sh-blurple);
+    color: var(--sh-white);
+}
+
+.blog-filter-btn span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: var(--sh-blurple-50);
+    color: var(--sh-blurple);
+    border-radius: var(--radius-pill);
+    font-size: 0.78em;
+    font-weight: 700;
+}
+
+.blog-filter-btn.active span,
+.blog-filter-btn:hover span {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--sh-white);
+}
+
+.blog-filter-note {
+    margin: 12px 0 0 0;
+    line-height: 1.55;
+}
+
+.blog-resource-card .resource-card-top i[data-lucide],
+.resource-card-top i[data-lucide] {
+    color: var(--sh-blurple);
+}
+
+.blog-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--fg-3);
+    font-size: 0.82em;
+}
+
+.blog-category-pill {
+    background: var(--sh-blurple-50);
+    color: var(--sh-blurple);
+    border-color: var(--sh-blurple-100);
+}
+
+.blog-webinar-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    background: var(--sh-orange-red);
+    color: var(--sh-white);
+    border: 1px solid var(--sh-orange-red);
+    border-radius: var(--radius-pill);
+    font-size: 0.72em;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+}
+
+.resource-highlight-list {
+    margin-left: 18px;
+    color: var(--fg-2);
+    font-size: 0.88em;
+}
+
+.resource-highlight-list li {
+    margin-bottom: 5px;
+}
+
 .youtube-filter-panel {
     padding: 16px;
     margin-bottom: 18px;
