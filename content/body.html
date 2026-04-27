@@ -18,6 +18,7 @@
                 <button class="nav-tab" onclick="switchTab('pricing', this)">Pricing Analysis</button>
                 <button class="nav-tab" onclick="switchTab('positioning', this)">Positioning Strategy</button>
                 <button class="nav-tab" onclick="switchTab('discovery', this)">Discovery Questions</button>
+                <button class="nav-tab" onclick="switchTab('resources', this)">Key Marketing Resources</button>
                 <button class="nav-tab active" onclick="switchTab('pricing-calculator', this)">Pricing Calculator</button>
             </div>
         </header>
@@ -686,6 +687,150 @@
             </div>
             <div id="discoveryContextLabel" style="margin: 0 0 14px 0; font-size: 0.9em; color: #6b7280; font-weight: 500;" aria-live="polite"></div>
             <div id="discoveryQuestionsContainer" aria-live="polite"></div>
+        </section>
+        <section id="resources" class="section">
+            <h2><i data-lucide="folder-open"></i> Key Marketing Resources</h2>
+            <div class="resource-hero">
+                <div>
+                    <p class="resource-eyebrow">Single source of truth</p>
+                    <h3><i data-lucide="library"></i> Redactor collateral, organized for fast sales and marketing access</h3>
+                    <p>Browse website pages, blog content, case studies, datasheets, videos, social links, and future sales assets in one searchable workspace.</p>
+                </div>
+                <div class="resource-hero-stat">
+                    <span id="resourceTotalCount">0</span>
+                    <small>resources tracked</small>
+                </div>
+            </div>
+
+            <div class="resource-toolbar" aria-label="Marketing resource controls">
+                <div class="resource-search">
+                    <label for="resourceSearch" class="version-selector-label"><i data-lucide="search"></i> Search resources</label>
+                    <input id="resourceSearch" class="resource-input" type="search" placeholder="Search title, URL, tag, notes..." oninput="renderMarketingResources()" />
+                </div>
+                <div class="resource-filter">
+                    <label for="resourceCategoryFilter" class="version-selector-label"><i data-lucide="folder"></i> Category</label>
+                    <select id="resourceCategoryFilter" class="version-selector" onchange="renderMarketingResources()">
+                        <option value="all">All Categories</option>
+                        <option value="website">Website Pages</option>
+                        <option value="blog">Blog Content</option>
+                        <option value="case-studies">Case Studies</option>
+                        <option value="datasheets">Datasheets / PDFs</option>
+                        <option value="videos">Videos (YouTube / demos)</option>
+                        <option value="social">Social Media Links</option>
+                        <option value="sales-assets">Sales Assets</option>
+                    </select>
+                </div>
+                <div class="resource-filter">
+                    <label for="resourceAssetTypeFilter" class="version-selector-label"><i data-lucide="file-type"></i> Asset type</label>
+                    <select id="resourceAssetTypeFilter" class="version-selector" onchange="renderMarketingResources()">
+                        <option value="all">All Asset Types</option>
+                        <option value="webpage">Website / Landing Page</option>
+                        <option value="blog">Blog Article</option>
+                        <option value="case-study">Case Study</option>
+                        <option value="pdf">PDF / Datasheet</option>
+                        <option value="video">Video / Demo</option>
+                        <option value="social">Social Link</option>
+                        <option value="sales">Sales Asset</option>
+                        <option value="file">Uploaded File</option>
+                    </select>
+                </div>
+                <div class="resource-filter">
+                    <label for="resourceFunnelFilter" class="version-selector-label"><i data-lucide="funnel"></i> Funnel stage</label>
+                    <select id="resourceFunnelFilter" class="version-selector" onchange="renderMarketingResources()">
+                        <option value="all">All Stages</option>
+                        <option value="TOFU">TOFU</option>
+                        <option value="MOFU">MOFU</option>
+                        <option value="BOFU">BOFU</option>
+                    </select>
+                </div>
+                <div class="resource-filter">
+                    <label for="resourceSectionJump" class="version-selector-label"><i data-lucide="chevrons-up-down"></i> Jump to section</label>
+                    <select id="resourceSectionJump" class="version-selector" onchange="jumpToMarketingResourceSection(this.value)">
+                        <option value="">Choose a section</option>
+                        <option value="website">Website Pages</option>
+                        <option value="blog">Blog Content</option>
+                        <option value="case-studies">Case Studies</option>
+                        <option value="datasheets">Datasheets / PDFs</option>
+                        <option value="videos">Videos (YouTube / demos)</option>
+                        <option value="social">Social Media Links</option>
+                        <option value="sales-assets">Sales Assets</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="resource-actions-bar">
+                <p id="resourceSummary" aria-live="polite">Showing resources.</p>
+                <div class="resource-view-toggle" aria-label="View toggle">
+                    <button type="button" class="resource-toggle active" onclick="setMarketingResourceView('card', this)"><i data-lucide="layout-grid"></i> Cards</button>
+                    <button type="button" class="resource-toggle" onclick="setMarketingResourceView('table', this)"><i data-lucide="table-2"></i> Table</button>
+                    <button type="button" class="resource-toggle" onclick="resetMarketingResourceFilters()"><i data-lucide="rotate-ccw"></i> Reset</button>
+                </div>
+            </div>
+
+            <div class="resource-add-panel">
+                <div>
+                    <h3><i data-lucide="plus-circle"></i> Add a resource</h3>
+                    <p>Add external URLs or upload PDF, PPT, and DOC files. Titles are limited to 80 characters and duplicate URLs are blocked.</p>
+                </div>
+                <form id="resourceForm" class="resource-form" onsubmit="addMarketingResource(event)" novalidate>
+                    <div class="resource-form-grid">
+                        <div class="resource-field">
+                            <label for="resourceTitle">Title <span aria-hidden="true">*</span></label>
+                            <input id="resourceTitle" class="resource-input" type="text" maxlength="80" placeholder="Redactor Product Overview" required />
+                        </div>
+                        <div class="resource-field">
+                            <label for="resourceInputType">Resource type <span aria-hidden="true">*</span></label>
+                            <select id="resourceInputType" class="version-selector" onchange="handleMarketingResourceModeChange()">
+                                <option value="external" selected>External URL</option>
+                                <option value="file">File upload</option>
+                            </select>
+                        </div>
+                        <div class="resource-field resource-url-field">
+                            <label for="resourceUrl">URL <span aria-hidden="true">*</span></label>
+                            <input id="resourceUrl" class="resource-input" type="url" placeholder="https://www.redactor.com/product" />
+                        </div>
+                        <div class="resource-field resource-file-field" hidden>
+                            <label for="resourceFile">Upload file <span aria-hidden="true">*</span></label>
+                            <input id="resourceFile" class="resource-input" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx" onchange="handleMarketingFileSelect(event)" />
+                        </div>
+                        <div class="resource-field">
+                            <label for="resourceCategory">Category <span aria-hidden="true">*</span></label>
+                            <select id="resourceCategory" class="version-selector" required>
+                                <option value="website">Website Pages</option>
+                                <option value="blog">Blog Content</option>
+                                <option value="case-studies">Case Studies</option>
+                                <option value="datasheets">Datasheets / PDFs</option>
+                                <option value="videos">Videos (YouTube / demos)</option>
+                                <option value="social">Social Media Links</option>
+                                <option value="sales-assets">Sales Assets</option>
+                            </select>
+                        </div>
+                        <div class="resource-field">
+                            <label for="resourceFunnelStage">Funnel stage</label>
+                            <select id="resourceFunnelStage" class="version-selector">
+                                <option value="TOFU">TOFU</option>
+                                <option value="MOFU">MOFU</option>
+                                <option value="BOFU" selected>BOFU</option>
+                            </select>
+                        </div>
+                        <div class="resource-field">
+                            <label for="resourceTag">Optional tag</label>
+                            <input id="resourceTag" class="resource-input" type="text" maxlength="32" placeholder="SEO, Conversion, Awareness" />
+                        </div>
+                        <div class="resource-field resource-notes-field">
+                            <label for="resourceNotes">Notes</label>
+                            <textarea id="resourceNotes" class="resource-input" rows="2" placeholder="Usage notes, audience, or campaign context"></textarea>
+                        </div>
+                    </div>
+                    <div class="resource-form-actions">
+                        <button type="submit" class="resource-primary-btn"><i data-lucide="save"></i> Save Resource</button>
+                        <button type="button" class="resource-secondary-btn" onclick="clearMarketingResourceForm()"><i data-lucide="x"></i> Clear</button>
+                        <span id="resourceFormMessage" class="resource-form-message" aria-live="polite"></span>
+                    </div>
+                </form>
+            </div>
+
+            <div id="resourceSections" class="resource-section-list" aria-live="polite"></div>
         </section>
 
         <section id="pricing-calculator" class="section">

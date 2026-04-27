@@ -1,6 +1,6 @@
 # Sighthound Redactor – Competitive Analysis Hub
 
-A Next.js 14 port of the original `redactor-pricing-calculator.html`, ready to deploy to **Vercel**. It preserves every tab (Pricing Calculator, Executive Summary, Product Updates, ICP & Personas, Competitor Profiles, Feature Comparison, Pricing Analysis, Positioning Strategy, Discovery Questions) and all of the original interactive behavior.
+A Next.js 14 port of the original `redactor-pricing-calculator.html`, ready to deploy to **Vercel**. It preserves every tab (Pricing Calculator, Executive Summary, Product Updates, ICP & Personas, Competitor Profiles, Feature Comparison, Pricing Analysis, Positioning Strategy, Discovery Questions) and adds a Key Marketing Resources workspace for Redactor collateral.
 
 ## Tech stack
 

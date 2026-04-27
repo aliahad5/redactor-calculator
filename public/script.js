@@ -504,6 +504,508 @@ function resetPricingCalc() {
     if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 
+var MARKETING_RESOURCE_STORAGE_KEY = 'redactorMarketingResources.v1';
+var marketingResourceView = 'card';
+var marketingResources = [];
+var marketingUploadedFiles = {};
+var marketingResourceCategories = [
+    { value: 'website', label: 'Website Pages', icon: 'globe-2' },
+    { value: 'blog', label: 'Blog Content', icon: 'newspaper' },
+    { value: 'case-studies', label: 'Case Studies', icon: 'briefcase-business' },
+    { value: 'datasheets', label: 'Datasheets / PDFs', icon: 'file-text' },
+    { value: 'videos', label: 'Videos (YouTube / demos)', icon: 'play-circle' },
+    { value: 'social', label: 'Social Media Links', icon: 'share-2' },
+    { value: 'sales-assets', label: 'Sales Assets (if added later)', icon: 'badge-dollar-sign' }
+];
+var marketingAssetLabels = {
+    webpage: 'Website / Landing Page',
+    blog: 'Blog Article',
+    'case-study': 'Case Study',
+    pdf: 'PDF / Datasheet',
+    video: 'Video / Demo',
+    social: 'Social Link',
+    sales: 'Sales Asset',
+    file: 'Uploaded File',
+    presentation: 'Presentation',
+    document: 'Document'
+};
+var MARKETING_SEED_RESOURCES = [
+    { id: 'seed-redactor-home', title: 'Redactor Homepage', url: 'https://www.redactor.com/', category: 'website', assetType: 'webpage', funnel: 'TOFU', tag: 'Awareness', notes: 'Primary product homepage and messaging.', source: 'seed' },
+    { id: 'seed-redactor-features', title: 'Redactor Product Overview', url: 'https://www.redactor.com/features', category: 'website', assetType: 'webpage', funnel: 'MOFU', tag: 'Product', notes: 'Feature and product overview for Redactor capabilities.', source: 'seed' },
+    { id: 'seed-redactor-pricing', title: 'Redactor Pricing Page', url: 'https://www.redactor.com/pricing', category: 'website', assetType: 'webpage', funnel: 'BOFU', tag: 'Conversion', notes: 'Pricing and plan comparison page.', source: 'seed' },
+    { id: 'seed-redactor-docs', title: 'Redactor Documentation', url: 'https://docs.redactor.com/', category: 'website', assetType: 'webpage', funnel: 'MOFU', tag: 'Docs', notes: 'Product documentation and system requirements.', source: 'seed' },
+    { id: 'seed-redactor-faq', title: 'Redactor FAQ', url: 'https://www.redactor.com/faq', category: 'website', assetType: 'webpage', funnel: 'MOFU', tag: 'FAQ', notes: 'Frequently asked sales and support questions.', source: 'seed' },
+    { id: 'seed-redactor-brochure', title: 'Redactor Brochure (Powered by Sighthound)', url: 'https://cdn.prod.website-files.com/61815a2f8dc169fcb7758fa8/6819111318fd95714ab6d51e_Faltech.ai%20Redactor%20Brochure%20%5BPowered%20by%20Sighthound%5D%20(1).pdf', category: 'datasheets', assetType: 'pdf', funnel: 'BOFU', tag: 'Datasheet', notes: 'Public Redactor brochure PDF linked from the homepage.', source: 'seed' },
+    { id: 'seed-blog-hub', title: 'Redactor Blog Hub', url: 'https://www.redactor.com/blog', category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'SEO', notes: 'Main blog index for AI redaction insights.', source: 'seed' },
+    { id: 'seed-blog-v7', title: "What's New in Redactor V7", url: 'https://www.redactor.com/blog/whats-new-in-redactor-v7', category: 'blog', assetType: 'blog', funnel: 'MOFU', tag: 'Product update', notes: 'Product update article for V7 messaging.', source: 'seed' },
+    { id: 'seed-blog-top-tools', title: 'Top 5 Video Redaction Tools', url: 'https://www.redactor.com/blog/top-5-video-redaction-tools', category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'SEO', notes: 'Competitive SEO article for evaluation traffic.', source: 'seed' },
+    { id: 'seed-case-surveillance-discovery', title: 'Case Study: Surveillance Discovery', url: 'https://www.redactor.com/post/case-study-surveillance-discovery', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Social proof', notes: 'Customer proof point for high-accuracy redaction.', source: 'seed' },
+    { id: 'seed-case-bodycam', title: 'Bodycam Footage Redaction Case Study', url: 'https://www.redactor.com/blog/a-bodycam-footage-redaction-solution-customizable-for-a-range-of-uses', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Law enforcement', notes: 'Bodycam and evidence redaction customer story.', source: 'seed' },
+    { id: 'seed-demo-video-page', title: 'Watch Redactor Demo', url: 'https://www.redactor.com/demo-video', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'Demo', notes: 'Short Redactor demo page.', source: 'seed' },
+    { id: 'seed-watch-demo-page', title: 'Watch Demo Landing Page', url: 'https://www.redactor.com/watch-demo', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'Demo', notes: 'Demo-focused landing page.', source: 'seed' },
+    { id: 'seed-youtube-license-plate', title: 'License Plate Redaction Tutorial', url: 'https://www.youtube.com/watch?v=ahp3E7QSQlM', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'How-to', notes: 'YouTube tutorial for license plate redaction.', source: 'seed' },
+    { id: 'seed-youtube-playlist', title: 'Beginner Guide YouTube Playlist', url: 'https://www.youtube.com/playlist?list=PLBBpx2rua99gmb6QX6DJUmRlj8SITFOGq', category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'How-to', notes: 'Beginner Redactor tutorial playlist.', source: 'seed' },
+    { id: 'seed-linkedin-showcase', title: 'Sighthound Redactor LinkedIn Showcase', url: 'https://www.linkedin.com/showcase/sighthound-redactor/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Redactor-specific LinkedIn showcase page.', source: 'seed' },
+    { id: 'seed-linkedin-company', title: 'Sighthound LinkedIn Company Page', url: 'https://www.linkedin.com/company/sighthound-inc-/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound company LinkedIn page.', source: 'seed' },
+    { id: 'seed-facebook', title: 'Sighthound Facebook', url: 'https://www.facebook.com/sighthoundinc/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Facebook presence.', source: 'seed' },
+    { id: 'seed-instagram', title: 'Sighthound Instagram', url: 'https://www.instagram.com/sighthoundcv/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Instagram presence.', source: 'seed' },
+    { id: 'seed-schedule-demo', title: 'Schedule a Live Demo', url: 'https://www.redactor.com/schedule-demo', category: 'sales-assets', assetType: 'sales', funnel: 'BOFU', tag: 'Conversion', notes: 'Primary demo conversion page.', source: 'seed' },
+    { id: 'seed-contact-sales', title: 'Contact Sales', url: 'https://www.redactor.com/contact-us', category: 'sales-assets', assetType: 'sales', funnel: 'BOFU', tag: 'Conversion', notes: 'Sales contact page.', source: 'seed' }
+];
+
+function getMarketingCategory(value) {
+    for (var i = 0; i < marketingResourceCategories.length; i += 1) {
+        if (marketingResourceCategories[i].value === value) { return marketingResourceCategories[i]; }
+    }
+    return marketingResourceCategories[0];
+}
+
+function getMarketingCategoryLabel(value) {
+    return getMarketingCategory(value).label;
+}
+
+function getMarketingAssetLabel(type) {
+    return marketingAssetLabels[type] || 'Website / Landing Page';
+}
+
+function getMarketingInputValue(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value || '').trim() : '';
+}
+
+function normalizeMarketingResourceUrl(url) {
+    try {
+        var parsed = new URL(url);
+        parsed.hash = '';
+        var normalized = parsed.toString();
+        if (normalized.length > 1 && normalized.slice(-1) === '/') {
+            normalized = normalized.slice(0, -1);
+        }
+        return normalized.toLowerCase();
+    } catch (e) {
+        return String(url || '').trim().toLowerCase();
+    }
+}
+
+function validateMarketingUrl(url) {
+    try {
+        var parsed = new URL(url);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch (e) {
+        return false;
+    }
+}
+
+function getMarketingFileExtension(name) {
+    var parts = String(name || '').split('.');
+    return parts.length > 1 ? parts.pop().toLowerCase() : '';
+}
+
+function inferMarketingAssetType(resource) {
+    var url = String(resource.url || '');
+    var category = resource.category;
+    var extension = getMarketingFileExtension(resource.fileName || url.split('?')[0]);
+    if (resource.uploaded) { return extension === 'pdf' ? 'pdf' : 'file'; }
+    if (extension === 'pdf') { return 'pdf'; }
+    if (extension === 'ppt' || extension === 'pptx') { return 'presentation'; }
+    if (extension === 'doc' || extension === 'docx') { return 'document'; }
+    if (category === 'blog') { return 'blog'; }
+    if (category === 'case-studies') { return 'case-study'; }
+    if (category === 'datasheets') { return 'pdf'; }
+    if (category === 'videos' || /youtube\.com|youtu\.be|vimeo\.com|demo-video|watch-demo/i.test(url)) { return 'video'; }
+    if (category === 'social' || /linkedin\.com|facebook\.com|instagram\.com|twitter\.com|x\.com/i.test(url)) { return 'social'; }
+    if (category === 'sales-assets') { return 'sales'; }
+    return 'webpage';
+}
+
+function sanitizeMarketingResource(resource) {
+    if (!resource) { return null; }
+    var title = String(resource.title || '').trim().slice(0, 80);
+    var url = String(resource.url || '').trim();
+    if (!title || !url) { return null; }
+    var category = getMarketingCategory(resource.category || 'website').value;
+    var funnel = ['TOFU', 'MOFU', 'BOFU'].indexOf(resource.funnel) !== -1 ? resource.funnel : 'BOFU';
+    var sanitized = {
+        id: resource.id || generateMarketingResourceId(),
+        title: title,
+        url: url,
+        category: category,
+        assetType: resource.assetType || '',
+        funnel: funnel,
+        tag: String(resource.tag || '').trim().slice(0, 32),
+        notes: String(resource.notes || '').trim(),
+        source: resource.source || 'custom',
+        uploaded: !!resource.uploaded,
+        fileName: resource.fileName || '',
+        fileSize: resource.fileSize || 0,
+        fileType: resource.fileType || '',
+        createdAt: resource.createdAt || new Date().toISOString()
+    };
+    sanitized.assetType = sanitized.assetType || inferMarketingAssetType(sanitized);
+    return sanitized;
+}
+
+function generateMarketingResourceId() {
+    return 'resource-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+}
+
+function loadMarketingResources() {
+    var stored = [];
+    try {
+        var raw = window.localStorage ? window.localStorage.getItem(MARKETING_RESOURCE_STORAGE_KEY) : null;
+        stored = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(stored)) { stored = []; }
+    } catch (e) {
+        stored = [];
+    }
+    var merged = [];
+    var seen = {};
+    MARKETING_SEED_RESOURCES.concat(stored).forEach(function(item) {
+        var resource = sanitizeMarketingResource(item);
+        if (!resource) { return; }
+        var key = normalizeMarketingResourceUrl(resource.url);
+        if (seen[key]) { return; }
+        seen[key] = true;
+        merged.push(resource);
+    });
+    marketingResources = merged;
+}
+
+function saveMarketingResources() {
+    try {
+        if (!window.localStorage) { return; }
+        var customResources = marketingResources.filter(function(resource) {
+            return resource.source !== 'seed' && !resource.uploaded;
+        });
+        window.localStorage.setItem(MARKETING_RESOURCE_STORAGE_KEY, JSON.stringify(customResources));
+    } catch (e) {}
+}
+
+function getFilteredMarketingResources() {
+    var query = getMarketingInputValue('resourceSearch').toLowerCase();
+    var categoryFilter = getMarketingInputValue('resourceCategoryFilter') || 'all';
+    var assetFilter = getMarketingInputValue('resourceAssetTypeFilter') || 'all';
+    var funnelFilter = getMarketingInputValue('resourceFunnelFilter') || 'all';
+    return marketingResources.filter(function(resource) {
+        var categoryMatch = categoryFilter === 'all' || resource.category === categoryFilter;
+        var assetMatch = assetFilter === 'all' || resource.assetType === assetFilter || (assetFilter === 'file' && resource.uploaded);
+        var funnelMatch = funnelFilter === 'all' || resource.funnel === funnelFilter;
+        var searchable = [
+            resource.title,
+            resource.url,
+            getMarketingCategoryLabel(resource.category),
+            getMarketingAssetLabel(resource.assetType),
+            resource.funnel,
+            resource.tag,
+            resource.notes,
+            resource.fileName
+        ].join(' ').toLowerCase();
+        var queryMatch = !query || searchable.indexOf(query) !== -1;
+        return categoryMatch && assetMatch && funnelMatch && queryMatch;
+    });
+}
+
+function renderMarketingResources() {
+    var container = document.getElementById('resourceSections');
+    if (!container) { return; }
+    var filtered = getFilteredMarketingResources();
+    var categoryFilter = getMarketingInputValue('resourceCategoryFilter') || 'all';
+    var visibleCategories = marketingResourceCategories.filter(function(category) {
+        return categoryFilter === 'all' || category.value === categoryFilter;
+    });
+    var totalCount = document.getElementById('resourceTotalCount');
+    var summary = document.getElementById('resourceSummary');
+    if (totalCount) { totalCount.textContent = marketingResources.length; }
+    if (summary) {
+        summary.textContent = 'Showing ' + filtered.length + ' of ' + marketingResources.length + ' resources';
+    }
+    container.innerHTML = visibleCategories.map(function(category) {
+        var items = filtered.filter(function(resource) { return resource.category === category.value; });
+        return renderMarketingResourceSection(category, items);
+    }).join('');
+    refreshMarketingViewButtons();
+    if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+
+function renderMarketingResourceSection(category, items) {
+    var html = '<div id="resource-section-' + escapeHtml(category.value) + '" class="accordion-item resource-category-accordion active">';
+    html += '<div class="accordion-header resource-category-header" onclick="toggleAccordion(this)">';
+    html += '<div class="resource-category-title"><i data-lucide="' + escapeHtml(category.icon) + '"></i><h4>' + escapeHtml(category.label) + '<span class="resource-count-pill">' + items.length + '</span></h4></div>';
+    html += '<span class="accordion-toggle">▼</span></div>';
+    html += '<div class="accordion-content"><div class="accordion-content-inner">';
+    if (!items.length) {
+        html += '<div class="resource-empty">No resources match this section yet. Add one above or reset filters.</div>';
+    } else if (marketingResourceView === 'table') {
+        html += renderMarketingResourceTable(items);
+    } else {
+        html += '<div class="resource-cards-grid">' + items.map(renderMarketingResourceCard).join('') + '</div>';
+    }
+    html += '</div></div></div>';
+    return html;
+}
+
+function renderMarketingResourceCard(resource) {
+    var url = escapeHtml(resource.url);
+    var title = escapeHtml(resource.title);
+    var tagHtml = resource.tag ? '<span class="resource-pill">' + escapeHtml(resource.tag) + '</span>' : '';
+    var fileMeta = resource.uploaded && resource.fileName ? '<span class="resource-pill">' + escapeHtml(resource.fileName) + '</span>' : '';
+    var sizeMeta = resource.uploaded && resource.fileSize ? '<span class="resource-pill">' + escapeHtml(formatMarketingFileSize(resource.fileSize)) + '</span>' : '';
+    var download = resource.uploaded ? '<a class="resource-link-btn secondary" href="' + url + '" download="' + escapeHtml(resource.fileName || resource.title) + '"><i data-lucide="download"></i> Download</a>' : '';
+    var html = '<article class="resource-card">';
+    html += '<div class="resource-card-top"><span class="resource-pill">' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</span><span class="resource-funnel-pill">' + escapeHtml(resource.funnel) + '</span></div>';
+    html += '<h4><a href="' + url + '" target="_blank" rel="noopener">' + title + '</a></h4>';
+    html += '<p class="resource-url" title="' + url + '">' + url + '</p>';
+    html += '<div class="resource-card-meta"><span class="resource-pill">' + escapeHtml(getMarketingCategoryLabel(resource.category)) + '</span>' + tagHtml + fileMeta + sizeMeta + '</div>';
+    if (resource.notes) {
+        html += '<p class="resource-notes">' + escapeHtml(resource.notes) + '</p>';
+    }
+    html += '<div class="resource-card-actions"><a class="resource-link-btn primary" href="' + url + '" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Open</a>' + download + '<button type="button" class="resource-copy-btn" onclick="copyMarketingResourceUrl(\'' + escapeHtml(resource.id) + '\', this)"><i data-lucide="copy"></i> Copy URL</button></div>';
+    html += '</article>';
+    return html;
+}
+
+function renderMarketingResourceTable(items) {
+    var html = '<div class="resource-table-wrapper"><table class="resource-table"><thead><tr><th>Title</th><th>URL</th><th>Category</th><th>Asset Type</th><th>Funnel</th><th>Tag</th><th>Actions</th></tr></thead><tbody>';
+    items.forEach(function(resource) {
+        var url = escapeHtml(resource.url);
+        var download = resource.uploaded ? '<a class="resource-link-btn secondary" href="' + url + '" download="' + escapeHtml(resource.fileName || resource.title) + '">Download</a>' : '';
+        html += '<tr>';
+        html += '<td><a href="' + url + '" target="_blank" rel="noopener">' + escapeHtml(resource.title) + '</a></td>';
+        html += '<td><p class="resource-url" title="' + url + '">' + url + '</p></td>';
+        html += '<td>' + escapeHtml(getMarketingCategoryLabel(resource.category)) + '</td>';
+        html += '<td>' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</td>';
+        html += '<td><span class="resource-funnel-pill">' + escapeHtml(resource.funnel) + '</span></td>';
+        html += '<td>' + escapeHtml(resource.tag || '—') + '</td>';
+        html += '<td><div class="resource-table-actions"><a class="resource-link-btn primary" href="' + url + '" target="_blank" rel="noopener">Open</a>' + download + '<button type="button" class="resource-copy-btn" onclick="copyMarketingResourceUrl(\'' + escapeHtml(resource.id) + '\', this)">Copy</button></div></td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+}
+
+function setMarketingResourceView(view, element) {
+    marketingResourceView = view === 'table' ? 'table' : 'card';
+    if (element) {
+        document.querySelectorAll('#resources .resource-toggle').forEach(function(button) {
+            button.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
+    renderMarketingResources();
+}
+
+function refreshMarketingViewButtons() {
+    document.querySelectorAll('#resources .resource-toggle').forEach(function(button) {
+        var onclick = button.getAttribute('onclick') || '';
+        if (onclick.indexOf("'" + marketingResourceView + "'") !== -1) {
+            button.classList.add('active');
+        } else if (onclick.indexOf('setMarketingResourceView') !== -1) {
+            button.classList.remove('active');
+        }
+    });
+}
+
+function resetMarketingResourceFilters() {
+    ['resourceSearch', 'resourceCategoryFilter', 'resourceAssetTypeFilter', 'resourceFunnelFilter'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) { return; }
+        el.value = id === 'resourceSearch' ? '' : 'all';
+    });
+    renderMarketingResources();
+}
+
+function handleMarketingResourceModeChange() {
+    var mode = getMarketingInputValue('resourceInputType') || 'external';
+    var urlField = document.querySelector('#resources .resource-url-field');
+    var fileField = document.querySelector('#resources .resource-file-field');
+    var urlInput = document.getElementById('resourceUrl');
+    var fileInput = document.getElementById('resourceFile');
+    if (urlField) { urlField.hidden = mode !== 'external'; }
+    if (fileField) { fileField.hidden = mode !== 'file'; }
+    if (urlInput) { urlInput.required = mode === 'external'; }
+    if (fileInput) { fileInput.required = mode === 'file'; }
+}
+
+function handleMarketingFileSelect(event) {
+    var file = event && event.target && event.target.files ? event.target.files[0] : null;
+    if (!file) { return; }
+    var allowed = ['pdf', 'ppt', 'pptx', 'doc', 'docx'];
+    var extension = getMarketingFileExtension(file.name);
+    if (allowed.indexOf(extension) === -1) {
+        showMarketingFormMessage('Use a PDF, PPT, PPTX, DOC, or DOCX file.', 'error');
+        event.target.value = '';
+        return;
+    }
+    var titleEl = document.getElementById('resourceTitle');
+    if (titleEl && !titleEl.value.trim()) {
+        titleEl.value = file.name.replace(/\.[^/.]+$/, '').slice(0, 80);
+    }
+    var categoryEl = document.getElementById('resourceCategory');
+    if (categoryEl && categoryEl.value === 'website') {
+        categoryEl.value = 'datasheets';
+    }
+    showMarketingFormMessage('File selected. It will be previewable/downloadable after saving.', 'success');
+}
+
+function addMarketingResource(event) {
+    if (event && typeof event.preventDefault === 'function') { event.preventDefault(); }
+    var title = getMarketingInputValue('resourceTitle');
+    var mode = getMarketingInputValue('resourceInputType') || 'external';
+    var category = getMarketingInputValue('resourceCategory') || 'website';
+    var funnel = getMarketingInputValue('resourceFunnelStage') || 'BOFU';
+    var tag = getMarketingInputValue('resourceTag');
+    var notes = getMarketingInputValue('resourceNotes');
+    if (!title) {
+        showMarketingFormMessage('Add a title before saving.', 'error');
+        return;
+    }
+    if (title.length > 80) {
+        showMarketingFormMessage('Title must be 80 characters or fewer.', 'error');
+        return;
+    }
+    var resource = {
+        id: generateMarketingResourceId(),
+        title: title,
+        category: category,
+        funnel: funnel,
+        tag: tag,
+        notes: notes,
+        source: 'custom',
+        createdAt: new Date().toISOString()
+    };
+    if (mode === 'file') {
+        var fileInput = document.getElementById('resourceFile');
+        var file = fileInput && fileInput.files ? fileInput.files[0] : null;
+        if (!file) {
+            showMarketingFormMessage('Choose a file before saving.', 'error');
+            return;
+        }
+        var extension = getMarketingFileExtension(file.name);
+        if (['pdf', 'ppt', 'pptx', 'doc', 'docx'].indexOf(extension) === -1) {
+            showMarketingFormMessage('Use a PDF, PPT, PPTX, DOC, or DOCX file.', 'error');
+            return;
+        }
+        resource.url = URL.createObjectURL(file);
+        resource.uploaded = true;
+        resource.fileName = file.name;
+        resource.fileSize = file.size;
+        resource.fileType = file.type || '';
+        resource.assetType = inferMarketingAssetType(resource);
+        marketingUploadedFiles[resource.id] = file;
+    } else {
+        var url = getMarketingInputValue('resourceUrl');
+        if (!validateMarketingUrl(url)) {
+            showMarketingFormMessage('Enter a valid http or https URL.', 'error');
+            return;
+        }
+        var normalized = normalizeMarketingResourceUrl(url);
+        var duplicate = marketingResources.some(function(existing) {
+            return normalizeMarketingResourceUrl(existing.url) === normalized;
+        });
+        if (duplicate) {
+            showMarketingFormMessage('This URL already exists in the resource library.', 'error');
+            return;
+        }
+        resource.url = new URL(url).toString();
+        resource.uploaded = false;
+        resource.assetType = inferMarketingAssetType(resource);
+    }
+    var sanitized = sanitizeMarketingResource(resource);
+    if (!sanitized) {
+        showMarketingFormMessage('Resource could not be saved. Check the required fields.', 'error');
+        return;
+    }
+    marketingResources.unshift(sanitized);
+    saveMarketingResources();
+    clearMarketingResourceForm();
+    showMarketingFormMessage(sanitized.uploaded ? 'File resource saved for this browser session.' : 'Resource saved.', 'success');
+    renderMarketingResources();
+}
+
+function clearMarketingResourceForm() {
+    var form = document.getElementById('resourceForm');
+    if (form) { form.reset(); }
+    handleMarketingResourceModeChange();
+    showMarketingFormMessage('', '');
+}
+
+function showMarketingFormMessage(message, type) {
+    var messageEl = document.getElementById('resourceFormMessage');
+    if (!messageEl) { return; }
+    messageEl.textContent = message || '';
+    messageEl.className = 'resource-form-message' + (type ? ' ' + type : '');
+}
+
+function copyMarketingResourceUrl(resourceId, button) {
+    var resource = marketingResources.find(function(item) { return item.id === resourceId; });
+    if (!resource) { return; }
+    var text = resource.url;
+    function markCopied() {
+        if (!button) { return; }
+        var original = button.innerHTML;
+        button.innerHTML = 'Copied';
+        setTimeout(function() { button.innerHTML = original; }, 1400);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(markCopied).catch(function() {
+            fallbackCopyMarketingText(text);
+            markCopied();
+        });
+    } else {
+        fallbackCopyMarketingText(text);
+        markCopied();
+    }
+}
+
+function fallbackCopyMarketingText(text) {
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(textarea);
+}
+
+function jumpToMarketingResourceSection(categoryValue) {
+    if (!categoryValue) { return; }
+    var filter = document.getElementById('resourceCategoryFilter');
+    if (filter && filter.value !== 'all' && filter.value !== categoryValue) {
+        filter.value = categoryValue;
+        renderMarketingResources();
+    }
+    setTimeout(function() {
+        var section = document.getElementById('resource-section-' + categoryValue);
+        if (section) {
+            if (!section.classList.contains('active')) { section.classList.add('active'); }
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        var jump = document.getElementById('resourceSectionJump');
+        if (jump) { jump.value = ''; }
+    }, 0);
+}
+
+function formatMarketingFileSize(bytes) {
+    if (!bytes) { return ''; }
+    var units = ['B', 'KB', 'MB', 'GB'];
+    var size = bytes;
+    var unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
+        size = size / 1024;
+        unitIndex += 1;
+    }
+    return (unitIndex === 0 ? size : size.toFixed(1)) + ' ' + units[unitIndex];
+}
+
+function initMarketingResources() {
+    loadMarketingResources();
+    handleMarketingResourceModeChange();
+    renderMarketingResources();
+}
 // Expose functions to global scope so inline onclick handlers can find them
 // (This is redundant when loaded as a regular script, but ensures reliability.)
 if (typeof window !== 'undefined') {
@@ -522,6 +1024,15 @@ if (typeof window !== 'undefined') {
     window.calculatePricing = calculatePricing;
     window.resetPricingCalc = resetPricingCalc;
     window.toggleScrollButton = toggleScrollButton;
+    window.renderMarketingResources = renderMarketingResources;
+    window.setMarketingResourceView = setMarketingResourceView;
+    window.resetMarketingResourceFilters = resetMarketingResourceFilters;
+    window.handleMarketingResourceModeChange = handleMarketingResourceModeChange;
+    window.handleMarketingFileSelect = handleMarketingFileSelect;
+    window.addMarketingResource = addMarketingResource;
+    window.clearMarketingResourceForm = clearMarketingResourceForm;
+    window.copyMarketingResourceUrl = copyMarketingResourceUrl;
+    window.jumpToMarketingResourceSection = jumpToMarketingResourceSection;
 
     // Initialization: run after the DOM / page hydrates
     function __redactorInit() {
@@ -529,6 +1040,7 @@ if (typeof window !== 'undefined') {
         try { updateVersionDetails(); } catch (e) {}
         try { toggleScrollButton(); } catch (e) {}
         try { updateDiscoveryQuestions(); } catch (e) {}
+        try { initMarketingResources(); } catch (e) {}
         if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
             try { window.lucide.createIcons(); } catch (e) {}
         }
