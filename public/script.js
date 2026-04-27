@@ -685,23 +685,20 @@ function getFilteredMarketingResources() {
     var query = getMarketingInputValue('resourceSearch').toLowerCase();
     var categoryFilter = getMarketingInputValue('resourceCategoryFilter') || 'all';
     var assetFilter = getMarketingInputValue('resourceAssetTypeFilter') || 'all';
-    var funnelFilter = getMarketingInputValue('resourceFunnelFilter') || 'all';
     return marketingResources.filter(function(resource) {
         var categoryMatch = categoryFilter === 'all' || resource.category === categoryFilter;
         var assetMatch = assetFilter === 'all' || resource.assetType === assetFilter || (assetFilter === 'file' && resource.uploaded);
-        var funnelMatch = funnelFilter === 'all' || resource.funnel === funnelFilter;
         var searchable = [
             resource.title,
             resource.url,
             getMarketingCategoryLabel(resource.category),
             getMarketingAssetLabel(resource.assetType),
-            resource.funnel,
             resource.tag,
             resource.notes,
             resource.fileName
         ].join(' ').toLowerCase();
         var queryMatch = !query || searchable.indexOf(query) !== -1;
-        return categoryMatch && assetMatch && funnelMatch && queryMatch;
+        return categoryMatch && assetMatch && queryMatch;
     });
 }
 
@@ -754,7 +751,7 @@ function renderMarketingResourceCard(resource) {
     var sizeMeta = resource.uploaded && resource.fileSize ? '<span class="resource-pill">' + escapeHtml(formatMarketingFileSize(resource.fileSize)) + '</span>' : '';
     var download = resource.uploaded ? '<a class="resource-link-btn secondary" href="' + url + '" download="' + escapeHtml(resource.fileName || resource.title) + '"><i data-lucide="download"></i> Download</a>' : '';
     var html = '<article class="resource-card">';
-    html += '<div class="resource-card-top"><span class="resource-pill">' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</span><span class="resource-funnel-pill">' + escapeHtml(resource.funnel) + '</span></div>';
+    html += '<div class="resource-card-top"><span class="resource-pill">' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</span></div>';
     html += '<h4><a href="' + url + '" target="_blank" rel="noopener">' + title + '</a></h4>';
     html += '<p class="resource-url" title="' + url + '">' + url + '</p>';
     html += '<div class="resource-card-meta"><span class="resource-pill">' + escapeHtml(getMarketingCategoryLabel(resource.category)) + '</span>' + tagHtml + fileMeta + sizeMeta + '</div>';
@@ -767,7 +764,7 @@ function renderMarketingResourceCard(resource) {
 }
 
 function renderMarketingResourceTable(items) {
-    var html = '<div class="resource-table-wrapper"><table class="resource-table"><thead><tr><th>Title</th><th>URL</th><th>Category</th><th>Asset Type</th><th>Funnel</th><th>Tag</th><th>Actions</th></tr></thead><tbody>';
+    var html = '<div class="resource-table-wrapper"><table class="resource-table"><thead><tr><th>Title</th><th>URL</th><th>Category</th><th>Asset Type</th><th>Tag</th><th>Actions</th></tr></thead><tbody>';
     items.forEach(function(resource) {
         var url = escapeHtml(resource.url);
         var download = resource.uploaded ? '<a class="resource-link-btn secondary" href="' + url + '" download="' + escapeHtml(resource.fileName || resource.title) + '">Download</a>' : '';
@@ -776,7 +773,6 @@ function renderMarketingResourceTable(items) {
         html += '<td><p class="resource-url" title="' + url + '">' + url + '</p></td>';
         html += '<td>' + escapeHtml(getMarketingCategoryLabel(resource.category)) + '</td>';
         html += '<td>' + escapeHtml(getMarketingAssetLabel(resource.assetType)) + '</td>';
-        html += '<td><span class="resource-funnel-pill">' + escapeHtml(resource.funnel) + '</span></td>';
         html += '<td>' + escapeHtml(resource.tag || '—') + '</td>';
         html += '<td><div class="resource-table-actions"><a class="resource-link-btn primary" href="' + url + '" target="_blank" rel="noopener">Open</a>' + download + '<button type="button" class="resource-copy-btn" onclick="copyMarketingResourceUrl(\'' + escapeHtml(resource.id) + '\', this)">Copy</button></div></td>';
         html += '</tr>';
@@ -808,7 +804,7 @@ function refreshMarketingViewButtons() {
 }
 
 function resetMarketingResourceFilters() {
-    ['resourceSearch', 'resourceCategoryFilter', 'resourceAssetTypeFilter', 'resourceFunnelFilter'].forEach(function(id) {
+    ['resourceSearch', 'resourceCategoryFilter', 'resourceAssetTypeFilter'].forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) { return; }
         el.value = id === 'resourceSearch' ? '' : 'all';

@@ -881,18 +881,9 @@
                         <option value="file">Uploaded File</option>
                     </select>
                 </div>
-                <div class="resource-filter">
-                    <label for="resourceFunnelFilter" class="version-selector-label"><i data-lucide="funnel"></i> Funnel stage</label>
-                    <select id="resourceFunnelFilter" class="version-selector" onchange="renderMarketingResources()">
-                        <option value="all">All Stages</option>
-                        <option value="TOFU">TOFU</option>
-                        <option value="MOFU">MOFU</option>
-                        <option value="BOFU">BOFU</option>
-                    </select>
-                </div>
-                <div class="resource-filter">
+                <div class="resource-filter resource-jump-filter">
                     <label for="resourceSectionJump" class="version-selector-label"><i data-lucide="chevrons-up-down"></i> Jump to section</label>
-                    <select id="resourceSectionJump" class="version-selector" onchange="jumpToMarketingResourceSection(this.value)">
+                    <select id="resourceSectionJump" class="resource-section-select" onchange="jumpToMarketingResourceSection(this.value)">
                         <option value="">Choose a section</option>
                         <option value="website">Website Pages</option>
                         <option value="blog">Blog Content</option>
