@@ -1,0 +1,515 @@
+/* Pricing Analysis Container */
+.pricing-analysis-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* Header Styles */
+.pricing-header {
+  text-align: center;
+  margin-bottom: 50px;
+  background: white;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-header h1 {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  color: #1a202c;
+  font-weight: 700;
+}
+
+.pricing-header .subtitle {
+  font-size: 1.2rem;
+  color: #718096;
+  margin: 0 0 30px 0;
+}
+
+/* Product Snapshot */
+.product-snapshot {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.snapshot-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.snapshot-item .label {
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.snapshot-item .value {
+  font-size: 1.5rem;
+  color: #2d3748;
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  padding: 12px 30px;
+  border: 2px solid #cbd5e0;
+  background: white;
+  color: #2d3748;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  border-color: #4299e1;
+  color: #4299e1;
+  transform: translateY(-2px);
+}
+
+.tab-button.active {
+  background: #4299e1;
+  color: white;
+  border-color: #4299e1;
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+/* Section Styles */
+.section {
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section h2 {
+  font-size: 2rem;
+  color: #1a202c;
+  margin-bottom: 15px;
+  margin-top: 0;
+}
+
+.section-intro {
+  font-size: 1.05rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 35px;
+  background: white;
+  padding: 20px 25px;
+  border-radius: 8px;
+  border-left: 4px solid #4299e1;
+}
+
+/* Rebuttals Grid */
+.rebuttals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+/* Rebuttal Card */
+.rebuttal-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 5px solid #4299e1;
+}
+
+.rebuttal-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.rebuttal-header {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #edf2f7;
+}
+
+.rebuttal-header h3 {
+  margin: 0 0 8px 0;
+  color: #1a202c;
+  font-size: 1.5rem;
+}
+
+.headline-label {
+  display: inline-block;
+  background: #ebf8ff;
+  color: #2c5282;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Rebuttal Sections */
+.rebuttal-section {
+  margin-bottom: 20px;
+}
+
+.rebuttal-section h4 {
+  color: #2d3748;
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.objection-quote {
+  margin: 0;
+  padding: 15px 20px;
+  background: #f7fafc;
+  border-left: 3px solid #cbd5e0;
+  font-style: italic;
+  color: #4a5568;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.answer-text {
+  margin: 0;
+  color: #2d3748;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Rebuttal Grid */
+.rebuttal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .rebuttal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rebuttal-detail {
+  background: #f7fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+}
+
+.rebuttal-detail h5 {
+  margin: 0 0 10px 0;
+  color: #2d3748;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.rebuttal-detail p {
+  margin: 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Close Line */
+.close-line {
+  margin: 0;
+  padding: 12px 15px;
+  background: #edf2f7;
+  border-radius: 6px;
+  color: #2d3748;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Rebuttal Footer */
+.rebuttal-footer {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #edf2f7;
+}
+
+.power-phrase {
+  margin: 0;
+  color: #2c5282;
+  background: #ebf8ff;
+  padding: 12px 15px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* FAQs Container */
+.faqs-container {
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+/* FAQ Item */
+.faq-item {
+  margin-bottom: 15px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* FAQ Question Button */
+.faq-question {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  background: white;
+  color: #1a202c;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+  background: #f7fafc;
+  color: #4299e1;
+}
+
+.faq-question:focus {
+  outline: none;
+  background: #ebf8ff;
+}
+
+.faq-question-text {
+  flex: 1;
+  padding-right: 20px;
+}
+
+/* FAQ Toggle */
+.faq-toggle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #4299e1;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-toggle.expanded {
+  transform: rotate(180deg);
+}
+
+/* FAQ Answer */
+.faq-answer {
+  padding: 0 20px 20px 20px;
+  background: #f7fafc;
+  border-top: 1px solid #edf2f7;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-answer-text {
+  margin: 15px 0 15px 0;
+  color: #2d3748;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.faq-power-phrase {
+  margin: 15px 0 0 0;
+  padding: 12px 15px;
+  background: #ebf8ff;
+  border-left: 3px solid #4299e1;
+  border-radius: 4px;
+  color: #2c5282;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.faq-power-phrase strong {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+/* Footer */
+.pricing-footer {
+  margin-top: 60px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  border-top: 3px solid #4299e1;
+}
+
+.footer-note {
+  margin: 10px 0;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.footer-note:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .pricing-analysis-container {
+    padding: 30px 15px;
+  }
+
+  .pricing-header {
+    padding: 30px 20px;
+  }
+
+  .pricing-header h1 {
+    font-size: 2rem;
+  }
+
+  .rebuttals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-snapshot {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pricing-analysis-container {
+    padding: 20px 10px;
+  }
+
+  .pricing-header {
+    padding: 20px 15px;
+  }
+
+  .pricing-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .pricing-header .subtitle {
+    font-size: 1rem;
+  }
+
+  .product-snapshot {
+    gap: 20px;
+  }
+
+  .snapshot-item .value {
+    font-size: 1.2rem;
+  }
+
+  .rebuttal-card {
+    padding: 20px;
+  }
+
+  .rebuttal-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+  }
+
+  .faq-question {
+    padding: 15px;
+    font-size: 0.95rem;
+  }
+
+  .faq-answer {
+    padding: 0 15px 15px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-analysis-container {
+    padding: 15px 8px;
+  }
+
+  .pricing-header {
+    padding: 15px 10px;
+  }
+
+  .pricing-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .tab-navigation {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+
+  .rebuttal-card {
+    padding: 15px;
+  }
+
+  .section-intro {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+
+  .faq-question {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .faq-toggle {
+    font-size: 1.2rem;
+  }
+
+  .pricing-footer {
+    padding: 20px 15px;
+  }
+}

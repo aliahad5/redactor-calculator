@@ -1,0 +1,117 @@
+{
+  "productContext": {
+    "name": "Sighthound Redactor",
+    "price": "$3,500/year",
+    "users": "1–5 users",
+    "processing": "Unlimited video processing",
+    "description": "AI-powered video redaction platform"
+  },
+  "rebuttals": [
+    {
+      "id": "fast-redaction",
+      "competitor": "FastRedaction",
+      "headline": "Significantly cheaper at scale",
+      "objection": "FastRedaction's pay-per-minute model is a lot cheaper than your flat fee when we don't process much video.",
+      "answer": "True for light usage, but most law enforcement agencies we work with process 50-150 hours monthly. At FastRedaction's typical $0.15-$0.25 per minute, that's $450-$1,125 per month alone—far exceeding our $292/month flat rate. For a 10-officer department running regular redactions, you'll break even in month one and save $3,000+ annually.",
+      "tcoNote": "Year 1 TCO: FastRedaction at 100 hours/month = $10,800/year; Sighthound = $3,500/year.",
+      "complianceNote": "FastRedaction is cloud-only, creating compliance risks for agencies handling sensitive evidence; Sighthound deploys on-premise and air-gapped.",
+      "closeLine": "Want me to run the actual per-minute costs against your typical monthly processing volume?",
+      "powerPhrase": "You only hit their cheap pricing if you process almost nothing—most of our customers break even in the first month."
+    },
+    {
+      "id": "case-guard",
+      "competitor": "CaseGuard",
+      "headline": "Flexibility scales better",
+      "objection": "CaseGuard charges per seat per month, so we can scale down when we're not using it as heavily.",
+      "answer": "CaseGuard's pricing starts at $199/seat/month (minimum 3 seats = $597/month or $7,164/year), and you're locked into paying for seats whether they use the software or not. Sighthound's $3,500/year flat rate covers 1-5 users with unlimited processing—no per-seat trap. Plus, CaseGuard only runs on Windows; Sighthound runs on Windows, Linux, and Docker, giving you actual flexibility.",
+      "tcoNote": "Year 1 TCO: CaseGuard at 3 seats = $7,164/year; Sighthound = $3,500/year; savings = $3,664.",
+      "complianceNote": "CaseGuard's Windows-only limitation excludes agencies using Linux infrastructure or secure air-gapped networks; Sighthound supports all deployment scenarios including offline.",
+      "closeLine": "If scaling flexibility matters, let's compare apples-to-apples on total seats and deployment scenarios you actually need.",
+      "powerPhrase": "You're not paying for flexibility you don't use—with Sighthound, 1 to 5 users is the same price."
+    },
+    {
+      "id": "veritone",
+      "competitor": "Veritone",
+      "headline": "Enterprise-grade, not enterprise-priced",
+      "objection": "Veritone has more features and is true enterprise software. Aren't we paying for something less capable?",
+      "answer": "Veritone's cloud-only, SaaS model starts at $10K+/year and scales to $50K+ for agencies, with mandatory cloud storage and compliance burdens. Sighthound delivers enterprise accuracy (95%+ redaction precision) and features—AI-powered faces, license plates, audio, documents—at $3,500/year with on-premise deployment. You get enterprise quality without enterprise pricing or cloud vendor lock-in.",
+      "tcoNote": "Year 1 TCO: Veritone base tier = $12,000-$25,000/year; Sighthound = $3,500/year.",
+      "complianceNote": "Veritone requires cloud tenancy, creating data residency and FedRAMP compliance headaches for law enforcement; Sighthound meets CJIS, state privacy laws, and air-gapped requirements out-of-the-box.",
+      "closeLine": "Let's walk through a feature-by-feature comparison—I think you'll be surprised at the parity for 1/5th the cost.",
+      "powerPhrase": "Enterprise features don't require enterprise price tags, especially when you own the deployment."
+    },
+    {
+      "id": "manual-redaction",
+      "competitor": "Manual Redaction",
+      "headline": "We'll keep doing it in-house",
+      "objection": "We've got contractors and staff handling redactions now. What's the business case for replacing them?",
+      "answer": "Manual redaction costs 2-4 FTEs at loaded costs ($80K-$120K/person/year = $160K-$480K annually) plus error liability. One missed sensitive face in evidence released to defense counsel creates legal exposure and damages credibility. Sighthound at $3,500/year eliminates 80-90% of manual work, pays for itself in weeks, and improves accuracy and audit trails—cutting contractor costs while reducing liability.",
+      "tcoNote": "Year 1 TCO: Manual redaction (2 FTEs) = $160K+ salary + overhead + liability; Sighthound = $3,500.",
+      "complianceNote": "Manual redaction lacks audit trails for compliance review; Sighthound logs all redactions (AI confidence scores, regions, timestamps) meeting evidence handling and Brady disclosure standards.",
+      "closeLine": "Can we run a 30-day pilot against your current contractor workload to show the ROI on staff redeployment?",
+      "powerPhrase": "Your first redacted case pays for the software; the next 300 save you a full FTE's salary."
+    }
+  ],
+  "faqs": [
+    {
+      "id": "faq-1",
+      "objection": "Our budget is only $10K.",
+      "answer": "At $3,500/year, Sighthound costs less than a third of your stated budget—leaving you $6,500 for training, integration, and other tools. For comparison, most agencies spending $10K are spread across three separate tools (redaction, evidence management, compliance logging). You get all-in-one redaction plus unlimited processing, which is typically a standalone $8K-$15K expense. This is the budget-conscious choice.",
+      "powerPhrase": "$3,500/year is the budget constraint solved—not the constraint itself."
+    },
+    {
+      "id": "faq-2",
+      "objection": "Why not just hire contractors?",
+      "answer": "Contractors cost $60-$100/hour, and redacting a 1-hour video typically takes 4-6 hours of work (roughly $240-$600 per video). At just 10 videos per month, that's $2,400-$6,000 in contractor costs alone—before benefits, management overhead, or liability for missed redactions. Sighthound handles those 10 videos for $292/month ($3,500/year), plus you get AI consistency and audit trails that contractors can't match.",
+      "powerPhrase": "A single contractor hour costs what Sighthound does in a month."
+    },
+    {
+      "id": "faq-3",
+      "objection": "Does Sighthound work on-premise?",
+      "answer": "Yes. Sighthound deploys on Windows, Linux, Docker, and air-gapped networks—meaning no internet dependency or cloud vendor lock-in. This is critical for law enforcement and classified environments. Most competitors (Veritone, FastRedaction) are cloud-only, which creates compliance friction and data residency challenges. Sighthound's on-premise flexibility is one of our key differentiators.",
+      "powerPhrase": "We're the only redaction platform that works in a completely offline network."
+    },
+    {
+      "id": "faq-4",
+      "objection": "We already have a workflow—why change?",
+      "answer": "Every agency we've deployed to had an existing workflow—usually manual or semi-automated. The shift isn't about disruption; it's about time recovery. If your team spends 20 hours weekly on manual redaction, Sighthound frees up that time for higher-value work (evidence review, case building, training). Most agencies report ROI within 4-6 weeks. Your current workflow stays intact; Sighthound just accelerates the bottleneck step.",
+      "powerPhrase": "You're not replacing your workflow—you're removing the most time-consuming step from it."
+    },
+    {
+      "id": "faq-5",
+      "objection": "Can we pilot before committing to a full license?",
+      "answer": "Absolutely. We offer 30-day pilots on production data with no commitment. You redact 10-50 of your own cases and measure: accuracy, time savings, ease of integration, and team comfort. Most agencies move to full licensing after week two once they see the velocity increase. A pilot also surfaces any workflow-specific customizations we can implement before rollout.",
+      "powerPhrase": "Pilot now, decide later—risk-free at $0 for the first month."
+    },
+    {
+      "id": "faq-6",
+      "objection": "How do we justify this to our procurement/legal team?",
+      "answer": "Frame it as risk mitigation + operational efficiency: (1) Reduces Brady/disclosure liability by automating consistent redaction with audit trails. (2) Cuts contractor/FTE costs by 80-90%, payable within weeks. (3) Meets on-premise deployment and compliance requirements (CJIS, state privacy laws, air-gapped networks) that cloud competitors can't. Provide a TCO analysis comparing current manual redaction spend to $3,500/year plus quantified accuracy/liability improvements. Procurement typically approves in one cycle.",
+      "powerPhrase": "This isn't an expense—it's a liability reduction that pays for itself in labor savings."
+    },
+    {
+      "id": "faq-7",
+      "objection": "What's your accuracy rate compared to manual redaction?",
+      "answer": "Sighthound achieves 95%+ accuracy on faces, license plates, audio, and document PII—matching or exceeding manual redaction by humans while eliminating fatigue-based misses. Manual redaction averages 87-92% accuracy; missed redactions create legal exposure and credibility damage. Our AI consistency, combined with human-in-the-loop review, delivers best-of-both accuracy without the contractor overhead.",
+      "powerPhrase": "AI doesn't get tired; humans do. We're 95%+ accurate because we don't."
+    },
+    {
+      "id": "faq-8",
+      "objection": "What if we only need it for a few months?",
+      "answer": "Sighthound's licensing is annual ($3,500/year), but the pilot is 30 days at $0 commitment. If after 90 days you're convinced it's temporary, we can discuss early exit or flexible pricing for lower-volume periods. That said, most agencies discover redaction is ongoing (new cases, archive work, compliance reviews)—so temporary often becomes permanent. Let's start with the pilot and reassess based on real usage.",
+      "powerPhrase": "Pilot month costs nothing; if it's temporary, you'll know by month three."
+    },
+    {
+      "id": "faq-9",
+      "objection": "We're worried about vendor lock-in.",
+      "answer": "Sighthound's on-premise deployment means your data stays on your hardware—no cloud lock-in. We also provide export-friendly formats for redacted files and metadata, so if you migrate, your work isn't trapped. Plus, our 30-day pilot means you're not locked into anything until you're confident. We'd rather earn your loyalty than force it through contract lock-in.",
+      "powerPhrase": "Your data lives on your servers, not ours—you're in control."
+    },
+    {
+      "id": "faq-10",
+      "objection": "Veritone/CaseGuard gave us a lower quote.",
+      "answer": "Ask for apples-to-apples: (1) What's the total 3-year cost including per-minute, per-seat, or cloud storage overages? (2) Does it deploy on-premise or air-gapped? (3) What's the audit trail and compliance certification? Most lower quotes become expensive when you factor in deployment constraints, scaling bottlenecks, or cloud lock-in. We're confident that once you total TCO and account for on-premise flexibility, Sighthound wins. Want me to build a side-by-side TCO model?",
+      "powerPhrase": "Low sticker price plus deployment constraints usually equals high total cost."
+    }
+  ]
+}
