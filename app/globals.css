@@ -669,6 +669,7 @@ tbody tr:nth-child(even):hover {
     display: grid;
     grid-template-columns: repeat(2, minmax(220px, 1fr)) auto;
     gap: 16px;
+    align-items: stretch;
     align-items: end;
 }
 
@@ -878,11 +879,16 @@ tbody tr:nth-child(even):hover {
     transition: background var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard);
 }
 
-#pricing .pricing-summary-collapse-toggle:hover,
-#pricing .pricing-summary-collapse-toggle:focus-visible {
+#pricing .pricing-summary-collapse-toggle:hover {
     background: var(--sh-blurple-50);
     border-color: var(--sh-blurple-300);
+}
+
+#pricing .pricing-summary-collapse-toggle:focus-visible {
+    background: var(--sh-blurple-50);
+    border-color: var(--sh-blurple);
     outline: none;
+    box-shadow: var(--shadow-focus);
 }
 
 #pricing .pricing-summary-collapse-icon {
@@ -891,20 +897,28 @@ tbody tr:nth-child(even):hover {
 }
 
 #pricing .pricing-summary-viewer.collapsed .pricing-summary-collapse-icon {
-    transform: rotate(-90deg);
+    transform: none;
 }
 
 #pricing .pricing-summary-viewer-body {
-    max-height: 9999px;
+    max-height: var(--pricing-summary-body-height, 5000px);
     overflow: hidden;
     opacity: 1;
-    transition: max-height 0.4s ease, opacity 0.3s ease;
+    visibility: visible;
+    transition: max-height 0.36s ease, opacity 0.28s ease, visibility 0s linear 0s;
+}
+
+#pricing .pricing-summary-viewer-body[hidden],
+#pricing .pricing-summary-view[hidden] {
+    display: none !important;
 }
 
 #pricing .pricing-summary-viewer.collapsed .pricing-summary-viewer-body {
     max-height: 0;
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
+    transition: max-height 0.36s ease, opacity 0.28s ease, visibility 0s linear 0.36s;
 }
 
 #pricing .pricing-summary-view-tabs {
@@ -917,7 +931,7 @@ tbody tr:nth-child(even):hover {
 #pricing .pricing-summary-view-tab {
     padding: 9px 16px;
     background: var(--bg-raised);
-    color: var(--fg-2);
+    color: var(--sh-navy);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-button);
     font-family: var(--font-sans);
@@ -925,14 +939,33 @@ tbody tr:nth-child(even):hover {
     cursor: pointer;
     transition: background var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard);
 }
+#pricing .pricing-summary-view-tab:hover {
+    background: var(--sh-blurple-50);
+    border-color: var(--sh-blurple-300);
+    color: var(--sh-blurple);
+}
 
-#pricing .pricing-summary-view-tab:hover,
-#pricing .pricing-summary-view-tab:focus-visible,
-#pricing .pricing-summary-view-tab.active {
-    background: var(--sh-blurple);
-    border-color: var(--sh-blurple);
-    color: var(--sh-white);
+#pricing .pricing-summary-view-tab:focus-visible {
     outline: none;
+    border-color: var(--sh-blurple);
+    box-shadow: var(--shadow-focus);
+}
+
+#pricing .pricing-summary-view-tab.active,
+#pricing .pricing-summary-view-tab[aria-selected="true"] {
+    background: var(--sh-navy);
+    border-color: var(--sh-navy);
+    color: var(--sh-white);
+    box-shadow: 0 8px 18px rgba(26, 29, 56, 0.18);
+}
+
+#pricing .pricing-summary-view-tab.active:hover,
+#pricing .pricing-summary-view-tab[aria-selected="true"]:hover,
+#pricing .pricing-summary-view-tab.active:focus-visible,
+#pricing .pricing-summary-view-tab[aria-selected="true"]:focus-visible {
+    background: var(--sh-navy-700);
+    border-color: var(--sh-navy-700);
+    color: var(--sh-white);
 }
 
 #pricing .pricing-summary-view {
@@ -941,11 +974,16 @@ tbody tr:nth-child(even):hover {
 
 #pricing .pricing-summary-card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
     gap: 16px;
+    align-items: stretch;
 }
 
 #pricing .pricing-summary-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 230px;
     background: var(--bg-raised);
     border: 1px solid var(--border-subtle);
     border-left: 3px solid var(--sh-blurple);
@@ -963,6 +1001,7 @@ tbody tr:nth-child(even):hover {
 #pricing .pricing-summary-card dl {
     display: grid;
     gap: 10px;
+    flex: 1;
 }
 
 #pricing .pricing-summary-card dt {
@@ -981,10 +1020,30 @@ tbody tr:nth-child(even):hover {
 
 #pricing .pricing-summary-table-wrapper {
     overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    -webkit-overflow-scrolling: touch;
 }
 
 #pricing .pricing-summary-table {
     min-width: 760px;
+}
+
+#pricing .pricing-summary-table th {
+    white-space: nowrap;
+}
+
+#pricing .pricing-summary-table tbody tr {
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+#pricing .pricing-summary-table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+#pricing .pricing-summary-table tbody tr:hover {
+    background-color: var(--sh-blurple-50);
 }
 
 .version-meta {

@@ -801,6 +801,14 @@ function comparePricingCompetitors() {
 
 var PRICING_SUMMARY_VIEW_STORAGE_KEY = 'redactorPricingSummaryView.v1';
 
+function updatePricingSummaryBodyHeight(force) {
+    var viewer = document.getElementById('pricingSummaryViewer');
+    var body = document.getElementById('pricingSummaryViewerBody');
+    if (!viewer || !body || body.hidden) { return; }
+    if (!force && viewer.classList.contains('collapsed')) { return; }
+    body.style.setProperty('--pricing-summary-body-height', body.scrollHeight + 'px');
+}
+
 function getPricingSummaryItems() {
     return Array.prototype.map.call(document.querySelectorAll('template[data-summary-template]'), function(template) {
         var wrapper = document.createElement('div');
@@ -863,6 +871,7 @@ function renderPricingSummaryViews() {
 
     enforcePricingAnalysisLinkTargets(cardView);
     enforcePricingAnalysisLinkTargets(tableBody);
+    updatePricingSummaryBodyHeight();
 }
 
 function setPricingSummaryView(view) {
@@ -876,14 +885,20 @@ function setPricingSummaryView(view) {
     var isCard = nextView === 'card';
     cardView.hidden = !isCard;
     tableView.hidden = isCard;
+    cardView.setAttribute('aria-hidden', isCard ? 'false' : 'true');
+    tableView.setAttribute('aria-hidden', isCard ? 'true' : 'false');
     cardTab.classList.toggle('active', isCard);
     tableTab.classList.toggle('active', !isCard);
     cardTab.setAttribute('aria-selected', isCard ? 'true' : 'false');
     tableTab.setAttribute('aria-selected', isCard ? 'false' : 'true');
+    cardTab.setAttribute('aria-pressed', isCard ? 'true' : 'false');
+    tableTab.setAttribute('aria-pressed', isCard ? 'false' : 'true');
 
     try {
         window.sessionStorage.setItem(PRICING_SUMMARY_VIEW_STORAGE_KEY, nextView);
     } catch (e) {}
+
+    updatePricingSummaryBodyHeight();
 }
 
 function togglePricingSummarySection() {
@@ -891,12 +906,36 @@ function togglePricingSummarySection() {
     var toggle = document.getElementById('pricingSummaryCollapseToggle');
     var label = document.getElementById('pricingSummaryCollapseLabel');
     var body = document.getElementById('pricingSummaryViewerBody');
+    var icon = toggle ? toggle.querySelector('.pricing-summary-collapse-icon') : null;
     if (!viewer || !toggle || !body) { return; }
+    var shouldCollapse = !viewer.classList.contains('collapsed');
+    if (shouldCollapse) {
+        updatePricingSummaryBodyHeight(true);
+        viewer.classList.add('collapsed');
+        toggle.setAttribute('aria-expanded', 'false');
+        body.setAttribute('aria-hidden', 'true');
+        body.setAttribute('inert', '');
+        if (label) { label.textContent = 'Expand'; }
+        if (icon) { icon.textContent = '⌃'; }
+        window.setTimeout(function() {
+            if (viewer.classList.contains('collapsed')) {
+                body.hidden = true;
+            }
+        }, 360);
+        return;
+    }
 
-    var collapsed = viewer.classList.toggle('collapsed');
-    toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-    body.setAttribute('aria-hidden', collapsed ? 'true' : 'false');
-    if (label) { label.textContent = collapsed ? 'Expand' : 'Collapse'; }
+    body.hidden = false;
+    body.removeAttribute('inert');
+    body.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    if (label) { label.textContent = 'Collapse'; }
+    if (icon) { icon.textContent = '⌄'; }
+    updatePricingSummaryBodyHeight(true);
+    window.requestAnimationFrame(function() {
+        viewer.classList.remove('collapsed');
+        updatePricingSummaryBodyHeight(true);
+    });
 }
 
 function handlePricingSummaryViewKey(event) {
@@ -917,9 +956,15 @@ function initPricingSummaryViewer() {
     var toggle = document.getElementById('pricingSummaryCollapseToggle');
     var label = document.getElementById('pricingSummaryCollapseLabel');
     var body = document.getElementById('pricingSummaryViewerBody');
+    var icon = toggle ? toggle.querySelector('.pricing-summary-collapse-icon') : null;
     if (toggle) { toggle.setAttribute('aria-expanded', 'true'); }
     if (label) { label.textContent = 'Collapse'; }
-    if (body) { body.setAttribute('aria-hidden', 'false'); }
+    if (icon) { icon.textContent = '⌄'; }
+    if (body) {
+        body.hidden = false;
+        body.removeAttribute('inert');
+        body.setAttribute('aria-hidden', 'false');
+    }
 
     ['pricingSummaryCardTab', 'pricingSummaryTableTab'].forEach(function(id) {
         var tab = document.getElementById(id);
@@ -933,6 +978,7 @@ function initPricingSummaryViewer() {
         savedView = window.sessionStorage.getItem(PRICING_SUMMARY_VIEW_STORAGE_KEY) || 'card';
     } catch (e) {}
     setPricingSummaryView(savedView);
+    updatePricingSummaryBodyHeight(true);
 }
 
 function handlePricingCompetitorChange() {
@@ -2035,6 +2081,9 @@ if (typeof window !== 'undefined') {
     window.__redactorInit = __redactorInit;
 
     window.addEventListener('scroll', toggleScrollButton);
+    window.addEventListener('resize', function() {
+        try { updatePricingSummaryBodyHeight(); } catch (e) {}
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', __redactorInit);
