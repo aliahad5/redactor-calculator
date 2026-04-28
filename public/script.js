@@ -568,6 +568,7 @@ var marketingResourceCategories = [
     { value: 'datasheets', label: 'Datasheets / PDFs', icon: 'file-text' },
     { value: 'videos', label: 'YouTube Demo Videos', icon: 'play-circle' },
     { value: 'social', label: 'Social Media Links', icon: 'share-2' },
+    { value: 'webinar', label: 'Webinar', icon: 'presentation' },
     { value: 'sales-assets', label: 'Sales Assets', icon: 'handshake' }
 ];
 var marketingAssetLabels = {
@@ -689,6 +690,7 @@ var MARKETING_SEED_RESOURCES = [
     { id: 'seed-redactor-faq', title: 'Redactor FAQ', url: 'https://www.redactor.com/faq', category: 'website', assetType: 'webpage', funnel: 'MOFU', tag: 'FAQ', notes: 'Frequently asked sales and support questions.', source: 'seed' },
     { id: 'seed-redactor-brochure', title: 'Redactor Brochure (Powered by Sighthound)', url: 'https://cdn.prod.website-files.com/61815a2f8dc169fcb7758fa8/6819111318fd95714ab6d51e_Faltech.ai%20Redactor%20Brochure%20%5BPowered%20by%20Sighthound%5D%20(1).pdf', category: 'datasheets', assetType: 'pdf', funnel: 'BOFU', tag: 'Datasheet', notes: 'Public Redactor brochure PDF linked from the homepage.', source: 'seed' },
 ].concat(BLOG_SEED_RESOURCES, [
+    { id: 'seed-webinar-whats-new-in-redactor-v7', title: 'What’s New in Redactor V7', url: 'https://www.redactor.com/blog/whats-new-in-redactor-v7', category: 'webinar', assetType: 'webinar', funnel: 'TOFU', tag: 'Webinar', notes: 'Product update resource for the Redactor V7 release, surfaced in the webinar category for sales and marketing access.', publishDate: 'January 21, 2026', readTime: '8 min read', source: 'seed', isWebinar: true },
     { id: 'seed-case-surveillance-discovery', title: 'Case Study: Surveillance Discovery', url: 'https://www.redactor.com/post/case-study-surveillance-discovery', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Social proof', notes: 'Customer proof point for high-accuracy redaction.', source: 'seed' },
     { id: 'seed-case-bodycam', title: 'Bodycam Footage Redaction Case Study', url: 'https://www.redactor.com/blog/a-bodycam-footage-redaction-solution-customizable-for-a-range-of-uses', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Law enforcement', notes: 'Bodycam and evidence redaction customer story.', source: 'seed' },
     { id: 'seed-youtube-7lQzauchZiQ', title: "How to Keep One Person Visible While Redacting Others | Redactor Tutorial", url: "https://www.youtube.com/watch?v=7lQzauchZiQ", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "7lQzauchZiQ", thumbnail: "https://i.ytimg.com/vi/7lQzauchZiQ/hqdefault.jpg", publishDate: "Apr 22, 2026", viewCount: "11 views", duration: "1:47" },
@@ -1078,6 +1080,7 @@ function inferMarketingAssetType(resource) {
     if (category === 'datasheets') { return 'pdf'; }
     if (category === 'videos' || /youtube\.com|youtu\.be|vimeo\.com|demo-video|watch-demo/i.test(url)) { return 'video'; }
     if (category === 'social' || /linkedin\.com|facebook\.com|instagram\.com|twitter\.com|x\.com/i.test(url)) { return 'social'; }
+    if (category === 'webinar') { return 'webinar'; }
     if (category === 'sales-assets') { return 'sales'; }
     return 'webpage';
 }
