@@ -289,7 +289,7 @@ function updateDiscoveryQuestions() {
 
 // ═══════════════════════════════════════════════════════
 // PRICING CALCULATOR LOGIC
-// Update TIERS or PRICING_COMPETITORS to adjust recommendations.
+// Update TIERS or the Pricing Analysis summary templates to adjust recommendations.
 // ═══════════════════════════════════════════════════════
 var TIERS = {
     free: {
@@ -324,29 +324,6 @@ var TIERS = {
         tagline:    'Best for large teams, API & integrations',
         features:   ['Unlimited users', 'REST API access', 'Air-gapped support', 'OEM integration', 'Server + API install', 'Private Slack + priority support', 'Annual subscription']
     }
-};
-
-var PRICING_COMPETITORS = {
-    lawenforcement: [
-        { name: 'CaseGuard',                pricingModel: 'Per-user subscription',        scalesWith: 'Number of users',                bestFor: 'FOIA redaction, public agencies',       advantage: 'Flat annual pricing, no per-user scaling cost' },
-        { name: 'Motorola CommandCentral',  pricingModel: 'Platform bundle pricing',       scalesWith: 'Platform seats',                 bestFor: 'Agencies already on Motorola ecosystem', advantage: 'Standalone deployment — no platform lock-in' }
-    ],
-    government: [
-        { name: 'Veritone Redact',          pricingModel: 'Usage-based (per minute)',     scalesWith: 'Video volume processed',         bestFor: 'Agencies processing high video volumes', advantage: 'Zero per-minute charges — flat annual cost' },
-        { name: 'Axon Evidence Redaction',  pricingModel: 'Bundled within Axon platform', scalesWith: 'Axon platform seats',            bestFor: 'Agencies using Axon body cameras',      advantage: 'Works with any footage source, no platform dependency' }
-    ],
-    healthcare: [
-        { name: 'Redactable',               pricingModel: 'Per-document / SaaS subscription', scalesWith: 'Document volume',             bestFor: 'Document redaction (PDFs, text)',       advantage: 'Full video + image + audio redaction in one tool' },
-        { name: 'VIDIZMO',                  pricingModel: 'Per-user SaaS subscription',   scalesWith: 'Users + video storage',          bestFor: 'Video management with basic redaction', advantage: 'AI-first redaction — not a bolt-on feature' }
-    ],
-    legal: [
-        { name: 'Opus2',                    pricingModel: 'Per-user / matter-based',      scalesWith: 'Legal matters + users',          bestFor: 'eDiscovery and trial management',       advantage: 'Purpose-built AI video redaction vs. general legal platform' },
-        { name: 'Adobe Premiere (manual)',  pricingModel: 'Creative Cloud subscription',  scalesWith: 'Manual labor hours',             bestFor: 'Teams with existing Adobe workflows',   advantage: 'Automated AI detection — hours vs. days for redaction' }
-    ],
-    other: [
-        { name: 'CaseGuard',                pricingModel: 'Per-user subscription',        scalesWith: 'Number of users',                bestFor: 'General FOIA and records redaction',    advantage: 'Flat annual pricing, no per-user scaling cost' },
-        { name: 'Veritone Redact',          pricingModel: 'Usage-based (per minute)',     scalesWith: 'Video volume processed',         bestFor: 'High-volume cloud-based workflows',     advantage: 'Zero per-minute charges — flat annual cost' }
-    ]
 };
 
 function getRecommendedTier(users, deployment, api) {
@@ -431,6 +408,65 @@ function isPricingSelectionComplete(selections) {
     return !!(selections.users && selections.deployment && selections.api && selections.industry);
 }
 
+function isKnownComparisonPrice(price) {
+    var text = cleanPricingValue(price);
+    if (!text) { return false; }
+
+    var unavailablePatterns = [
+        /\bnot\s+(publicly\s+)?listed\b/i,
+        /\bnot\s+available\b/i,
+        /\bunavailable\b/i,
+        /\bunknown\b/i,
+        /\bestimat(?:e|ed)\b/i,
+        /\btbd\b/i,
+        /\bn\/a\b/i,
+        /\bno\s+pricing\s+available\b/i,
+        /\bcontact\s+(for\s+pricing|us|sales|vendor)\b/i,
+        /\btalk\s+to\s+sales\b/i,
+        /\bcustom\s+(quote|pricing|price)\b/i,
+        /^custom$/i
+    ];
+
+    return !unavailablePatterns.some(function(pattern) {
+        return pattern.test(text);
+    });
+}
+
+function getKnownPricingCompetitorsFromAnalysis() {
+    if (typeof getPricingSummaryItems !== 'function') { return []; }
+
+    return getPricingSummaryItems()
+        .filter(function(item) {
+            var startingPrice = ((item.fields['Starting Price'] || {}).text || '').trim();
+            return isKnownComparisonPrice(startingPrice);
+        })
+        .map(function(item) {
+            return {
+                name: item.name,
+                startingPrice: ((item.fields['Starting Price'] || {}).text || '').trim(),
+                billingModel: ((item.fields['Billing Model'] || {}).text || '').trim(),
+                freeTrial: ((item.fields['Free Trial'] || {}).text || '').trim()
+            };
+        });
+}
+
+function setComparisonEmptyMessage(isVisible) {
+    var table = document.getElementById('compTable');
+    var wrap = table ? table.closest('.comparison-wrap') : null;
+    if (!wrap) { return; }
+
+    var message = document.getElementById('compTableEmptyMessage');
+    if (!message) {
+        message = document.createElement('p');
+        message.id = 'compTableEmptyMessage';
+        message.className = 'comparison-empty-message';
+        wrap.appendChild(message);
+    }
+
+    message.textContent = isVisible ? 'Competitor pricing not available for comparison at this time.' : '';
+    message.hidden = !isVisible;
+}
+
 function clearPricingResult() {
     var outputSection = document.getElementById('output-section');
     if (outputSection) {
@@ -454,6 +490,7 @@ function clearPricingResult() {
 
     var tbody = document.getElementById('compTableBody');
     if (tbody) { tbody.innerHTML = ''; }
+    setComparisonEmptyMessage(false);
 }
 
 function renderPricingResult(selections, options) {
@@ -472,7 +509,7 @@ function renderPricingResult(selections, options) {
     var tierKey     = getRecommendedTier(users, deployment, api);
     var tier        = TIERS[tierKey];
     var explain     = getPricingExplanation(users, deployment, api, industry, tierKey);
-    var competitors = PRICING_COMPETITORS[industry] || PRICING_COMPETITORS.other;
+    var competitors = getKnownPricingCompetitorsFromAnalysis();
 
     var badge = document.getElementById('tierBadge');
     badge.textContent = tier.tagline;
@@ -494,24 +531,26 @@ function renderPricingResult(selections, options) {
 
     var shRow = document.createElement('tr');
     shRow.className = 'sighthound-row';
+    var sighthoundValueLabel = tierKey === 'custom' ? 'Recommended Fit' : 'Best Value';
     shRow.innerHTML =
-        '<td data-label="Tool"><span class="tool-name">Sighthound Redactor</span><span class="tool-price">' + escapeHtml(tier.price) + '</span></td>' +
+        '<td data-label="Tool"><span class="tool-name">✓ Sighthound Redactor</span><span class="value-badge">' + sighthoundValueLabel + '</span></td>' +
+        '<td data-label="Known Price"><span class="comparison-price sighthound-price">' + escapeHtml(tier.price) + '</span></td>' +
         '<td data-label="Pricing Model">Flat annual subscription</td>' +
-        '<td data-label="Scales With">Users + deployment type</td>' +
-        '<td data-label="Best For">' + escapeHtml(tier.tagline) + '</td>' +
-        '<td data-label="Sighthound Advantage"><span class="adv-pill">✓ Recommended</span></td>';
+        '<td data-label="Free Trial">Yes</td>' +
+        '<td data-label="Sighthound Advantage"><span class="adv-pill">✓ No per-minute fees</span></td>';
     tbody.appendChild(shRow);
 
     competitors.forEach(function(comp) {
         var tr = document.createElement('tr');
         tr.innerHTML =
             '<td data-label="Tool"><span class="tool-name">' + escapeHtml(comp.name) + '</span></td>' +
-            '<td data-label="Pricing Model">' + escapeHtml(comp.pricingModel) + '</td>' +
-            '<td data-label="Scales With">' + escapeHtml(comp.scalesWith) + '</td>' +
-            '<td data-label="Best For">' + escapeHtml(comp.bestFor) + '</td>' +
-            '<td data-label="Sighthound Advantage">' + escapeHtml(comp.advantage) + '</td>';
+            '<td data-label="Known Price"><span class="comparison-price">' + escapeHtml(comp.startingPrice) + '</span></td>' +
+            '<td data-label="Pricing Model">' + escapeHtml(comp.billingModel || 'Not listed') + '</td>' +
+            '<td data-label="Free Trial">' + escapeHtml(comp.freeTrial || 'Not listed') + '</td>' +
+            '<td data-label="Sighthound Advantage">Flat annual pricing with unlimited processing avoids usage-based surprises.</td>';
         tbody.appendChild(tr);
     });
+    setComparisonEmptyMessage(competitors.length === 0);
 
     document.getElementById('outputDivider').style.display = 'block';
     var outputSection = document.getElementById('output-section');
