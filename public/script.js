@@ -598,6 +598,304 @@ function renderPricingTemplateSelection(selectId, outputId, templateAttribute, p
     }
 }
 
+function setPricingCompareMessage(message, isWarning) {
+    var messageEl = document.getElementById('pricingCompareMessage');
+    if (!messageEl) { return; }
+    messageEl.textContent = message;
+    messageEl.classList.toggle('warning', !!isWarning);
+}
+
+function clearPricingComparisonResult() {
+    var output = document.getElementById('pricingComparisonResult');
+    if (output) { output.innerHTML = ''; }
+    var details = document.getElementById('pricingCompetitorDetails');
+    if (details) { details.style.display = ''; }
+}
+
+function getTemplateWrapper(templateAttribute, selectedValue) {
+    var template = document.querySelector('template[' + templateAttribute + '="' + selectedValue + '"]');
+    if (!template) { return null; }
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = template.innerHTML;
+    return wrapper;
+}
+
+function cleanPricingLabel(label) {
+    return (label || '')
+        .replace(/^[-–—\s]+/, '')
+        .replace(/:\s*$/, '')
+        .trim();
+}
+
+function cleanPricingValue(value) {
+    return (value || '')
+        .replace(/^[:\s–—-]+/, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function getPricingPanelName(panel) {
+    if (!panel) { return ''; }
+    var paragraphs = panel.querySelectorAll('p');
+    for (var i = 0; i < paragraphs.length; i += 1) {
+        var strong = paragraphs[i].querySelector('strong');
+        if (strong && cleanPricingLabel(strong.textContent) === 'Competitor Name') {
+            return cleanPricingValue(paragraphs[i].textContent.replace(strong.textContent, ''));
+        }
+    }
+    var heading = panel.querySelector('h4');
+    if (!heading) { return 'Selected Competitor'; }
+    return heading.textContent.replace(/^\s*\d+\.\s*/, '').trim();
+}
+
+function collectPricingComparisonFields(panel) {
+    var fields = {};
+    if (!panel) { return fields; }
+    var section = 'General';
+    Array.prototype.forEach.call(panel.children, function(child) {
+        var tagName = child.tagName ? child.tagName.toLowerCase() : '';
+        if (tagName === 'h5') {
+            section = child.textContent.trim();
+            return;
+        }
+        if (tagName !== 'p') { return; }
+        var strong = child.querySelector('strong');
+        if (!strong) { return; }
+        var label = cleanPricingLabel(strong.textContent);
+        if (label === 'Competitor Name') { return; }
+        var value = cleanPricingValue(child.textContent.replace(strong.textContent, ''));
+        fields[section + ' — ' + label] = {
+            value: value.toLowerCase(),
+            element: child
+        };
+    });
+    return fields;
+}
+
+function highlightPricingDifferences(leftPanel, rightPanel) {
+    var leftFields = collectPricingComparisonFields(leftPanel);
+    var rightFields = collectPricingComparisonFields(rightPanel);
+    var keys = {};
+    Object.keys(leftFields).forEach(function(key) { keys[key] = true; });
+    Object.keys(rightFields).forEach(function(key) { keys[key] = true; });
+
+    Object.keys(keys).forEach(function(key) {
+        if (!leftFields[key] || !rightFields[key]) { return; }
+        if (leftFields[key].value !== rightFields[key].value) {
+            leftFields[key].element.classList.add('pricing-difference');
+            rightFields[key].element.classList.add('pricing-difference');
+        }
+    });
+}
+
+function buildPricingComparisonPanel(selectedValue) {
+    var wrapper = getTemplateWrapper('data-pricing-template', selectedValue);
+    if (!wrapper) { return null; }
+    var panel = wrapper.querySelector('.pricing-dropdown-panel');
+    if (!panel) { return null; }
+    var name = getPricingPanelName(panel);
+    var originalHeading = panel.querySelector('h4');
+    if (originalHeading) { originalHeading.remove(); }
+    return {
+        name: name,
+        panel: panel
+    };
+}
+
+function comparePricingCompetitors() {
+    var firstSelect = document.getElementById('pricingCompetitorSelect');
+    var secondSelect = document.getElementById('pricingCompetitorCompareSelect');
+    var output = document.getElementById('pricingComparisonResult');
+    if (!firstSelect || !secondSelect || !output) { return; }
+
+    var firstValue = firstSelect.value;
+    var secondValue = secondSelect.value;
+    output.innerHTML = '';
+
+    if (!firstValue && !secondValue) {
+        setPricingCompareMessage('Select two competitors to compare.', true);
+        return;
+    }
+    if (firstValue && !secondValue) {
+        setPricingCompareMessage('Please select a second competitor to compare.', true);
+        return;
+    }
+    if (!firstValue && secondValue) {
+        setPricingCompareMessage('Please select a first competitor to compare.', true);
+        return;
+    }
+    if (firstValue === secondValue) {
+        setPricingCompareMessage('Please select two different competitors to compare.', true);
+        return;
+    }
+
+    var firstPanel = buildPricingComparisonPanel(firstValue);
+    var secondPanel = buildPricingComparisonPanel(secondValue);
+    if (!firstPanel || !secondPanel) {
+        setPricingCompareMessage('No pricing details are available for one of the selected competitors.', true);
+        return;
+    }
+
+    highlightPricingDifferences(firstPanel.panel, secondPanel.panel);
+
+    output.innerHTML =
+        '<div class="pricing-comparison-grid">' +
+            '<div class="pricing-comparison-column">' +
+                '<h4 class="pricing-compare-heading">' + escapeHtml(firstPanel.name) + '</h4>' +
+                firstPanel.panel.outerHTML +
+            '</div>' +
+            '<div class="pricing-comparison-column">' +
+                '<h4 class="pricing-compare-heading">' + escapeHtml(secondPanel.name) + '</h4>' +
+                secondPanel.panel.outerHTML +
+            '</div>' +
+        '</div>';
+
+    var details = document.getElementById('pricingCompetitorDetails');
+    if (details) { details.style.display = 'none'; }
+    setPricingCompareMessage('Comparison shown. Highlighted fields indicate differences between the selected competitors.', false);
+    enforcePricingAnalysisLinkTargets(output);
+
+    if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch (e) {}
+    }
+}
+
+var PRICING_SUMMARY_VIEW_STORAGE_KEY = 'redactorPricingSummaryView.v1';
+
+function getPricingSummaryItems() {
+    return Array.prototype.map.call(document.querySelectorAll('template[data-summary-template]'), function(template) {
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = template.innerHTML;
+        var panel = wrapper.querySelector('.pricing-summary-panel');
+        var nameNode = panel ? panel.querySelector('h4') : null;
+        var fields = {};
+
+        if (panel) {
+            Array.prototype.forEach.call(panel.querySelectorAll('dl > div'), function(item) {
+                var term = item.querySelector('dt');
+                var detail = item.querySelector('dd');
+                if (!term || !detail) { return; }
+                fields[term.textContent.trim()] = {
+                    text: detail.textContent.trim(),
+                    html: detail.innerHTML
+                };
+            });
+        }
+
+        return {
+            id: template.getAttribute('data-summary-template'),
+            name: nameNode ? nameNode.textContent.trim() : 'Summary Item',
+            fields: fields
+        };
+    });
+}
+
+function renderPricingSummaryViews() {
+    var cardView = document.getElementById('pricingSummaryCardView');
+    var tableBody = document.getElementById('pricingSummaryTableBody');
+    if (!cardView || !tableBody) { return; }
+
+    var items = getPricingSummaryItems();
+    cardView.innerHTML = items.map(function(item) {
+        return (
+            '<article class="pricing-summary-card">' +
+                '<h5>' + escapeHtml(item.name) + '</h5>' +
+                '<dl>' +
+                    '<div><dt>Starting Price</dt><dd>' + escapeHtml((item.fields['Starting Price'] || {}).text || 'Not listed') + '</dd></div>' +
+                    '<div><dt>Billing Model</dt><dd>' + escapeHtml((item.fields['Billing Model'] || {}).text || 'Not listed') + '</dd></div>' +
+                    '<div><dt>Free Trial</dt><dd>' + escapeHtml((item.fields['Free Trial'] || {}).text || 'Not listed') + '</dd></div>' +
+                    '<div><dt>Best Source</dt><dd>' + ((item.fields['Best Source'] || {}).html || 'Not listed') + '</dd></div>' +
+                '</dl>' +
+            '</article>'
+        );
+    }).join('');
+
+    tableBody.innerHTML = items.map(function(item) {
+        return (
+            '<tr>' +
+                '<td data-label="Competitor">' + escapeHtml(item.name) + '</td>' +
+                '<td data-label="Starting Price">' + escapeHtml((item.fields['Starting Price'] || {}).text || 'Not listed') + '</td>' +
+                '<td data-label="Billing Model">' + escapeHtml((item.fields['Billing Model'] || {}).text || 'Not listed') + '</td>' +
+                '<td data-label="Free Trial">' + escapeHtml((item.fields['Free Trial'] || {}).text || 'Not listed') + '</td>' +
+                '<td data-label="Best Source">' + ((item.fields['Best Source'] || {}).html || 'Not listed') + '</td>' +
+            '</tr>'
+        );
+    }).join('');
+
+    enforcePricingAnalysisLinkTargets(cardView);
+    enforcePricingAnalysisLinkTargets(tableBody);
+}
+
+function setPricingSummaryView(view) {
+    var nextView = view === 'table' ? 'table' : 'card';
+    var cardView = document.getElementById('pricingSummaryCardView');
+    var tableView = document.getElementById('pricingSummaryTableView');
+    var cardTab = document.getElementById('pricingSummaryCardTab');
+    var tableTab = document.getElementById('pricingSummaryTableTab');
+    if (!cardView || !tableView || !cardTab || !tableTab) { return; }
+
+    var isCard = nextView === 'card';
+    cardView.hidden = !isCard;
+    tableView.hidden = isCard;
+    cardTab.classList.toggle('active', isCard);
+    tableTab.classList.toggle('active', !isCard);
+    cardTab.setAttribute('aria-selected', isCard ? 'true' : 'false');
+    tableTab.setAttribute('aria-selected', isCard ? 'false' : 'true');
+
+    try {
+        window.sessionStorage.setItem(PRICING_SUMMARY_VIEW_STORAGE_KEY, nextView);
+    } catch (e) {}
+}
+
+function togglePricingSummarySection() {
+    var viewer = document.getElementById('pricingSummaryViewer');
+    var toggle = document.getElementById('pricingSummaryCollapseToggle');
+    var label = document.getElementById('pricingSummaryCollapseLabel');
+    var body = document.getElementById('pricingSummaryViewerBody');
+    if (!viewer || !toggle || !body) { return; }
+
+    var collapsed = viewer.classList.toggle('collapsed');
+    toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    body.setAttribute('aria-hidden', collapsed ? 'true' : 'false');
+    if (label) { label.textContent = collapsed ? 'Expand' : 'Collapse'; }
+}
+
+function handlePricingSummaryViewKey(event) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') { return; }
+    event.preventDefault();
+    var nextView = event.key === 'ArrowRight' ? 'table' : 'card';
+    setPricingSummaryView(nextView);
+    var target = document.getElementById(nextView === 'card' ? 'pricingSummaryCardTab' : 'pricingSummaryTableTab');
+    if (target) { target.focus(); }
+}
+
+function initPricingSummaryViewer() {
+    var viewer = document.getElementById('pricingSummaryViewer');
+    if (!viewer) { return; }
+
+    renderPricingSummaryViews();
+    viewer.classList.remove('collapsed');
+    var toggle = document.getElementById('pricingSummaryCollapseToggle');
+    var label = document.getElementById('pricingSummaryCollapseLabel');
+    var body = document.getElementById('pricingSummaryViewerBody');
+    if (toggle) { toggle.setAttribute('aria-expanded', 'true'); }
+    if (label) { label.textContent = 'Collapse'; }
+    if (body) { body.setAttribute('aria-hidden', 'false'); }
+
+    ['pricingSummaryCardTab', 'pricingSummaryTableTab'].forEach(function(id) {
+        var tab = document.getElementById(id);
+        if (!tab || tab.getAttribute('data-summary-keydown-attached') === 'true') { return; }
+        tab.addEventListener('keydown', handlePricingSummaryViewKey);
+        tab.setAttribute('data-summary-keydown-attached', 'true');
+    });
+
+    var savedView = 'card';
+    try {
+        savedView = window.sessionStorage.getItem(PRICING_SUMMARY_VIEW_STORAGE_KEY) || 'card';
+    } catch (e) {}
+    setPricingSummaryView(savedView);
+}
+
 function handlePricingCompetitorChange() {
     renderPricingTemplateSelection(
         'pricingCompetitorSelect',
@@ -605,6 +903,24 @@ function handlePricingCompetitorChange() {
         'data-pricing-template',
         'Select a competitor to view pricing details.'
     );
+    clearPricingComparisonResult();
+
+    var firstSelect = document.getElementById('pricingCompetitorSelect');
+    var secondSelect = document.getElementById('pricingCompetitorCompareSelect');
+    var firstValue = firstSelect ? firstSelect.value : '';
+    var secondValue = secondSelect ? secondSelect.value : '';
+
+    if (firstValue && !secondValue) {
+        setPricingCompareMessage('Please select a second competitor to compare.', false);
+    } else if (!firstValue && secondValue) {
+        setPricingCompareMessage('Please select a first competitor to compare.', false);
+    } else if (firstValue && secondValue && firstValue === secondValue) {
+        setPricingCompareMessage('Please select two different competitors to compare.', true);
+    } else if (firstValue && secondValue) {
+        setPricingCompareMessage('Select Compare to view the two competitors side by side.', false);
+    } else {
+        setPricingCompareMessage('Select two competitors, then choose Compare to view pricing details side by side.', false);
+    }
 }
 
 function handlePricingSummaryChange() {
@@ -619,6 +935,7 @@ function handlePricingSummaryChange() {
 function initPricingAnalysisDropdowns() {
     [
         { id: 'pricingCompetitorSelect', handler: handlePricingCompetitorChange },
+        { id: 'pricingCompetitorCompareSelect', handler: handlePricingCompetitorChange },
         { id: 'pricingSummarySelect', handler: handlePricingSummaryChange }
     ].forEach(function(config) {
         var el = document.getElementById(config.id);
@@ -630,6 +947,7 @@ function initPricingAnalysisDropdowns() {
     enforcePricingAnalysisLinkTargets();
     handlePricingCompetitorChange();
     handlePricingSummaryChange();
+    initPricingSummaryViewer();
 }
 
 var MARKETING_RESOURCE_STORAGE_KEY = 'redactorMarketingResources.v1';
@@ -1647,6 +1965,9 @@ if (typeof window !== 'undefined') {
     window.resetPricingCalc = resetPricingCalc;
     window.handlePricingCompetitorChange = handlePricingCompetitorChange;
     window.handlePricingSummaryChange = handlePricingSummaryChange;
+    window.comparePricingCompetitors = comparePricingCompetitors;
+    window.setPricingSummaryView = setPricingSummaryView;
+    window.togglePricingSummarySection = togglePricingSummarySection;
     window.toggleScrollButton = toggleScrollButton;
     window.renderMarketingResources = renderMarketingResources;
     window.setMarketingResourceView = setMarketingResourceView;

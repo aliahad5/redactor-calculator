@@ -665,6 +665,97 @@ tbody tr:nth-child(even):hover {
 #pricing .pricing-dropdown-select {
     max-width: 560px;
 }
+#pricing .pricing-compare-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr)) auto;
+    gap: 16px;
+    align-items: end;
+}
+
+#pricing .pricing-compare-field {
+    min-width: 0;
+}
+
+#pricing .pricing-compare-field .pricing-dropdown-select {
+    max-width: 100%;
+}
+
+#pricing .pricing-compare-button {
+    min-height: 43px;
+    padding: 10px 22px;
+    border: 1px solid var(--sh-blurple);
+    border-radius: var(--radius-button);
+    background: var(--sh-blurple);
+    color: var(--sh-white);
+    font-family: var(--font-sans);
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+    box-shadow: 0 4px 12px rgba(79, 96, 220, 0.24);
+}
+
+#pricing .pricing-compare-button:hover {
+    background: var(--sh-blurple-700);
+    box-shadow: 0 7px 16px rgba(79, 96, 220, 0.34);
+}
+
+#pricing .pricing-compare-button:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+#pricing .pricing-compare-button:active {
+    transform: translateY(1px);
+}
+
+#pricing .pricing-inline-message {
+    margin: 14px 0 0 0;
+    color: var(--fg-3);
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+#pricing .pricing-inline-message.warning {
+    color: #9b1d4a;
+}
+
+#pricing .pricing-comparison-output {
+    margin-top: 18px;
+}
+
+#pricing .pricing-comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
+#pricing .pricing-comparison-column {
+    min-width: 0;
+}
+
+#pricing .pricing-compare-heading {
+    margin: 0 0 10px 0;
+    padding: 12px 14px;
+    background: var(--sh-blurple);
+    color: var(--sh-white);
+    border-radius: var(--radius-md);
+}
+
+#pricing .pricing-comparison-column .pricing-dropdown-panel {
+    height: 100%;
+}
+
+#pricing .pricing-difference {
+    margin-left: -8px;
+    margin-right: -8px;
+    padding: 8px;
+    background: #fff6e9;
+    border-left: 3px solid var(--sh-orange-light);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
 
 #pricing .pricing-dropdown-output {
     margin-top: 18px;
@@ -738,6 +829,162 @@ tbody tr:nth-child(even):hover {
 
 #pricing .pricing-template-store {
     display: none;
+}
+#pricing .pricing-summary-viewer {
+    margin-top: 24px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    overflow: hidden;
+}
+
+#pricing .pricing-summary-viewer-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+    padding: 20px;
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+#pricing .pricing-summary-viewer-header h4 {
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#pricing .pricing-summary-viewer-header p {
+    margin: 0;
+    color: var(--fg-3);
+    font-size: 0.92em;
+}
+
+#pricing .pricing-summary-collapse-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 9px 16px;
+    background: var(--bg-raised);
+    color: var(--sh-blurple);
+    border: 1px solid var(--sh-blurple-100);
+    border-radius: var(--radius-button);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard);
+}
+
+#pricing .pricing-summary-collapse-toggle:hover,
+#pricing .pricing-summary-collapse-toggle:focus-visible {
+    background: var(--sh-blurple-50);
+    border-color: var(--sh-blurple-300);
+    outline: none;
+}
+
+#pricing .pricing-summary-collapse-icon {
+    display: inline-block;
+    transition: transform var(--dur-base) var(--ease-standard);
+}
+
+#pricing .pricing-summary-viewer.collapsed .pricing-summary-collapse-icon {
+    transform: rotate(-90deg);
+}
+
+#pricing .pricing-summary-viewer-body {
+    max-height: 9999px;
+    overflow: hidden;
+    opacity: 1;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+#pricing .pricing-summary-viewer.collapsed .pricing-summary-viewer-body {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#pricing .pricing-summary-view-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 18px 20px 0 20px;
+}
+
+#pricing .pricing-summary-view-tab {
+    padding: 9px 16px;
+    background: var(--bg-raised);
+    color: var(--fg-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-button);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard);
+}
+
+#pricing .pricing-summary-view-tab:hover,
+#pricing .pricing-summary-view-tab:focus-visible,
+#pricing .pricing-summary-view-tab.active {
+    background: var(--sh-blurple);
+    border-color: var(--sh-blurple);
+    color: var(--sh-white);
+    outline: none;
+}
+
+#pricing .pricing-summary-view {
+    padding: 20px;
+}
+
+#pricing .pricing-summary-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+#pricing .pricing-summary-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--sh-blurple);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow-xs);
+}
+
+#pricing .pricing-summary-card h5 {
+    margin: 0 0 12px 0;
+    color: var(--sh-navy);
+    font-size: 1em;
+}
+
+#pricing .pricing-summary-card dl {
+    display: grid;
+    gap: 10px;
+}
+
+#pricing .pricing-summary-card dt {
+    color: var(--sh-navy);
+    font-size: 0.76em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+#pricing .pricing-summary-card dd {
+    margin: 3px 0 0 0;
+    color: var(--fg-2);
+    line-height: 1.5;
+}
+
+#pricing .pricing-summary-table-wrapper {
+    overflow-x: auto;
+}
+
+#pricing .pricing-summary-table {
+    min-width: 760px;
 }
 
 .version-meta {
@@ -927,6 +1174,21 @@ a:hover {
     }
     .meta-info {
         gap: 16px;
+    }
+    #pricing .pricing-compare-controls,
+    #pricing .pricing-comparison-grid,
+    #pricing .pricing-summary-card-grid {
+        grid-template-columns: 1fr;
+    }
+    #pricing .pricing-compare-button {
+        width: 100%;
+    }
+    #pricing .pricing-summary-viewer-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    #pricing .pricing-summary-collapse-toggle {
+        justify-content: center;
     }
     .scroll-to-top {
         bottom: 20px;

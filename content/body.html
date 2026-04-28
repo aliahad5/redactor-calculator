@@ -459,29 +459,58 @@
 
             <h3><i data-lucide="list-checks"></i> Competitor Pricing Dropdown</h3>
             <div class="pricing-dropdown-wrapper">
-                <label for="pricingCompetitorSelect" class="version-selector-label"><i data-lucide="building-2"></i> Select a competitor to view pricing details:</label>
-                <select id="pricingCompetitorSelect" class="version-selector pricing-dropdown-select" onchange="handlePricingCompetitorChange()">
-                    <option value="" selected>Select a Competitor</option>
-                    <option value="competitor-1">Veritone Redact</option>
-                    <option value="competitor-2">CaseGuard Studio</option>
-                    <option value="competitor-3">FastRedaction</option>
-                    <option value="competitor-4">MotionDSP Spotlight</option>
-                    <option value="competitor-5">CLIPr</option>
-                    <option value="competitor-6">AssemblyAI</option>
-                    <option value="competitor-7">Lantero Redact</option>
-                    <option value="competitor-8">Pimloc / SecureRedact</option>
-                    <option value="competitor-9">VIDIZMO / Redactor.ai</option>
-                    <option value="competitor-10">Facit Data Systems / Identity Cloak</option>
-                    <option value="competitor-11">Suspect Technologies</option>
-                    <option value="competitor-12">Redactable</option>
-                    <option value="competitor-13">Extract Systems</option>
-                    <option value="competitor-14">iDox.ai</option>
-                    <option value="competitor-15">Everlaw</option>
-                    <option value="competitor-16">TransPerfect</option>
-                </select>
+                <div class="pricing-compare-controls" aria-describedby="pricingCompareMessage">
+                    <div class="pricing-compare-field">
+                        <label for="pricingCompetitorSelect" class="version-selector-label"><i data-lucide="building-2"></i> First competitor:</label>
+                        <select id="pricingCompetitorSelect" class="version-selector pricing-dropdown-select" onchange="handlePricingCompetitorChange()">
+                            <option value="" selected>Select a Competitor</option>
+                            <option value="competitor-1">Veritone Redact</option>
+                            <option value="competitor-2">CaseGuard Studio</option>
+                            <option value="competitor-3">FastRedaction</option>
+                            <option value="competitor-4">MotionDSP Spotlight</option>
+                            <option value="competitor-5">CLIPr</option>
+                            <option value="competitor-6">AssemblyAI</option>
+                            <option value="competitor-7">Lantero Redact</option>
+                            <option value="competitor-8">Pimloc / SecureRedact</option>
+                            <option value="competitor-9">VIDIZMO / Redactor.ai</option>
+                            <option value="competitor-10">Facit Data Systems / Identity Cloak</option>
+                            <option value="competitor-11">Suspect Technologies</option>
+                            <option value="competitor-12">Redactable</option>
+                            <option value="competitor-13">Extract Systems</option>
+                            <option value="competitor-14">iDox.ai</option>
+                            <option value="competitor-15">Everlaw</option>
+                            <option value="competitor-16">TransPerfect</option>
+                        </select>
+                    </div>
+                    <div class="pricing-compare-field">
+                        <label for="pricingCompetitorCompareSelect" class="version-selector-label"><i data-lucide="columns-2"></i> Second competitor:</label>
+                        <select id="pricingCompetitorCompareSelect" class="version-selector pricing-dropdown-select" onchange="handlePricingCompetitorChange()">
+                            <option value="" selected>Select a Competitor</option>
+                            <option value="competitor-1">Veritone Redact</option>
+                            <option value="competitor-2">CaseGuard Studio</option>
+                            <option value="competitor-3">FastRedaction</option>
+                            <option value="competitor-4">MotionDSP Spotlight</option>
+                            <option value="competitor-5">CLIPr</option>
+                            <option value="competitor-6">AssemblyAI</option>
+                            <option value="competitor-7">Lantero Redact</option>
+                            <option value="competitor-8">Pimloc / SecureRedact</option>
+                            <option value="competitor-9">VIDIZMO / Redactor.ai</option>
+                            <option value="competitor-10">Facit Data Systems / Identity Cloak</option>
+                            <option value="competitor-11">Suspect Technologies</option>
+                            <option value="competitor-12">Redactable</option>
+                            <option value="competitor-13">Extract Systems</option>
+                            <option value="competitor-14">iDox.ai</option>
+                            <option value="competitor-15">Everlaw</option>
+                            <option value="competitor-16">TransPerfect</option>
+                        </select>
+                    </div>
+                    <button type="button" class="pricing-compare-button" onclick="comparePricingCompetitors()" aria-controls="pricingComparisonResult">Compare</button>
+                </div>
+                <p id="pricingCompareMessage" class="pricing-inline-message" aria-live="polite">Select two competitors, then choose Compare to view pricing details side by side.</p>
                 <div id="pricingCompetitorDetails" class="pricing-dropdown-output" aria-live="polite">
                     <p class="pricing-dropdown-placeholder">Select a competitor to view pricing details.</p>
                 </div>
+                <div id="pricingComparisonResult" class="pricing-comparison-output" aria-live="polite"></div>
                 <div class="pricing-template-store" hidden>
                 <template data-pricing-template="competitor-1">
                     <div class="pricing-dropdown-panel pricing-competitor-panel">
@@ -1024,6 +1053,39 @@
                         </dl>
                     </div>
                 </template>
+                </div>
+            </div>
+            <div id="pricingSummaryViewer" class="pricing-summary-viewer">
+                <div class="pricing-summary-viewer-header">
+                    <div>
+                        <h4><i data-lucide="layout-grid"></i> All Summary Items</h4>
+                        <p>Review the same summary data as cards or as a single table.</p>
+                    </div>
+                    <button type="button" id="pricingSummaryCollapseToggle" class="pricing-summary-collapse-toggle" onclick="togglePricingSummarySection()" aria-expanded="true" aria-controls="pricingSummaryViewerBody">
+                        <span id="pricingSummaryCollapseLabel">Collapse</span>
+                        <span class="pricing-summary-collapse-icon" aria-hidden="true">⌄</span>
+                    </button>
+                </div>
+                <div id="pricingSummaryViewerBody" class="pricing-summary-viewer-body">
+                    <div class="pricing-summary-view-tabs" role="tablist" aria-label="Pricing summary view options">
+                        <button type="button" id="pricingSummaryCardTab" class="pricing-summary-view-tab active" role="tab" aria-selected="true" aria-controls="pricingSummaryCardView" onclick="setPricingSummaryView('card')">Card View</button>
+                        <button type="button" id="pricingSummaryTableTab" class="pricing-summary-view-tab" role="tab" aria-selected="false" aria-controls="pricingSummaryTableView" onclick="setPricingSummaryView('table')">Table View</button>
+                    </div>
+                    <div id="pricingSummaryCardView" class="pricing-summary-view pricing-summary-card-grid" role="tabpanel" aria-labelledby="pricingSummaryCardTab"></div>
+                    <div id="pricingSummaryTableView" class="pricing-summary-view pricing-summary-table-wrapper" role="tabpanel" aria-labelledby="pricingSummaryTableTab" hidden>
+                        <table class="pricing-summary-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Competitor</th>
+                                    <th scope="col">Starting Price</th>
+                                    <th scope="col">Billing Model</th>
+                                    <th scope="col">Free Trial</th>
+                                    <th scope="col">Best Source</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricingSummaryTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
