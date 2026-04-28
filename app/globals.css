@@ -653,6 +653,92 @@ tbody tr:nth-child(even):hover {
     margin: 10px 0;
     color: var(--fg-2);
 }
+#pricing .pricing-dropdown-wrapper {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin: 20px 0 28px 0;
+    box-shadow: var(--shadow-xs);
+}
+
+#pricing .pricing-dropdown-select {
+    max-width: 560px;
+}
+
+#pricing .pricing-dropdown-output {
+    margin-top: 18px;
+    min-height: 58px;
+}
+
+#pricing .pricing-dropdown-placeholder {
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--bg-raised);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--fg-3);
+    font-weight: 500;
+}
+
+#pricing .pricing-dropdown-panel {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--sh-blurple);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-xs);
+    animation: fadeIn 0.3s ease;
+}
+
+#pricing .pricing-dropdown-panel h4 {
+    margin-top: 0;
+}
+
+#pricing .pricing-dropdown-panel h5 {
+    margin: 18px 0 8px 0;
+    color: var(--sh-navy);
+    font-size: 0.95em;
+    font-weight: 700;
+}
+
+#pricing .pricing-dropdown-panel p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+#pricing .pricing-detail-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 14px 0 0 0;
+}
+
+#pricing .pricing-detail-list div {
+    padding: 14px 16px;
+    background: var(--sh-blurple-50);
+    border: 1px solid var(--sh-blurple-100);
+    border-radius: var(--radius-md);
+}
+
+#pricing .pricing-detail-list dt {
+    margin-bottom: 6px;
+    color: var(--sh-navy);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+#pricing .pricing-detail-list dd {
+    margin: 0;
+    color: var(--fg-2);
+    line-height: 1.5;
+}
+
+#pricing .pricing-template-store {
+    display: none;
+}
 
 .version-meta {
     display: inline-block;

@@ -563,6 +563,75 @@ function resetPricingCalc() {
     if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 
+function enforcePricingAnalysisLinkTargets(root) {
+    var scope = root || document.getElementById('pricing');
+    if (!scope) { return; }
+
+    Array.prototype.forEach.call(scope.querySelectorAll('a'), function(link) {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+    });
+}
+
+function renderPricingTemplateSelection(selectId, outputId, templateAttribute, placeholderText) {
+    var select = document.getElementById(selectId);
+    var output = document.getElementById(outputId);
+    if (!select || !output) { return; }
+
+    var selectedValue = select.value;
+    if (!selectedValue) {
+        output.innerHTML = '<p class="pricing-dropdown-placeholder">' + escapeHtml(placeholderText) + '</p>';
+        return;
+    }
+
+    var template = document.querySelector('template[' + templateAttribute + '="' + selectedValue + '"]');
+    if (!template) {
+        output.innerHTML = '<p class="pricing-dropdown-placeholder">No pricing details are available for the selected item.</p>';
+        return;
+    }
+
+    output.innerHTML = template.innerHTML;
+    enforcePricingAnalysisLinkTargets(output);
+
+    if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch (e) {}
+    }
+}
+
+function handlePricingCompetitorChange() {
+    renderPricingTemplateSelection(
+        'pricingCompetitorSelect',
+        'pricingCompetitorDetails',
+        'data-pricing-template',
+        'Select a competitor to view pricing details.'
+    );
+}
+
+function handlePricingSummaryChange() {
+    renderPricingTemplateSelection(
+        'pricingSummarySelect',
+        'pricingSummaryDetails',
+        'data-summary-template',
+        'Select a summary item to view pricing summary details.'
+    );
+}
+
+function initPricingAnalysisDropdowns() {
+    [
+        { id: 'pricingCompetitorSelect', handler: handlePricingCompetitorChange },
+        { id: 'pricingSummarySelect', handler: handlePricingSummaryChange }
+    ].forEach(function(config) {
+        var el = document.getElementById(config.id);
+        if (!el || el.getAttribute('data-pricing-dropdown-listener-attached') === 'true') { return; }
+        el.addEventListener('change', config.handler);
+        el.setAttribute('data-pricing-dropdown-listener-attached', 'true');
+    });
+
+    enforcePricingAnalysisLinkTargets();
+    handlePricingCompetitorChange();
+    handlePricingSummaryChange();
+}
+
 var MARKETING_RESOURCE_STORAGE_KEY = 'redactorMarketingResources.v1';
 var marketingResourceView = 'card';
 var marketingResources = [];
@@ -1576,6 +1645,8 @@ if (typeof window !== 'undefined') {
     window.calculatePricing = calculatePricing;
     window.handlePricingSelectionChange = handlePricingSelectionChange;
     window.resetPricingCalc = resetPricingCalc;
+    window.handlePricingCompetitorChange = handlePricingCompetitorChange;
+    window.handlePricingSummaryChange = handlePricingSummaryChange;
     window.toggleScrollButton = toggleScrollButton;
     window.renderMarketingResources = renderMarketingResources;
     window.setMarketingResourceView = setMarketingResourceView;
@@ -1594,6 +1665,7 @@ if (typeof window !== 'undefined') {
         try { updateVersionDetails(); } catch (e) {}
         try { toggleScrollButton(); } catch (e) {}
         try { updateDiscoveryQuestions(); } catch (e) {}
+        try { initPricingAnalysisDropdowns(); } catch (e) {}
         try { initPricingCalculator(); } catch (e) {}
         try { initMarketingResources(); } catch (e) {}
         if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {

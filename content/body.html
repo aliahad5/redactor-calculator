@@ -457,9 +457,34 @@
                 <p style="margin-bottom: 0;">Pricing data below uses only official company websites, Capterra product listings, and G2 product listings. Where no verified Capterra or G2 product listing was found for the specific competitor, that field is marked as not publicly listed instead of linking to unrelated products.</p>
             </div>
 
-            <h3><i data-lucide="list-checks"></i> Competitor Pricing Blocks</h3>
-            <div class="positioning-grid">
-                <div class="card">
+            <h3><i data-lucide="list-checks"></i> Competitor Pricing Dropdown</h3>
+            <div class="pricing-dropdown-wrapper">
+                <label for="pricingCompetitorSelect" class="version-selector-label"><i data-lucide="building-2"></i> Select a competitor to view pricing details:</label>
+                <select id="pricingCompetitorSelect" class="version-selector pricing-dropdown-select" onchange="handlePricingCompetitorChange()">
+                    <option value="" selected>Select a Competitor</option>
+                    <option value="competitor-1">Veritone Redact</option>
+                    <option value="competitor-2">CaseGuard Studio</option>
+                    <option value="competitor-3">FastRedaction</option>
+                    <option value="competitor-4">MotionDSP Spotlight</option>
+                    <option value="competitor-5">CLIPr</option>
+                    <option value="competitor-6">AssemblyAI</option>
+                    <option value="competitor-7">Lantero Redact</option>
+                    <option value="competitor-8">Pimloc / SecureRedact</option>
+                    <option value="competitor-9">VIDIZMO / Redactor.ai</option>
+                    <option value="competitor-10">Facit Data Systems / Identity Cloak</option>
+                    <option value="competitor-11">Suspect Technologies</option>
+                    <option value="competitor-12">Redactable</option>
+                    <option value="competitor-13">Extract Systems</option>
+                    <option value="competitor-14">iDox.ai</option>
+                    <option value="competitor-15">Everlaw</option>
+                    <option value="competitor-16">TransPerfect</option>
+                </select>
+                <div id="pricingCompetitorDetails" class="pricing-dropdown-output" aria-live="polite">
+                    <p class="pricing-dropdown-placeholder">Select a competitor to view pricing details.</p>
+                </div>
+                <div class="pricing-template-store" hidden>
+                <template data-pricing-template="competitor-1">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 1. Veritone Redact</h4>
                     <p><strong>Competitor Name:</strong> Veritone Redact</p>
                     <h5>Official Website Pricing</h5>
@@ -467,7 +492,7 @@
                     <p><strong>&mdash; Price:</strong> Custom Quote / Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.veritone.com/applications/redact/">https://www.veritone.com/applications/redact/</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.veritone.com/applications/redact/" target="_blank" rel="noopener noreferrer">https://www.veritone.com/applications/redact/</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -477,9 +502,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction product. Official site routes prospects to sales/contact flow; no public dollar pricing was listed on the allowed sources.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-2">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 2. CaseGuard Studio</h4>
                     <p><strong>Competitor Name:</strong> CaseGuard Studio</p>
                     <h5>Official Website Pricing</h5>
@@ -487,7 +513,7 @@
                     <p><strong>&mdash; Price:</strong> Document Suite $279/month paid annually; Media Suite $299/month paid annually; Ultimate Suite $379/month paid annually; Enterprise Custom Quote</p>
                     <p><strong>&mdash; Billing Model:</strong> Annual / Per seat</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Yes</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://caseguard.com/redaction-pricing/">https://caseguard.com/redaction-pricing/</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://caseguard.com/redaction-pricing/" target="_blank" rel="noopener noreferrer">https://caseguard.com/redaction-pricing/</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -497,9 +523,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Multi-format redaction suite covering documents, images, audio, and video. Public official pricing is annualized monthly per-seat pricing.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-3">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 3. FastRedaction</h4>
                     <p><strong>Competitor Name:</strong> FastRedaction</p>
                     <h5>Official Website Pricing</h5>
@@ -507,7 +534,7 @@
                     <p><strong>&mdash; Price:</strong> Free Trial $0; Pay As You Go $19 + $1 per minute of uploaded video; annual and team plans by contact</p>
                     <p><strong>&mdash; Billing Model:</strong> One-time / Per usage</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Yes</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.fastredaction.com/">https://www.fastredaction.com/</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.fastredaction.com/" target="_blank" rel="noopener noreferrer">https://www.fastredaction.com/</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -517,9 +544,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction tool. Pay-as-you-go pricing is transparent, but total cost scales with uploaded video minutes.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-4">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 4. MotionDSP Spotlight</h4>
                     <p><strong>Competitor Name:</strong> MotionDSP Spotlight</p>
                     <h5>Official Website Pricing</h5>
@@ -527,7 +555,7 @@
                     <p><strong>&mdash; Price:</strong> Spotlight $164/month per license or $1,870/year per license; Forensic $274/month or $3,124/year; Forensic Studio $329/month or $3,751/year</p>
                     <p><strong>&mdash; Billing Model:</strong> Monthly / Annual / Per seat</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> No; free 30-minute demo listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://motiondsp.com/collections/all">https://motiondsp.com/collections/all</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://motiondsp.com/collections/all" target="_blank" rel="noopener noreferrer">https://motiondsp.com/collections/all</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -537,9 +565,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video enhancement and forensic redaction workflow. &#9888;&#65039; Spotlight Pro pricing is ambiguous because public product pricing showed $204 USD while the FAQ directs users to contact MotionDSP for Pro pricing.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-5">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 5. CLIPr</h4>
                     <p><strong>Competitor Name:</strong> CLIPr</p>
                     <h5>Official Website Pricing</h5>
@@ -547,7 +576,7 @@
                     <p><strong>&mdash; Price:</strong> Free $0; Annual $997.50/year or $91.44/month; Team / Dept $9,500/year or $915/month; Enterprise $34,000/year or $3,116.67/month; Need More custom</p>
                     <p><strong>&mdash; Billing Model:</strong> Monthly / Annual / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Freemium</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.clipr.ai/clipr-pricing">https://www.clipr.ai/clipr-pricing</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.clipr.ai/clipr-pricing" target="_blank" rel="noopener noreferrer">https://www.clipr.ai/clipr-pricing</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -557,9 +586,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video intelligence and indexing platform rather than a dedicated redaction tool. Free tier is limited to 1 user and 5 annual hours.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-6">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 6. AssemblyAI</h4>
                     <p><strong>Competitor Name:</strong> AssemblyAI</p>
                     <h5>Official Website Pricing</h5>
@@ -567,7 +597,7 @@
                     <p><strong>&mdash; Price:</strong> $50 free credits; Universal-2 $0.15/hour; Universal-3 Pro $0.21/hour; PII Audio Redaction $0.05/hour add-on</p>
                     <p><strong>&mdash; Billing Model:</strong> Per usage</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Yes</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.assemblyai.com/pricing">https://www.assemblyai.com/pricing</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.assemblyai.com/pricing" target="_blank" rel="noopener noreferrer">https://www.assemblyai.com/pricing</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -575,11 +605,12 @@
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Free / Pay as you go</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Usage-based / Custom</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> <a href="https://www.g2.com/products/assemblyai-speech-to-text-api/pricing">https://www.g2.com/products/assemblyai-speech-to-text-api/pricing</a></p>
+                    <p><strong>&mdash; G2 Direct Link:</strong> <a href="https://www.g2.com/products/assemblyai-speech-to-text-api/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/assemblyai-speech-to-text-api/pricing</a></p>
                     <p><strong>Notes:</strong> Audio-only API vendor; PII audio redaction is separate from video/image/document redaction.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-7">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 7. Lantero Redact</h4>
                     <p><strong>Competitor Name:</strong> Lantero Redact</p>
                     <h5>Official Website Pricing</h5>
@@ -587,7 +618,7 @@
                     <p><strong>&mdash; Price:</strong> Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Per usage / Per seat / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.lantero.se/en/redact">https://www.lantero.se/en/redact</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.lantero.se/en/redact" target="_blank" rel="noopener noreferrer">https://www.lantero.se/en/redact</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -597,9 +628,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Document redaction tool. Official site describes per-page, per-user, and hybrid commercial models but does not publish dollar amounts.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-8">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 8. Pimloc / SecureRedact</h4>
                     <p><strong>Competitor Name:</strong> Pimloc / SecureRedact</p>
                     <h5>Official Website Pricing</h5>
@@ -607,7 +639,7 @@
                     <p><strong>&mdash; Price:</strong> Basic &pound;0; Pro &pound;149 / $189 per month billed annually or &pound;189 / $249 billed monthly; Advanced &pound;239 / $299 billed annually or &pound;309 / $399 billed monthly; Enterprise Custom Quote</p>
                     <p><strong>&mdash; Billing Model:</strong> Monthly / Annual / Per usage / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Freemium</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.secureredact.ai/pricing">https://www.secureredact.ai/pricing</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.secureredact.ai/pricing" target="_blank" rel="noopener noreferrer">https://www.secureredact.ai/pricing</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -617,9 +649,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video/image redaction platform. Basic includes up to 10 minutes/month; Pro includes 30 minutes/month with top-up &pound;5 / $6.50 per minute; Advanced includes 60 minutes/month with top-up &pound;4.50 / $6 per minute.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-9">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 9. VIDIZMO / Redactor.ai</h4>
                     <p><strong>Competitor Name:</strong> VIDIZMO / Redactor.ai</p>
                     <h5>Official Website Pricing</h5>
@@ -627,7 +660,7 @@
                     <p><strong>&mdash; Price:</strong> Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Monthly / Annual / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Yes</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://redactor.ai/pricing-plan">https://redactor.ai/pricing-plan</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://redactor.ai/pricing-plan" target="_blank" rel="noopener noreferrer">https://redactor.ai/pricing-plan</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -637,9 +670,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction platform. Official terms reference monthly/annual order forms and a 7-day free trial; VIDIZMO free-trial pages also reference a 14-day trial. No public dollar pricing was listed on allowed sources.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-10">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 10. Facit Data Systems / Identity Cloak</h4>
                     <p><strong>Competitor Name:</strong> Facit Data Systems / Identity Cloak</p>
                     <h5>Official Website Pricing</h5>
@@ -647,7 +681,7 @@
                     <p><strong>&mdash; Price:</strong> Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Yes</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://facit.ai/video-redaction-software/identity-cloak-pricing">https://facit.ai/video-redaction-software/identity-cloak-pricing</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://facit.ai/video-redaction-software/identity-cloak-pricing" target="_blank" rel="noopener noreferrer">https://facit.ai/video-redaction-software/identity-cloak-pricing</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -657,9 +691,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video identity redaction tool. Official pricing page names tiers and a 7-day trial, but public dollar amounts were not available in the verified page content.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-11">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 11. Suspect Technologies</h4>
                     <p><strong>Competitor Name:</strong> Suspect Technologies</p>
                     <h5>Official Website Pricing</h5>
@@ -667,7 +702,7 @@
                     <p><strong>&mdash; Price:</strong> Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://suspecttech.com/exactredact">https://suspecttech.com/exactredact</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://suspecttech.com/exactredact" target="_blank" rel="noopener noreferrer">https://suspecttech.com/exactredact</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -677,9 +712,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction / face redaction product page was live, but no public pricing was available on the allowed sources.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-12">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 12. Redactable</h4>
                     <p><strong>Competitor Name:</strong> Redactable</p>
                     <h5>Official Website Pricing</h5>
@@ -687,7 +723,7 @@
                     <p><strong>&mdash; Price:</strong> Free up to 3 documents; Starter $19/month; Pro Plus $99/month or $79/month annual; Enterprise Contact us</p>
                     <p><strong>&mdash; Billing Model:</strong> Monthly / Annual / Per usage / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Freemium</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.redactable.com/pricing">https://www.redactable.com/pricing</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.redactable.com/pricing" target="_blank" rel="noopener noreferrer">https://www.redactable.com/pricing</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -697,9 +733,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Document redaction platform. &#9888;&#65039; Live pricing page also displayed $23/month near Starter, likely a monthly/annual toggle conflict; use the live page and flag the ambiguity.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-13">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 13. Extract Systems</h4>
                     <p><strong>Competitor Name:</strong> Extract Systems</p>
                     <h5>Official Website Pricing</h5>
@@ -707,7 +744,7 @@
                     <p><strong>&mdash; Price:</strong> Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.extractsystems.com/redaction-software/">https://www.extractsystems.com/redaction-software/</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.extractsystems.com/redaction-software/" target="_blank" rel="noopener noreferrer">https://www.extractsystems.com/redaction-software/</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -717,9 +754,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Document redaction product for records and identity data. Official site routes users to demos/consultants rather than public prices.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-14">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 14. iDox.ai</h4>
                     <p><strong>Competitor Name:</strong> iDox.ai</p>
                     <h5>Official Website Pricing</h5>
@@ -727,7 +765,7 @@
                     <p><strong>&mdash; Price:</strong> Value Pack $10/month; Starter $390/year or $39/month; Premium $890/year or $89/month; Enterprise talk to sales</p>
                     <p><strong>&mdash; Billing Model:</strong> Monthly / Annual / Per usage / Per seat / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Yes</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.idox.ai/store">https://www.idox.ai/store</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.idox.ai/store" target="_blank" rel="noopener noreferrer">https://www.idox.ai/store</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -737,9 +775,10 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Document redaction and document AI product. Enterprise minimums include 3 users and 50,000 pages; free trial is limited to 20 pages total and first 2 pages per document.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-15">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 15. Everlaw</h4>
                     <p><strong>Competitor Name:</strong> Everlaw</p>
                     <h5>Official Website Pricing</h5>
@@ -747,7 +786,7 @@
                     <p><strong>&mdash; Price:</strong> Custom Quote / Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Annual / Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.everlaw.com/pricing/">https://www.everlaw.com/pricing/</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.everlaw.com/pricing/" target="_blank" rel="noopener noreferrer">https://www.everlaw.com/pricing/</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -755,11 +794,12 @@
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> No pricing available / Contact vendor</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> <a href="https://www.g2.com/products/everlaw/pricing">https://www.g2.com/products/everlaw/pricing</a></p>
+                    <p><strong>&mdash; G2 Direct Link:</strong> <a href="https://www.g2.com/products/everlaw/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/everlaw/pricing</a></p>
                     <p><strong>Notes:</strong> eDiscovery platform, not a standalone video redaction tool. Official pricing is based on data managed and usage; redaction is included in the broader legal platform.</p>
-                </div>
-
-                <div class="card">
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-16">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
                     <h4><i data-lucide="dollar-sign"></i> 16. TransPerfect</h4>
                     <p><strong>Competitor Name:</strong> TransPerfect</p>
                     <h5>Official Website Pricing</h5>
@@ -767,7 +807,7 @@
                     <p><strong>&mdash; Price:</strong> Custom Quote / Not publicly listed</p>
                     <p><strong>&mdash; Billing Model:</strong> Custom</p>
                     <p><strong>&mdash; Free Trial / Free Plan:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.transperfect.com/request-quote">https://www.transperfect.com/request-quote</a></p>
+                    <p><strong>&mdash; Source URL:</strong> <a href="https://www.transperfect.com/request-quote" target="_blank" rel="noopener noreferrer">https://www.transperfect.com/request-quote</a></p>
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
@@ -777,34 +817,214 @@
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
                     <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Legal/eDiscovery services provider. Redaction is part of broader legal and data workflows, not a publicly priced standalone redaction product.</p>
+                    </div>
+                </template>
                 </div>
             </div>
 
-            <h3><i data-lucide="table"></i> Summary Table</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr><th>Competitor</th><th>Starting Price</th><th>Billing Model</th><th>Free Trial</th><th>Best Source</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>FastRedaction</td><td>$0 free trial; paid use starts at $19 + $1/minute</td><td>One-time / Per usage</td><td>Yes</td><td><a href="https://www.fastredaction.com/">Official website</a></td></tr>
-                        <tr><td>CLIPr</td><td>$0 free tier; paid plans start at $997.50/year or $91.44/month</td><td>Monthly / Annual / Custom</td><td>Freemium</td><td><a href="https://www.clipr.ai/clipr-pricing">Official website</a></td></tr>
-                        <tr><td>AssemblyAI</td><td>$0 free credits; paid use starts at $0.15/hour plus redaction add-on</td><td>Per usage / Custom</td><td>Yes</td><td><a href="https://www.assemblyai.com/pricing">Official website</a> / <a href="https://www.g2.com/products/assemblyai-speech-to-text-api/pricing">G2</a></td></tr>
-                        <tr><td>Pimloc / SecureRedact</td><td>&pound;0 Basic; paid plans start at &pound;149 / $189 per month billed annually</td><td>Monthly / Annual / Per usage / Custom</td><td>Freemium</td><td><a href="https://www.secureredact.ai/pricing">Official website</a></td></tr>
-                        <tr><td>Redactable</td><td>$0 free tier; paid plans start at $19/month</td><td>Monthly / Annual / Per usage / Custom</td><td>Freemium</td><td><a href="https://www.redactable.com/pricing">Official website</a></td></tr>
-                        <tr><td>iDox.ai</td><td>$10/month</td><td>Monthly / Annual / Per usage / Per seat / Custom</td><td>Yes</td><td><a href="https://www.idox.ai/store">Official website</a></td></tr>
-                        <tr><td>MotionDSP Spotlight</td><td>$164/month per license or $1,870/year per license</td><td>Monthly / Annual / Per seat</td><td>No; demo available</td><td><a href="https://motiondsp.com/collections/all">Official website</a></td></tr>
-                        <tr><td>CaseGuard Studio</td><td>$279/month paid annually</td><td>Annual / Per seat</td><td>Yes</td><td><a href="https://caseguard.com/redaction-pricing/">Official website</a></td></tr>
-                        <tr><td>Veritone Redact</td><td>Not listed</td><td>Custom</td><td>Not publicly listed</td><td><a href="https://www.veritone.com/applications/redact/">Official website</a></td></tr>
-                        <tr><td>Lantero Redact</td><td>Not listed</td><td>Per usage / Per seat / Custom</td><td>Not publicly listed</td><td><a href="https://www.lantero.se/en/redact">Official website</a></td></tr>
-                        <tr><td>VIDIZMO / Redactor.ai</td><td>Not listed</td><td>Monthly / Annual / Custom</td><td>Yes</td><td><a href="https://redactor.ai/pricing-plan">Official website</a></td></tr>
-                        <tr><td>Facit Data Systems / Identity Cloak</td><td>Not listed</td><td>Custom</td><td>Yes</td><td><a href="https://facit.ai/video-redaction-software/identity-cloak-pricing">Official website</a></td></tr>
-                        <tr><td>Suspect Technologies</td><td>Not listed</td><td>Custom</td><td>Not publicly listed</td><td><a href="https://suspecttech.com/exactredact">Official website</a></td></tr>
-                        <tr><td>Extract Systems</td><td>Not listed</td><td>Custom</td><td>Not publicly listed</td><td><a href="https://www.extractsystems.com/redaction-software/">Official website</a></td></tr>
-                        <tr><td>Everlaw</td><td>Not listed</td><td>Annual / Custom</td><td>Not publicly listed</td><td><a href="https://www.everlaw.com/pricing/">Official website</a> / <a href="https://www.g2.com/products/everlaw/pricing">G2</a></td></tr>
-                        <tr><td>TransPerfect</td><td>Not listed</td><td>Custom</td><td>Not publicly listed</td><td><a href="https://www.transperfect.com/request-quote">Official website</a></td></tr>
-                    </tbody>
-                </table>
+            <h3><i data-lucide="table"></i> Summary Dropdown</h3>
+            <div class="pricing-dropdown-wrapper">
+                <label for="pricingSummarySelect" class="version-selector-label"><i data-lucide="list"></i> Select a summary item to view:</label>
+                <select id="pricingSummarySelect" class="version-selector pricing-dropdown-select" onchange="handlePricingSummaryChange()">
+                    <option value="" selected>Select a Summary Item</option>
+                    <option value="summary-1">FastRedaction</option>
+                    <option value="summary-2">CLIPr</option>
+                    <option value="summary-3">AssemblyAI</option>
+                    <option value="summary-4">Pimloc / SecureRedact</option>
+                    <option value="summary-5">Redactable</option>
+                    <option value="summary-6">iDox.ai</option>
+                    <option value="summary-7">MotionDSP Spotlight</option>
+                    <option value="summary-8">CaseGuard Studio</option>
+                    <option value="summary-9">Veritone Redact</option>
+                    <option value="summary-10">Lantero Redact</option>
+                    <option value="summary-11">VIDIZMO / Redactor.ai</option>
+                    <option value="summary-12">Facit Data Systems / Identity Cloak</option>
+                    <option value="summary-13">Suspect Technologies</option>
+                    <option value="summary-14">Extract Systems</option>
+                    <option value="summary-15">Everlaw</option>
+                    <option value="summary-16">TransPerfect</option>
+                </select>
+                <div id="pricingSummaryDetails" class="pricing-dropdown-output" aria-live="polite">
+                    <p class="pricing-dropdown-placeholder">Select a summary item to view pricing summary details.</p>
+                </div>
+                <div class="pricing-template-store" hidden>
+                <template data-summary-template="summary-1">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> FastRedaction</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$0 free trial; paid use starts at $19 + $1/minute</dd></div>
+                            <div><dt>Billing Model</dt><dd>One-time / Per usage</dd></div>
+                            <div><dt>Free Trial</dt><dd>Yes</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.fastredaction.com/" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-2">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> CLIPr</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$0 free tier; paid plans start at $997.50/year or $91.44/month</dd></div>
+                            <div><dt>Billing Model</dt><dd>Monthly / Annual / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Freemium</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.clipr.ai/clipr-pricing" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-3">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> AssemblyAI</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$0 free credits; paid use starts at $0.15/hour plus redaction add-on</dd></div>
+                            <div><dt>Billing Model</dt><dd>Per usage / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Yes</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.assemblyai.com/pricing" target="_blank" rel="noopener noreferrer">Official website</a> / <a href="https://www.g2.com/products/assemblyai-speech-to-text-api/pricing" target="_blank" rel="noopener noreferrer">G2</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-4">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Pimloc / SecureRedact</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>&pound;0 Basic; paid plans start at &pound;149 / $189 per month billed annually</dd></div>
+                            <div><dt>Billing Model</dt><dd>Monthly / Annual / Per usage / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Freemium</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.secureredact.ai/pricing" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-5">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Redactable</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$0 free tier; paid plans start at $19/month</dd></div>
+                            <div><dt>Billing Model</dt><dd>Monthly / Annual / Per usage / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Freemium</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.redactable.com/pricing" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-6">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> iDox.ai</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$10/month</dd></div>
+                            <div><dt>Billing Model</dt><dd>Monthly / Annual / Per usage / Per seat / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Yes</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.idox.ai/store" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-7">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> MotionDSP Spotlight</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$164/month per license or $1,870/year per license</dd></div>
+                            <div><dt>Billing Model</dt><dd>Monthly / Annual / Per seat</dd></div>
+                            <div><dt>Free Trial</dt><dd>No; demo available</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://motiondsp.com/collections/all" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-8">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> CaseGuard Studio</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>$279/month paid annually</dd></div>
+                            <div><dt>Billing Model</dt><dd>Annual / Per seat</dd></div>
+                            <div><dt>Free Trial</dt><dd>Yes</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://caseguard.com/redaction-pricing/" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-9">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Veritone Redact</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Not publicly listed</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.veritone.com/applications/redact/" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-10">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Lantero Redact</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Per usage / Per seat / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Not publicly listed</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.lantero.se/en/redact" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-11">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> VIDIZMO / Redactor.ai</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Monthly / Annual / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Yes</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://redactor.ai/pricing-plan" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-12">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Facit Data Systems / Identity Cloak</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Yes</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://facit.ai/video-redaction-software/identity-cloak-pricing" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-13">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Suspect Technologies</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Not publicly listed</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://suspecttech.com/exactredact" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-14">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Extract Systems</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Not publicly listed</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.extractsystems.com/redaction-software/" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-15">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> Everlaw</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Annual / Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Not publicly listed</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.everlaw.com/pricing/" target="_blank" rel="noopener noreferrer">Official website</a> / <a href="https://www.g2.com/products/everlaw/pricing" target="_blank" rel="noopener noreferrer">G2</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                <template data-summary-template="summary-16">
+                    <div class="pricing-dropdown-panel pricing-summary-panel">
+                        <h4><i data-lucide="list"></i> TransPerfect</h4>
+                        <dl class="pricing-detail-list">
+                            <div><dt>Starting Price</dt><dd>Not listed</dd></div>
+                            <div><dt>Billing Model</dt><dd>Custom</dd></div>
+                            <div><dt>Free Trial</dt><dd>Not publicly listed</dd></div>
+                            <div><dt>Best Source</dt><dd><a href="https://www.transperfect.com/request-quote" target="_blank" rel="noopener noreferrer">Official website</a></dd></div>
+                        </dl>
+                    </div>
+                </template>
+                </div>
             </div>
         </section>
 
