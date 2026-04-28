@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('renders pricing recommendation section', () => {
+  const html = renderToString(<App />);
+  expect(html).toContain('Competitive Pricing Analysis');
+  expect(html).toContain('How Sighthound Redactor Compares');
 });
