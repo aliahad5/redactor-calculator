@@ -349,6 +349,287 @@ var PRICING_COMPETITORS = {
     ]
 };
 
+var PRICING_ANALYSIS_COMPETITORS = [
+    {
+        id: 'sighthound',
+        company: 'Sighthound Redactor',
+        pricingModel: 'annualPlans',
+        explicitPricing: '$2,500/year Pro; $3,500/year Enterprise',
+        plans: [
+            { name: 'Pro', amount: 2500, includedUsers: 1, includedUsage: 'unlimited video length' },
+            { name: 'Enterprise', amount: 3500, includedUsers: 5, includedUsage: 'unlimited processing' }
+        ],
+        scalability: 'Flat annual cost through 5 users with unlimited processing.',
+        valueScore: 5,
+        valueDrivers: [
+            'Unlimited processing keeps marginal video volume cost at $0 after the license.',
+            'Enterprise covers 1-5 users without per-seat escalation.',
+            'Supports desktop, server, cloud, and offline/air-gapped deployment paths.'
+        ],
+        tradeOffs: [
+            'Not the lowest entry price when a competitor base tier is enough.',
+            'Annual licensing can be less attractive for temporary or very low-volume use.',
+            'Teams beyond 5 users, developer needs, or API integration require custom pricing.'
+        ],
+        deploymentCapabilities: ['cloud', 'desktop', 'server', 'onPremise', 'offline']
+    },
+    {
+        id: 'veritone',
+        company: 'Veritone Redact',
+        pricingModel: 'annualRange',
+        explicitPricing: '$2,400-$250K+/year',
+        plan: { amount: 2400, amountMax: 250000 },
+        scalability: 'Lowest listed entry price is attractive, but the explicit range scales up to $250K+/year.',
+        valueScore: 4,
+        valueDrivers: [
+            'Strong fit for enterprise cloud deployments.',
+            'Tiered annual model can start below Sighthound Pro and Enterprise.',
+            'Useful when cloud-first evidence workflows are acceptable.'
+        ],
+        tradeOffs: [
+            'Cloud-only deployment is not suitable for offline or air-gapped requirements.',
+            'The listed range is broad, so the entry price may not represent enterprise-scale use.',
+            'Usage, seat, support, and overage details are not explicit in this dataset.'
+        ],
+        deploymentCapabilities: ['cloud']
+    },
+    {
+        id: 'caseguard',
+        company: 'CaseGuard Studio',
+        pricingModel: 'monthlyPerSeatRange',
+        explicitPricing: '$279-$379/month per license',
+        plan: { amount: 279, amountMax: 379 },
+        scalability: 'Annual cost increases with every additional user seat.',
+        valueScore: 4,
+        valueDrivers: [
+            'Broad desktop workflow fit for teams that prefer seat-based licensing.',
+            'Processing is listed as included in the pricing analysis TCO example.',
+            'Useful when a desktop/on-premise workflow is preferred over cloud-only tools.'
+        ],
+        tradeOffs: [
+            'Per-seat pricing scales quickly as users are added.',
+            'At 3+ users, the explicit annualized price exceeds Sighthound Enterprise.',
+            'Usage limits and support details are not explicit in this dataset.'
+        ],
+        deploymentCapabilities: ['desktop', 'onPremise']
+    },
+    {
+        id: 'fastredaction',
+        company: 'FastRedaction',
+        pricingModel: 'usagePerMinute',
+        explicitPricing: '$19/minute + $1 base fee',
+        plan: { amount: 19, baseFee: 1, baseFeeUnit: 'job' },
+        scalability: 'Can be cheapest at very low usage, but cost rises directly with processing minutes and jobs.',
+        valueScore: 3,
+        valueDrivers: [
+            'No annual subscription is listed, which can fit infrequent redaction needs.',
+            'Usage-based billing aligns cost to actual processing minutes.',
+            'Best suited to occasional light users in the pricing analysis.'
+        ],
+        tradeOffs: [
+            'Costs increase linearly with every processed minute and base-fee job.',
+            'Cloud-only workflow is not suitable for offline or air-gapped requirements.',
+            'Limited audio/document workflow details are listed in the current dataset.'
+        ],
+        deploymentCapabilities: ['cloud']
+    }
+];
+
+var pricingAnalysisSelected = {};
+PRICING_ANALYSIS_COMPETITORS.forEach(function(competitor) {
+    pricingAnalysisSelected[competitor.id] = true;
+});
+
+function pricingCurrency(amount) {
+    return '$' + Math.round(amount).toLocaleString('en-US');
+}
+
+function pricingAnnualRange(result) {
+    if (!result || result.minAnnual == null) { return 'Not comparable'; }
+    if (result.maxAnnual && result.maxAnnual !== result.minAnnual) {
+        return pricingCurrency(result.minAnnual) + '-' + pricingCurrency(result.maxAnnual) + '/year';
+    }
+    return pricingCurrency(result.minAnnual) + '/year';
+}
+
+function getPricingScenario() {
+    var modeEl = document.getElementById('pricingDecisionMode');
+    var usersEl = document.getElementById('pricingScenarioUsers');
+    var minutesEl = document.getElementById('pricingScenarioMinutes');
+    var jobsEl = document.getElementById('pricingScenarioJobs');
+    var deploymentEl = document.getElementById('pricingScenarioDeployment');
+    return {
+        mode: modeEl ? modeEl.value : 'bestPrice',
+        users: usersEl ? parseInt(usersEl.value, 10) : 3,
+        monthlyMinutes: minutesEl ? parseInt(minutesEl.value, 10) : 100,
+        monthlyJobs: jobsEl ? parseInt(jobsEl.value, 10) : 10,
+        deploymentNeed: deploymentEl ? deploymentEl.value : 'any'
+    };
+}
+
+function hasPricingDeploymentFit(competitor, deploymentNeed) {
+    if (deploymentNeed === 'any') { return true; }
+    return competitor.deploymentCapabilities.indexOf(deploymentNeed) !== -1;
+}
+
+function normalizePricingAnalysisCompetitor(competitor, scenario) {
+    var normalized = null;
+    if (competitor.pricingModel === 'annualPlans') {
+        var matchingPlans = competitor.plans.filter(function(plan) {
+            return plan.includedUsers >= scenario.users;
+        }).sort(function(a, b) {
+            return a.amount - b.amount;
+        });
+        if (!matchingPlans.length) {
+            return Object.assign({}, competitor, {
+                isComparable: false,
+                isViable: false,
+                exclusionReason: 'No explicit listed plan covers ' + scenario.users + ' users.'
+            });
+        }
+        var selectedPlan = matchingPlans[0];
+        normalized = {
+            minAnnual: selectedPlan.amount,
+            maxAnnual: selectedPlan.amount,
+            note: selectedPlan.name + ': ' + pricingCurrency(selectedPlan.amount) + '/year for up to ' + selectedPlan.includedUsers + ' user' + (selectedPlan.includedUsers === 1 ? '' : 's') + '; ' + selectedPlan.includedUsage + '.'
+        };
+    }
+    if (competitor.pricingModel === 'annualRange') {
+        normalized = {
+            minAnnual: competitor.plan.amount,
+            maxAnnual: competitor.plan.amountMax,
+            note: 'Uses explicit listed annual entry price floor of ' + pricingCurrency(competitor.plan.amount) + '/year; upper listed range is ' + pricingCurrency(competitor.plan.amountMax) + '+/year.'
+        };
+    }
+    if (competitor.pricingModel === 'monthlyPerSeatRange') {
+        normalized = {
+            minAnnual: competitor.plan.amount * scenario.users * 12,
+            maxAnnual: competitor.plan.amountMax * scenario.users * 12,
+            note: pricingCurrency(competitor.plan.amount) + '-' + pricingCurrency(competitor.plan.amountMax) + '/month/license x ' + scenario.users + ' user' + (scenario.users === 1 ? '' : 's') + ' x 12 months.'
+        };
+    }
+    if (competitor.pricingModel === 'usagePerMinute') {
+        var monthlyCost = (competitor.plan.amount * scenario.monthlyMinutes) + (competitor.plan.baseFee * scenario.monthlyJobs);
+        normalized = {
+            minAnnual: monthlyCost * 12,
+            maxAnnual: monthlyCost * 12,
+            note: pricingCurrency(competitor.plan.amount) + '/minute x ' + scenario.monthlyMinutes.toLocaleString('en-US') + ' minutes/month + ' + pricingCurrency(competitor.plan.baseFee) + '/' + competitor.plan.baseFeeUnit + ' x ' + scenario.monthlyJobs.toLocaleString('en-US') + ' jobs/month, annualized.'
+        };
+    }
+    if (!normalized) {
+        return Object.assign({}, competitor, {
+            isComparable: false,
+            isViable: false,
+            exclusionReason: 'Unsupported explicit pricing model.'
+        });
+    }
+    var deploymentFit = hasPricingDeploymentFit(competitor, scenario.deploymentNeed);
+    return Object.assign({}, competitor, normalized, {
+        isComparable: true,
+        isViable: deploymentFit,
+        exclusionReason: deploymentFit ? '' : 'Does not match the selected deployment requirement.'
+    });
+}
+
+function choosePricingAnalysisRecommendation(results, mode) {
+    var viable = results.filter(function(result) { return result.isComparable && result.isViable; });
+    if (!viable.length) { return null; }
+    var byPrice = viable.slice().sort(function(a, b) {
+        return (a.minAnnual - b.minAnnual) || (b.valueScore - a.valueScore) || a.company.localeCompare(b.company);
+    });
+    var byValue = viable.slice().sort(function(a, b) {
+        return (b.valueScore - a.valueScore) || (a.minAnnual - b.minAnnual) || a.company.localeCompare(b.company);
+    });
+    var winner = mode === 'bestPrice' ? byPrice[0] : byValue[0];
+    return {
+        winner: winner,
+        cheapest: byPrice[0],
+        nextLowest: byPrice.filter(function(result) { return result.id !== winner.id; })[0] || null
+    };
+}
+
+function pricingAnalysisReason(recommendation, mode) {
+    var winner = recommendation.winner;
+    var cheapest = recommendation.cheapest;
+    var nextLowest = recommendation.nextLowest;
+    if (mode === 'bestPrice') {
+        return winner.company + ' has the lowest normalized explicit annual cost at ' + pricingAnnualRange(winner) + (nextLowest ? '. The next-lowest viable option is ' + nextLowest.company + ' at ' + pricingAnnualRange(nextLowest) + '.' : '.');
+    }
+    if (winner.id === cheapest.id) {
+        return winner.company + ' is also the lowest normalized explicit annual cost at ' + pricingAnnualRange(winner) + ' and has the strongest value fit among selected viable options.';
+    }
+    return winner.company + ' is not the lowest-price option; ' + cheapest.company + ' is lower at ' + pricingAnnualRange(cheapest) + '. In Best Value mode, ' + winner.company + ' wins on value score and scalability at ' + pricingAnnualRange(winner) + '.';
+}
+
+function pricingAnalysisTradeOffs(recommendation) {
+    var winner = recommendation.winner;
+    var cheapest = recommendation.cheapest;
+    var nextLowest = recommendation.nextLowest;
+    var tradeOffs = winner.tradeOffs.slice();
+    if (winner.id !== cheapest.id) {
+        tradeOffs.unshift(winner.company + ' costs ' + pricingCurrency(winner.minAnnual - cheapest.minAnnual) + ' more than ' + cheapest.company + "'s lowest normalized explicit price under these filters.");
+    } else if (nextLowest) {
+        tradeOffs.unshift(winner.company + ' is the lowest-price option under these filters; the next-lowest viable option is ' + nextLowest.company + ' at ' + pricingAnnualRange(nextLowest) + '.');
+    }
+    return tradeOffs.slice(0, 3);
+}
+
+function togglePricingCompetitor(competitorId) {
+    var selectedIds = Object.keys(pricingAnalysisSelected).filter(function(id) { return pricingAnalysisSelected[id]; });
+    if (pricingAnalysisSelected[competitorId] && selectedIds.length === 1) { return; }
+    pricingAnalysisSelected[competitorId] = !pricingAnalysisSelected[competitorId];
+    updatePricingRecommendation();
+}
+
+function renderPricingCompetitorToggles() {
+    var container = document.getElementById('pricingCompetitorToggles');
+    if (!container) { return; }
+    container.innerHTML = PRICING_ANALYSIS_COMPETITORS.map(function(competitor) {
+        var active = pricingAnalysisSelected[competitor.id];
+        return '<button type="button" class="pricing-toggle' + (active ? ' active' : '') + '" aria-pressed="' + (active ? 'true' : 'false') + '" onclick="togglePricingCompetitor(\'' + competitor.id + '\')">' +
+            '<span>' + escapeHtml(competitor.company) + '</span>' +
+            '<small>' + escapeHtml(competitor.explicitPricing) + '</small>' +
+            '</button>';
+    }).join('');
+}
+
+function updatePricingRecommendation() {
+    var output = document.getElementById('pricingRecommendationOutput');
+    var normalizedContainer = document.getElementById('pricingNormalizedInputs');
+    if (!output || !normalizedContainer) { return; }
+    var scenario = getPricingScenario();
+    var selectedCompetitors = PRICING_ANALYSIS_COMPETITORS.filter(function(competitor) {
+        return pricingAnalysisSelected[competitor.id];
+    });
+    var results = selectedCompetitors.map(function(competitor) {
+        return normalizePricingAnalysisCompetitor(competitor, scenario);
+    });
+    var recommendation = choosePricingAnalysisRecommendation(results, scenario.mode);
+    renderPricingCompetitorToggles();
+    if (!recommendation) {
+        output.innerHTML = '<p>No viable recommendation is available for the selected filters. Add an explicitly priced competitor or loosen the deployment requirement.</p>';
+    } else {
+        output.innerHTML =
+            '<h4>Recommended Solution: ' + escapeHtml(recommendation.winner.company) + '</h4>' +
+            '<p><strong>Why (Pricing-Based):</strong> ' + escapeHtml(pricingAnalysisReason(recommendation, scenario.mode)) + '</p>' +
+            '<p><strong>Why (Value-Based):</strong></p>' +
+            '<ul>' + recommendation.winner.valueDrivers.slice(0, 3).map(function(driver) { return '<li>' + escapeHtml(driver) + '</li>'; }).join('') + '</ul>' +
+            '<p><strong>Trade-offs:</strong></p>' +
+            '<ul>' + pricingAnalysisTradeOffs(recommendation).map(function(item) { return '<li>' + escapeHtml(item) + '</li>'; }).join('') + '</ul>';
+    }
+    normalizedContainer.innerHTML = results.map(function(result) {
+        var isWinner = recommendation && recommendation.winner.id === result.id;
+        return '<div class="pricing-normalized-card' + (isWinner ? ' winner' : '') + (!result.isViable ? ' excluded' : '') + '">' +
+            '<div class="pricing-normalized-header"><h5>' + escapeHtml(result.company) + '</h5><span>' + escapeHtml(result.isViable ? pricingAnnualRange(result) : 'Excluded') + '</span></div>' +
+            '<p><strong>Listed pricing:</strong> ' + escapeHtml(result.explicitPricing) + '</p>' +
+            '<p><strong>Normalization:</strong> ' + escapeHtml(result.note || result.exclusionReason) + '</p>' +
+            '<p><strong>Scalability:</strong> ' + escapeHtml(result.scalability) + '</p>' +
+            '<p><strong>Value score:</strong> ' + escapeHtml(String(result.valueScore)) + '/5</p>' +
+            (!result.isViable ? '<p class="pricing-exclusion-note"><strong>Reason:</strong> ' + escapeHtml(result.exclusionReason) + '</p>' : '') +
+            '</div>';
+    }).join('');
+}
+
 function getRecommendedTier(users, deployment, api) {
     if (api === 'yes-automation' || api === 'yes-oem' || deployment === 'airgapped' || users === '11+') {
         return 'custom';
@@ -1518,6 +1799,8 @@ if (typeof window !== 'undefined') {
     window.updateComparison = updateComparison;
     window.updateDiscoveryQuestions = updateDiscoveryQuestions;
     window.updateVersionDetails = updateVersionDetails;
+    window.updatePricingRecommendation = updatePricingRecommendation;
+    window.togglePricingCompetitor = togglePricingCompetitor;
     window.calculatePricing = calculatePricing;
     window.resetPricingCalc = resetPricingCalc;
     window.toggleScrollButton = toggleScrollButton;
@@ -1536,6 +1819,7 @@ if (typeof window !== 'undefined') {
     function __redactorInit() {
         try { updateComparison(); } catch (e) {}
         try { updateVersionDetails(); } catch (e) {}
+        try { updatePricingRecommendation(); } catch (e) {}
         try { toggleScrollButton(); } catch (e) {}
         try { updateDiscoveryQuestions(); } catch (e) {}
         try { initMarketingResources(); } catch (e) {}

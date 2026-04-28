@@ -809,6 +809,183 @@ a {
 a:hover {
     color: var(--sh-blurple-700);
 }
+.pricing-recommendation-panel {
+    margin: 24px 0 28px 0;
+    padding: 24px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.pricing-recommendation-panel h3 {
+    margin-top: 0;
+}
+
+.pricing-recommendation-note,
+.pricing-meta-note {
+    margin: 0 0 16px 0;
+    color: var(--fg-3);
+    line-height: 1.55;
+}
+
+.pricing-control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.pricing-control {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.pricing-control label,
+.pricing-control > span,
+.pricing-toggle-label {
+    color: var(--sh-navy);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.pricing-control select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 11px 36px 11px 12px;
+    background: var(--bg-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238891A5' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--sh-navy);
+    font: inherit;
+}
+
+.pricing-control select:focus {
+    outline: none;
+    border-color: var(--sh-blurple);
+    box-shadow: 0 0 0 3px rgba(79, 96, 220, 0.12);
+}
+
+.pricing-toggle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin: 10px 0 18px 0;
+}
+
+.pricing-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 74px;
+    padding: 13px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--fg-2);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard);
+}
+
+.pricing-toggle span {
+    color: var(--sh-navy);
+    font-weight: 700;
+}
+
+.pricing-toggle small {
+    color: var(--fg-3);
+    line-height: 1.35;
+}
+
+.pricing-toggle.active {
+    background: var(--sh-blurple-50);
+    border-color: var(--sh-blurple);
+    box-shadow: 0 0 0 3px rgba(79, 96, 220, 0.08);
+}
+
+.pricing-recommendation-output {
+    margin: 18px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(79, 96, 220, 0.08), rgba(246, 36, 112, 0.05));
+    border: 1px solid var(--sh-blurple-100);
+    border-left: 4px solid var(--sh-blurple);
+    border-radius: var(--radius-lg);
+}
+
+.pricing-recommendation-output h4 {
+    margin: 0 0 12px 0;
+    color: var(--sh-navy);
+}
+
+.pricing-recommendation-output p {
+    margin: 10px 0;
+}
+
+.pricing-recommendation-output ul {
+    margin: 8px 0 12px 20px;
+}
+
+.pricing-normalized-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.pricing-normalized-card {
+    padding: 16px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+}
+
+.pricing-normalized-card.winner {
+    border-color: var(--sh-blurple);
+    box-shadow: 0 0 0 3px rgba(79, 96, 220, 0.08);
+}
+
+.pricing-normalized-card.excluded {
+    opacity: 0.72;
+    background: var(--sh-gray);
+}
+
+.pricing-normalized-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.pricing-normalized-header h5 {
+    margin: 0;
+    color: var(--sh-navy);
+    font-size: 1em;
+}
+
+.pricing-normalized-header span {
+    flex-shrink: 0;
+    padding: 4px 8px;
+    background: var(--sh-blurple-50);
+    color: var(--sh-blurple);
+    border-radius: var(--radius-pill);
+    font-size: 0.78em;
+    font-weight: 800;
+}
+
+.pricing-normalized-card p {
+    margin: 8px 0;
+    color: var(--fg-2);
+    line-height: 1.5;
+}
+
+.pricing-exclusion-note {
+    color: var(--sh-orange-red) !important;
+}
 
 @media (max-width: 768px) {
     .container {

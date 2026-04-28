@@ -465,19 +465,22 @@
                 </div>
                 <div class="card">
                     <h4><i data-lucide="dollar-sign"></i> Veritone Redact</h4>
-                    <p><strong>Model:</strong> Tiered annual subscriptions — contact vendor for quote</p>
+                    <p><strong>Model:</strong> Tiered annual subscriptions</p>
+                    <p><strong>Entry Price:</strong> $2,400-$250K+/year</p>
                     <p><strong>Pricing Behavior:</strong> Scales rapidly from entry tier to enterprise deployments with support and overage add-ons</p>
                     <p><strong>Sweet Spot:</strong> Enterprise cloud deployments</p>
                 </div>
                 <div class="card">
                     <h4><i data-lucide="dollar-sign"></i> CaseGuard Studio</h4>
                     <p><strong>Model:</strong> Monthly per-seat licensing — scales with user count</p>
+                    <p><strong>Entry Price:</strong> $279-$379/month per license</p>
                     <p><strong>Pricing Behavior:</strong> Per-seat costs scale fast at 3+ users</p>
                     <p><strong>Sweet Spot:</strong> Small-to-medium desktop teams</p>
                 </div>
                 <div class="card">
                     <h4><i data-lucide="dollar-sign"></i> FastRedaction</h4>
                     <p><strong>Model:</strong> Pay-per-minute — costs rise significantly at high video volume</p>
+                    <p><strong>Entry Price:</strong> $19/minute + $1 base fee</p>
                     <p><strong>Pricing Behavior:</strong> Low upfront cost, but compounds quickly as video volume grows</p>
                     <p><strong>Sweet Spot:</strong> Occasional light users (2-10 videos/month)</p>
                 </div>
@@ -513,6 +516,62 @@
                 </div>
             </div>
 
+            <h3><i data-lucide="scale"></i> How Sighthound Redactor Compares</h3>
+            <div class="pricing-recommendation-panel">
+                <p class="pricing-recommendation-note">
+                    Recommendation logic uses only competitors with explicit pricing listed in this Pricing Analysis section. Custom-only or quote-only vendors are excluded until exact pricing is available.
+                </p>
+                <div class="pricing-control-grid">
+                    <label class="pricing-control">
+                        <span>Decision mode</span>
+                        <select id="pricingDecisionMode" onchange="updatePricingRecommendation()">
+                            <option value="bestPrice">Best Price</option>
+                            <option value="bestValue">Best Value</option>
+                        </select>
+                    </label>
+                    <label class="pricing-control">
+                        <span>Users</span>
+                        <select id="pricingScenarioUsers" onchange="updatePricingRecommendation()">
+                            <option value="1">1</option>
+                            <option value="3" selected>3</option>
+                            <option value="5">5</option>
+                        </select>
+                    </label>
+                    <label class="pricing-control">
+                        <span>Monthly processing minutes</span>
+                        <select id="pricingScenarioMinutes" onchange="updatePricingRecommendation()">
+                            <option value="10">10</option>
+                            <option value="100" selected>100</option>
+                            <option value="500">500</option>
+                            <option value="3000">3,000</option>
+                        </select>
+                    </label>
+                    <label class="pricing-control">
+                        <span>Monthly redaction jobs</span>
+                        <select id="pricingScenarioJobs" onchange="updatePricingRecommendation()">
+                            <option value="1">1</option>
+                            <option value="10" selected>10</option>
+                            <option value="50">50</option>
+                            <option value="200">200</option>
+                        </select>
+                    </label>
+                    <label class="pricing-control">
+                        <span>Deployment requirement</span>
+                        <select id="pricingScenarioDeployment" onchange="updatePricingRecommendation()">
+                            <option value="any">Any deployment</option>
+                            <option value="onPremise">On-premise acceptable/required</option>
+                            <option value="offline">Offline or air-gapped required</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <h4>Selected Competitors</h4>
+                    <div id="pricingCompetitorToggles" class="pricing-toggle-grid" aria-label="Pricing competitor filters"></div>
+                </div>
+                <div id="pricingRecommendationOutput" class="pricing-recommendation-output" aria-live="polite"></div>
+                <h4>Normalized Pricing Inputs</h4>
+                <div id="pricingNormalizedInputs" class="pricing-normalized-grid" aria-live="polite"></div>
+            </div>
             <h3><i data-lucide="eye-off"></i> Hidden Costs & TCO Analysis</h3>
             <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 4px;">
                 <h4 style="color: #856404; margin-top: 0;"><i data-lucide="alert-triangle"></i> Watch Out For These Hidden Costs</h4>
