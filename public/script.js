@@ -432,22 +432,271 @@ function isKnownComparisonPrice(price) {
     });
 }
 
-function getKnownPricingCompetitorsFromAnalysis() {
+function normalizeComparisonName(name) {
+    return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function getPricingPanelField(panel, label) {
+    if (!panel) { return ''; }
+    var target = cleanPricingLabel(label);
+    var paragraphs = panel.querySelectorAll('p');
+    for (var i = 0; i < paragraphs.length; i += 1) {
+        var strong = paragraphs[i].querySelector('strong');
+        if (!strong || cleanPricingLabel(strong.textContent) !== target) { continue; }
+        return cleanPricingValue(paragraphs[i].textContent.replace(strong.textContent, ''));
+    }
+    return '';
+}
+
+function getPricingTemplateDataByName() {
+    var byName = {};
+    Array.prototype.forEach.call(document.querySelectorAll('template[data-pricing-template]'), function(template) {
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = template.innerHTML;
+        var panel = wrapper.querySelector('.pricing-competitor-panel');
+        if (!panel) { return; }
+
+        var name = getPricingPanelName(panel);
+        byName[normalizeComparisonName(name)] = {
+            planTier: getPricingPanelField(panel, 'Plan Name / Tier'),
+            price: getPricingPanelField(panel, 'Price'),
+            billingModel: getPricingPanelField(panel, 'Billing Model'),
+            freeTrial: getPricingPanelField(panel, 'Free Trial / Free Plan'),
+            notes: getPricingPanelField(panel, 'Notes'),
+            sourceText: panel.textContent || ''
+        };
+    });
+    return byName;
+}
+
+function getCompetitorProfileDataByName() {
+    var byName = {};
+    Array.prototype.forEach.call(document.querySelectorAll('#competitors .competitor-profile'), function(profile) {
+        var nameNode = profile.querySelector('h3');
+        if (!nameNode) { return; }
+        byName[normalizeComparisonName(nameNode.textContent)] = {
+            sourceText: profile.textContent || ''
+        };
+    });
+    return byName;
+}
+
+function getComparisonPricingCategory(tierKey) {
+    if (tierKey === 'custom') { return 'custom'; }
+    if (tierKey === 'enterprise') { return 'enterprise'; }
+    return 'single';
+}
+
+function matchesAnyPricingPattern(text, patterns) {
+    return patterns.some(function(pattern) {
+        return pattern.test(text);
+    });
+}
+
+function competitorMatchesPricingTier(comp, tierKey) {
+    var category = getComparisonPricingCategory(tierKey);
+    var text = comp.searchText;
+
+    if (category === 'custom') {
+        return matchesAnyPricingPattern(text, [
+            /\bcustom\b/i,
+            /\bquote\b/i,
+            /\bcontact\b/i,
+            /\btalk\s+to\s+sales\b/i,
+            /\bneed\s+more\b/i,
+            /\bnegotiated\b/i
+        ]);
+    }
+
+    if (category === 'enterprise') {
+        return matchesAnyPricingPattern(text, [
+            /\benterprise\b/i,
+            /\bteam\b/i,
+            /\bdept\b/i,
+            /\bdepartment\b/i,
+            /\badvanced\b/i,
+            /\bultimate\b/i,
+            /\bforensic\s+studio\b/i,
+            /\bper\s+seat\b/i,
+            /\bper\s+license\b/i,
+            /\bcustom\b/i
+        ]);
+    }
+
+    return matchesAnyPricingPattern(text, [
+        /\b1\s*user\b/i,
+        /\bsingle\b/i,
+        /\bstarter\b/i,
+        /\bpro\b/i,
+        /\bvalue\s+pack\b/i,
+        /\bspotlight\b/i,
+        /\bpay\s+as\s+you\s+go\b/i,
+        /\bper\s+usage\b/i,
+        /\bper\s+seat\b/i,
+        /\bper\s+license\b/i,
+        /\bmonthly\b/i,
+        /\bannual\b/i
+    ]);
+}
+
+function getDeploymentText(comp) {
+    return (comp.profileText || comp.searchText || '').toLowerCase();
+}
+
+function competitorMatchesDeployment(comp, deployment) {
+    var text = getDeploymentText(comp);
+    if (!deployment || !text) { return true; }
+
+    if (deployment === 'desktop') {
+        return /\bdesktop\b|\bwindows\b|\bper\s+seat\b|\bper\s+license\b/i.test(text);
+    }
+
+    if (deployment === 'server') {
+        return /\bserver\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b|\bwindows\s+desktop\/on[-\s]?premise\b/i.test(text);
+    }
+
+    if (deployment === 'cloud') {
+        return /\bcloud\b|\bsaas\b|\bapi\b|\baws\b|\bazure\b|\bgovcloud\b|\bhybrid\b/i.test(text);
+    }
+
+    if (deployment === 'airgapped') {
+        return /\bair[-\s]?gapped\b|\boffline\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b|\bdesktop\b|\bwindows\b/i.test(text);
+    }
+
+    return true;
+}
+
+function getPricingTierScore(comp, tierKey) {
+    var category = getComparisonPricingCategory(tierKey);
+    var text = comp.searchText;
+    var score = 0;
+
+    if (category === 'custom') {
+        if (/\bcustom\b/i.test(text)) { score += 55; }
+        if (/\bquote\b|\bcontact\b|\btalk\s+to\s+sales\b|\bneed\s+more\b/i.test(text)) { score += 25; }
+        if (/\bapi\b|\boem\b|\benterprise\b|\bteam\b/i.test(text)) { score += 12; }
+        return score;
+    }
+
+    if (category === 'enterprise') {
+        if (/\benterprise\b/i.test(text)) { score += 50; }
+        if (/\bteam\b|\bdept\b|\bdepartment\b|\badvanced\b|\bultimate\b/i.test(text)) { score += 25; }
+        if (/\bper\s+seat\b|\bper\s+license\b|\bcustom\b/i.test(text)) { score += 12; }
+        return score;
+    }
+
+    if (/\b1\s*user\b|\bsingle\b|\bstarter\b|\bvalue\s+pack\b|\bspotlight\b/i.test(text)) { score += 35; }
+    if (/\bpro\b|\bpay\s+as\s+you\s+go\b|\bmonthly\b|\bper\s+usage\b/i.test(text)) { score += 24; }
+    if (/\bper\s+seat\b|\bper\s+license\b/i.test(text)) { score += 18; }
+    return score;
+}
+
+function getDeploymentScore(comp, deployment) {
+    var text = getDeploymentText(comp);
+    if (!deployment || !text) { return 0; }
+
+    if (deployment === 'desktop') {
+        return (/\bdesktop\b|\bwindows\b/i.test(text) ? 30 : 0) + (/\bper\s+seat\b|\bper\s+license\b/i.test(text) ? 8 : 0);
+    }
+
+    if (deployment === 'server') {
+        return (/\bserver\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b/i.test(text) ? 30 : 0) + (/\bdesktop\/on[-\s]?premise\b/i.test(text) ? 8 : 0);
+    }
+
+    if (deployment === 'cloud') {
+        return (/\bcloud\b|\bsaas\b|\bapi\b|\baws\b|\bazure\b|\bgovcloud\b/i.test(text) ? 30 : 0) + (/\bhybrid\b/i.test(text) ? 8 : 0);
+    }
+
+    if (deployment === 'airgapped') {
+        return (/\bair[-\s]?gapped\b|\boffline\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b/i.test(text) ? 30 : 0) + (/\bdesktop\b|\bwindows\b/i.test(text) ? 8 : 0);
+    }
+
+    return 0;
+}
+
+function getProductRelevanceScore(comp) {
+    var text = getDeploymentText(comp);
+    var score = 0;
+    if (/\bvideo\b/i.test(text)) { score += 14; }
+    if (/\bmedia\b|\bmulti[-\s]?format\b|\bredaction\s+suite\b/i.test(text)) { score += 8; }
+    if (/\blaw\s+enforcement\b|\bpublic\s+safety\b|\bforensic\b|\bevidence\b/i.test(text)) { score += 8; }
+    if (/\baudio-only\b|\baudio\s+only\b|\bdocument-centric\b|\bdocument\s+intelligence\b/i.test(text)) { score -= 12; }
+    return score;
+}
+
+function getRelevantPricingCompetitorsFromAnalysis(selections, tierKey) {
     if (typeof getPricingSummaryItems !== 'function') { return []; }
 
+    var templateData = getPricingTemplateDataByName();
+    var profileData = getCompetitorProfileDataByName();
+
     return getPricingSummaryItems()
-        .filter(function(item) {
+        .map(function(item, index) {
             var startingPrice = ((item.fields['Starting Price'] || {}).text || '').trim();
-            return isKnownComparisonPrice(startingPrice);
-        })
-        .map(function(item) {
+            var billingModel = ((item.fields['Billing Model'] || {}).text || '').trim();
+            var freeTrial = ((item.fields['Free Trial'] || {}).text || '').trim();
+            var key = normalizeComparisonName(item.name);
+            var template = templateData[key] || {};
+            var profile = profileData[key] || {};
+            var searchText = [
+                item.name,
+                startingPrice,
+                billingModel,
+                freeTrial,
+                template.planTier,
+                template.price,
+                template.billingModel,
+                template.freeTrial,
+                template.notes,
+                template.sourceText,
+                profile.sourceText
+            ].join(' ').toLowerCase();
+
             return {
                 name: item.name,
-                startingPrice: ((item.fields['Starting Price'] || {}).text || '').trim(),
-                billingModel: ((item.fields['Billing Model'] || {}).text || '').trim(),
-                freeTrial: ((item.fields['Free Trial'] || {}).text || '').trim()
+                startingPrice: startingPrice,
+                billingModel: billingModel,
+                freeTrial: freeTrial,
+                searchText: searchText,
+                profileText: profile.sourceText || '',
+                score: 0,
+                originalIndex: index
             };
-        });
+        })
+        .filter(function(comp) {
+            return isKnownComparisonPrice(comp.startingPrice) &&
+                competitorMatchesPricingTier(comp, tierKey) &&
+                competitorMatchesDeployment(comp, selections.deployment);
+        })
+        .map(function(comp) {
+            comp.score = getPricingTierScore(comp, tierKey) +
+                getDeploymentScore(comp, selections.deployment) +
+                getProductRelevanceScore(comp);
+            return comp;
+        })
+        .sort(function(a, b) {
+            if (b.score !== a.score) { return b.score - a.score; }
+            return a.originalIndex - b.originalIndex;
+        })
+        .slice(0, 5);
+}
+
+function getComparisonAdvantageText(tierKey, deployment) {
+    var category = getComparisonPricingCategory(tierKey);
+    var deploymentLabel = {
+        desktop: 'desktop',
+        server: 'server/on-premise',
+        cloud: 'private cloud',
+        airgapped: 'air-gapped'
+    }[deployment] || 'selected';
+
+    if (category === 'custom') {
+        return 'Custom deployment, API, and integration support without per-minute pricing surprises.';
+    }
+    if (category === 'enterprise') {
+        return 'Flat annual enterprise pricing for ' + deploymentLabel + ' deployments with unlimited processing.';
+    }
+    return 'Predictable single-user pricing with unlimited video length and no per-minute fees.';
 }
 
 function setComparisonEmptyMessage(isVisible) {
@@ -463,7 +712,7 @@ function setComparisonEmptyMessage(isVisible) {
         wrap.appendChild(message);
     }
 
-    message.textContent = isVisible ? 'Competitor pricing not available for comparison at this time.' : '';
+    message.textContent = isVisible ? 'No comparable competitors at this pricing tier' : '';
     message.hidden = !isVisible;
 }
 
@@ -509,7 +758,8 @@ function renderPricingResult(selections, options) {
     var tierKey     = getRecommendedTier(users, deployment, api);
     var tier        = TIERS[tierKey];
     var explain     = getPricingExplanation(users, deployment, api, industry, tierKey);
-    var competitors = getKnownPricingCompetitorsFromAnalysis();
+    var competitors = getRelevantPricingCompetitorsFromAnalysis(selections, tierKey);
+    var advantageText = getComparisonAdvantageText(tierKey, deployment);
 
     var badge = document.getElementById('tierBadge');
     badge.textContent = tier.tagline;
@@ -547,7 +797,7 @@ function renderPricingResult(selections, options) {
             '<td data-label="Known Price"><span class="comparison-price">' + escapeHtml(comp.startingPrice) + '</span></td>' +
             '<td data-label="Pricing Model">' + escapeHtml(comp.billingModel || 'Not listed') + '</td>' +
             '<td data-label="Free Trial">' + escapeHtml(comp.freeTrial || 'Not listed') + '</td>' +
-            '<td data-label="Sighthound Advantage">Flat annual pricing with unlimited processing avoids usage-based surprises.</td>';
+            '<td data-label=\"Sighthound Advantage\">' + escapeHtml(advantageText) + '</td>';
         tbody.appendChild(tr);
     });
     setComparisonEmptyMessage(competitors.length === 0);
