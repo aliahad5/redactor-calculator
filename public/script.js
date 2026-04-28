@@ -413,14 +413,59 @@ function getPricingExplanation(users, deployment, api, industry, tier) {
     return explanations[tier] || '';
 }
 
-function calculatePricing() {
-    var users      = document.getElementById('userCount').value;
-    var deployment = document.getElementById('deploymentType').value;
-    var api        = document.getElementById('apiNeeded').value;
-    var industry   = document.getElementById('pcIndustry').value;
+function getPricingSelections() {
+    var usersEl      = document.getElementById('userCount');
+    var deploymentEl = document.getElementById('deploymentType');
+    var apiEl        = document.getElementById('apiNeeded');
+    var industryEl   = document.getElementById('pcIndustry');
 
-    if (!users || !deployment || !api || !industry) {
-        alert('Please fill in all four fields before calculating.');
+    return {
+        users:      usersEl ? usersEl.value : '',
+        deployment: deploymentEl ? deploymentEl.value : '',
+        api:        apiEl ? apiEl.value : '',
+        industry:   industryEl ? industryEl.value : ''
+    };
+}
+
+function isPricingSelectionComplete(selections) {
+    return !!(selections.users && selections.deployment && selections.api && selections.industry);
+}
+
+function clearPricingResult() {
+    var outputSection = document.getElementById('output-section');
+    if (outputSection) {
+        outputSection.classList.remove('visible');
+        outputSection.style.display = 'none';
+    }
+
+    var divider = document.getElementById('outputDivider');
+    if (divider) { divider.style.display = 'none'; }
+
+    var resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) { resetBtn.classList.remove('visible'); }
+
+    ['tierBadge', 'tierName', 'tierPrice', 'tierExplanation', 'tierFeatures'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.textContent = '';
+            el.innerHTML = '';
+        }
+    });
+
+    var tbody = document.getElementById('compTableBody');
+    if (tbody) { tbody.innerHTML = ''; }
+}
+
+function renderPricingResult(selections, options) {
+    options = options || {};
+
+    var users      = selections.users;
+    var deployment = selections.deployment;
+    var api        = selections.api;
+    var industry   = selections.industry;
+
+    if (!isPricingSelectionComplete(selections)) {
+        clearPricingResult();
         return;
     }
 
@@ -450,7 +495,7 @@ function calculatePricing() {
     var shRow = document.createElement('tr');
     shRow.className = 'sighthound-row';
     shRow.innerHTML =
-        '<td data-label="Tool"><span class="tool-name">Sighthound Redactor</span></td>' +
+        '<td data-label="Tool"><span class="tool-name">Sighthound Redactor</span><span class="tool-price">' + escapeHtml(tier.price) + '</span></td>' +
         '<td data-label="Pricing Model">Flat annual subscription</td>' +
         '<td data-label="Scales With">Users + deployment type</td>' +
         '<td data-label="Best For">' + escapeHtml(tier.tagline) + '</td>' +
@@ -475,8 +520,36 @@ function calculatePricing() {
 
     var resetBtn = document.getElementById('resetBtn');
     resetBtn.classList.add('visible');
+    if (options.scroll !== false) {
+        outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 
-    outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function calculatePricing() {
+    var selections = getPricingSelections();
+
+    if (!isPricingSelectionComplete(selections)) {
+        alert('Please fill in all four fields before calculating.');
+        return;
+    }
+
+    renderPricingResult(selections, { scroll: true });
+}
+
+function handlePricingSelectionChange() {
+    var selections = getPricingSelections();
+    renderPricingResult(selections, { scroll: false });
+}
+
+function initPricingCalculator() {
+    ['userCount', 'deploymentType', 'apiNeeded', 'pcIndustry'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el || el.getAttribute('data-pricing-listener-attached') === 'true') { return; }
+        el.addEventListener('change', handlePricingSelectionChange);
+        el.setAttribute('data-pricing-listener-attached', 'true');
+    });
+
+    handlePricingSelectionChange();
 }
 
 function resetPricingCalc() {
@@ -484,21 +557,7 @@ function resetPricingCalc() {
         var el = document.getElementById(id);
         if (el) { el.value = ''; }
     });
-
-    var outputSection = document.getElementById('output-section');
-    if (outputSection) {
-        outputSection.classList.remove('visible');
-        outputSection.style.display = 'none';
-    }
-
-    var divider = document.getElementById('outputDivider');
-    if (divider) { divider.style.display = 'none'; }
-
-    var resetBtn = document.getElementById('resetBtn');
-    if (resetBtn) { resetBtn.classList.remove('visible'); }
-
-    var tbody = document.getElementById('compTableBody');
-    if (tbody) { tbody.innerHTML = ''; }
+    clearPricingResult();
 
     var section = document.getElementById('pricing-calculator');
     if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
@@ -1515,6 +1574,7 @@ if (typeof window !== 'undefined') {
     window.updateDiscoveryQuestions = updateDiscoveryQuestions;
     window.updateVersionDetails = updateVersionDetails;
     window.calculatePricing = calculatePricing;
+    window.handlePricingSelectionChange = handlePricingSelectionChange;
     window.resetPricingCalc = resetPricingCalc;
     window.toggleScrollButton = toggleScrollButton;
     window.renderMarketingResources = renderMarketingResources;
@@ -1534,6 +1594,7 @@ if (typeof window !== 'undefined') {
         try { updateVersionDetails(); } catch (e) {}
         try { toggleScrollButton(); } catch (e) {}
         try { updateDiscoveryQuestions(); } catch (e) {}
+        try { initPricingCalculator(); } catch (e) {}
         try { initMarketingResources(); } catch (e) {}
         if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
             try { window.lucide.createIcons(); } catch (e) {}

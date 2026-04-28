@@ -1259,6 +1259,14 @@ a:hover {
 }
 
 #pricing-calculator .sighthound-row .tool-name { color: var(--pc-green); }
+#pricing-calculator .sighthound-row .tool-price {
+    display: block;
+    margin-top: 3px;
+    color: var(--sh-orange-medium);
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1.35;
+}
 
 #pricing-calculator .adv-pill {
     display: inline-block;
@@ -1271,53 +1279,6 @@ a:hover {
     white-space: nowrap;
 }
 
-#pricing-calculator .cta-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding-top: 4px;
-}
-
-#pricing-calculator .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--sh-blurple);
-    color: #ffffff;
-    font-family: var(--pc-font-head);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 14px 29px;
-    border: none;
-    border-radius: var(--radius-button);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background var(--dur-base) var(--ease-standard), transform .12s, box-shadow var(--dur-base);
-    box-shadow: 0 4px 12px rgba(79, 96, 220, 0.25);
-}
-
-#pricing-calculator .btn-primary:hover  { background: var(--sh-blurple-700); color: #ffffff; box-shadow: 0 6px 16px rgba(79, 96, 220, 0.35); }
-#pricing-calculator .btn-primary:active { transform: scale(.97); }
-
-#pricing-calculator .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    color: var(--sh-navy);
-    font-family: var(--pc-font-head);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 13px 28px;
-    border: 1.5px solid var(--sh-navy);
-    border-radius: var(--radius-button);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background var(--dur-base), color var(--dur-base);
-}
-
-#pricing-calculator .btn-secondary:hover { background: var(--sh-navy); color: #ffffff; }
 
 #pricing-calculator .calc-footer {
     padding: 16px 32px;
@@ -1344,9 +1305,6 @@ a:hover {
     #pricing-calculator .comparison-table thead th,
     #pricing-calculator .comparison-table tbody td { padding: 10px; }
     #pricing-calculator .calc-footer { padding: 14px 20px; }
-    #pricing-calculator .cta-row { flex-direction: column; }
-    #pricing-calculator .btn-primary,
-    #pricing-calculator .btn-secondary { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 480px) {
