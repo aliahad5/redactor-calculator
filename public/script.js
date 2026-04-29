@@ -505,7 +505,21 @@ function matchesAnyPricingPattern(text, patterns) {
 }
 
 function getDeploymentText(comp) {
-    return (comp.profileText || comp.searchText || '').toLowerCase();
+    return (comp.capabilityText || comp.searchText || comp.profileText || '').toLowerCase();
+}
+
+function getAffirmedCapabilityText(text) {
+    return String(text || '')
+        .replace(/\bno\s+server\s*(?:\/|or|and)\s*cloud(?:\s+deployment)?\b/gi, ' ')
+        .replace(/\bno\s+(?:server\s*\/\s*)?cloud(?:\s+deployment)?\b/gi, ' ')
+        .replace(/\b(?:no|without|lacks?|lack(?:ing)?)\s+(?:an?\s+)?(?:server|cloud|api|oem|integration|automation|desktop|windows|on[-\s]?prem(?:ise)?|offline|air[-\s]?gapped)(?:\s+(?:deployment|support|access|capability|capabilities|workflow|option|pricing))?\b/gi, ' ')
+        .replace(/\b(?:not|isn'?t|aren'?t)\s+(?:a\s+|an\s+)?(?:complete\s+)?(?:server|cloud|api|desktop|windows|on[-\s]?prem(?:ise)?|offline|air[-\s]?gapped)(?:\s+(?:deployment|tool|suite|workflow|option))?\b/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function matchesAffirmedPricingPattern(text, patterns) {
+    return matchesAnyPricingPattern(getAffirmedCapabilityText(text), patterns);
 }
 
 function competitorMatchesDeployment(comp, deployment) {
@@ -513,19 +527,44 @@ function competitorMatchesDeployment(comp, deployment) {
     if (!deployment || !text) { return true; }
 
     if (deployment === 'desktop') {
-        return /\bdesktop\b|\bwindows\b|\bper\s+seat\b|\bper\s+license\b/i.test(text);
+        return matchesAffirmedPricingPattern(text, [
+            /\bdesktop\b/i,
+            /\bwindows\b/i,
+            /\bper\s+seat\b/i,
+            /\bper\s+license\b/i
+        ]);
     }
 
     if (deployment === 'server') {
-        return /\bserver\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b|\bwindows\s+desktop\/on[-\s]?premise\b/i.test(text);
+        return matchesAffirmedPricingPattern(text, [
+            /\bserver\b/i,
+            /\bon[-\s]?prem(?:ise)?\b/i,
+            /\bhybrid\b/i,
+            /\bwindows\s+desktop\/on[-\s]?premise\b/i
+        ]);
     }
 
     if (deployment === 'cloud') {
-        return /\bcloud\b|\bsaas\b|\bapi\b|\baws\b|\bazure\b|\bgovcloud\b|\bhybrid\b/i.test(text);
+        return matchesAffirmedPricingPattern(text, [
+            /\bcloud\b/i,
+            /\bsaas\b/i,
+            /\bapi\b/i,
+            /\baws\b/i,
+            /\bazure\b/i,
+            /\bgovcloud\b/i,
+            /\bhybrid\b/i
+        ]);
     }
 
     if (deployment === 'airgapped') {
-        return /\bair[-\s]?gapped\b|\boffline\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b|\bdesktop\b|\bwindows\b/i.test(text);
+        return matchesAffirmedPricingPattern(text, [
+            /\bair[-\s]?gapped\b/i,
+            /\boffline\b/i,
+            /\bon[-\s]?prem(?:ise)?\b/i,
+            /\bhybrid\b/i,
+            /\bdesktop\b/i,
+            /\bwindows\b/i
+        ]);
     }
 
     return true;
@@ -533,14 +572,13 @@ function competitorMatchesDeployment(comp, deployment) {
 
 function competitorMatchesApi(comp, apiNeed) {
     if (!apiNeed || apiNeed === 'no') { return true; }
-    var text = (comp.searchText || '').toLowerCase();
-    if (/\bno\s+api\b|\bwithout\s+api\b/i.test(text)) { return false; }
+    var text = getAffirmedCapabilityText(getDeploymentText(comp));
     return /\bapi\b|\boem\b|\bdeveloper\b|\bintegration\b|\bautomation\b|\bworkflow\s+automation\b/i.test(text);
 }
 
 function getPricingTierScore(comp, tierKey) {
     var category = getComparisonPricingCategory(tierKey);
-    var text = comp.searchText;
+    var text = getAffirmedCapabilityText(getDeploymentText(comp));
     var score = 0;
 
     if (category === 'custom') {
@@ -563,7 +601,7 @@ function getPricingTierScore(comp, tierKey) {
 }
 
 function getDeploymentScore(comp, deployment) {
-    var text = getDeploymentText(comp);
+    var text = getAffirmedCapabilityText(getDeploymentText(comp));
     if (!deployment || !text) { return 0; }
 
     if (deployment === 'desktop') {
@@ -609,7 +647,7 @@ function getRelevantPricingCompetitorsFromAnalysis(selections, tierKey) {
             var key = normalizeComparisonName(item.name);
             var template = templateData[key] || {};
             var profile = profileData[key] || {};
-            var searchText = [
+            var capabilityText = [
                 item.name,
                 startingPrice,
                 billingModel,
@@ -619,7 +657,10 @@ function getRelevantPricingCompetitorsFromAnalysis(selections, tierKey) {
                 template.billingModel,
                 template.freeTrial,
                 template.notes,
-                template.sourceText,
+                template.sourceText
+            ].join(' ').toLowerCase();
+            var searchText = [
+                capabilityText,
                 profile.sourceText
             ].join(' ').toLowerCase();
 
@@ -630,6 +671,7 @@ function getRelevantPricingCompetitorsFromAnalysis(selections, tierKey) {
                 freeTrial: freeTrial,
                 templatePrice: template.price || startingPrice,
                 templateNotes: template.notes || '',
+                capabilityText: capabilityText,
                 searchText: searchText,
                 profileText: profile.sourceText || '',
                 score: 0,
