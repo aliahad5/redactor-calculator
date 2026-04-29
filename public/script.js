@@ -488,6 +488,7 @@ var PRICING_ANALYSIS_COMPETITORS = [
     {
         id: 'sighthound',
         company: 'Sighthound Redactor',
+        hasExplicitPricing: true,
         pricingModel: 'annualPlans',
         explicitPricing: '$2,500/year Pro; $3,500/year Enterprise',
         plans: [
@@ -511,8 +512,10 @@ var PRICING_ANALYSIS_COMPETITORS = [
     {
         id: 'veritone',
         company: 'Veritone Redact',
+        hasExplicitPricing: true,
         pricingModel: 'annualRange',
         explicitPricing: '$2,400-$250K+/year',
+        capterraLink: 'https://www.capterra.com/p/184450/Veritone-Redact/',
         plan: { amount: 2400, amountMax: 250000 },
         scalability: 'Lowest listed entry price is attractive, but the explicit range scales up to $250K+/year.',
         valueScore: 4,
@@ -531,8 +534,11 @@ var PRICING_ANALYSIS_COMPETITORS = [
     {
         id: 'caseguard',
         company: 'CaseGuard Studio',
+        hasExplicitPricing: true,
         pricingModel: 'monthlyPerSeatRange',
         explicitPricing: '$279-$379/month per license',
+        capterraLink: 'https://www.capterra.com/p/10030197/CaseGuard/',
+        g2Link: 'https://www.g2.com/products/caseguard-studio/pricing',
         plan: { amount: 279, amountMax: 379 },
         scalability: 'Annual cost increases with every additional user seat.',
         valueScore: 4,
@@ -551,6 +557,7 @@ var PRICING_ANALYSIS_COMPETITORS = [
     {
         id: 'fastredaction',
         company: 'FastRedaction',
+        hasExplicitPricing: true,
         pricingModel: 'usagePerMinute',
         explicitPricing: '$19/minute + $1 base fee',
         plan: { amount: 19, baseFee: 1, baseFeeUnit: 'job' },
@@ -567,6 +574,65 @@ var PRICING_ANALYSIS_COMPETITORS = [
             'Limited audio/document workflow details are listed in the current dataset.'
         ],
         deploymentCapabilities: ['cloud']
+    },
+    {
+        id: 'idox',
+        company: 'iDox.ai',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Custom pricing',
+        capterraLink: 'https://www.capterra.com/p/10002118/iDox-ai-redact/',
+        g2Link: 'https://www.g2.com/products/idox-ai/pricing'
+    },
+    {
+        id: 'redactable',
+        company: 'Redactable',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Custom pricing',
+        capterraLink: 'https://www.capterra.com/p/264580/Redactable/',
+        g2Link: 'https://www.g2.com/products/redactable/pricing'
+    },
+    {
+        id: 'secure-redact',
+        company: 'Secure Redact',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Custom pricing',
+        capterraLink: 'https://www.capterra.com/p/10041695/Secure-Redaction/',
+        g2Link: 'https://www.g2.com/products/secure-redact/pricing'
+    },
+    {
+        id: 'naltero',
+        company: 'Naltero',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Custom pricing',
+        g2Link: 'https://www.g2.com/products/naltero/pricing'
+    },
+    {
+        id: 'assemblyai',
+        company: 'AssemblyAI',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Usage-based API pricing',
+        capterraLink: 'https://www.capterra.com/p/214210/Assembly/'
+    },
+    {
+        id: 'clipral',
+        company: 'Clipral',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Custom pricing',
+        capterraLink: 'https://www.capterra.com/p/10020412/Clipral/'
+    },
+    {
+        id: 'everlaw',
+        company: 'Everlaw',
+        hasExplicitPricing: false,
+        pricingModel: 'customOnly',
+        explicitPricing: 'Custom enterprise pricing',
+        capterraLink: 'https://www.capterra.com/p/137171/Everlaw/'
     }
 ];
 
@@ -608,6 +674,13 @@ function hasPricingDeploymentFit(competitor, deploymentNeed) {
 }
 
 function normalizePricingAnalysisCompetitor(competitor, scenario) {
+    if (competitor.hasExplicitPricing === false) {
+        return Object.assign({}, competitor, {
+            isComparable: false,
+            isViable: false,
+            exclusionReason: 'No explicit price listed.'
+        });
+    }
     var normalized = null;
     if (competitor.pricingModel === 'annualPlans') {
         var matchingPlans = competitor.plans.filter(function(plan) {
@@ -728,6 +801,17 @@ function renderPricingCompetitorToggles() {
     }).join('');
 }
 
+function pricingListingLinksHtml(item) {
+    var links = [];
+    if (item.capterraLink) {
+        links.push('<p><strong>Capterra Direct Link:</strong> <a href="' + escapeHtml(item.capterraLink) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.capterraLink) + '</a></p>');
+    }
+    if (item.g2Link) {
+        links.push('<p><strong>G2 Direct Link:</strong> <a href="' + escapeHtml(item.g2Link) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.g2Link) + '</a></p>');
+    }
+    return links.length ? '<div class="pricing-listing-links">' + links.join('') + '</div>' : '';
+}
+
 function updatePricingRecommendation() {
     var output = document.getElementById('pricingRecommendationOutput');
     var normalizedContainer = document.getElementById('pricingNormalizedInputs');
@@ -754,13 +838,17 @@ function updatePricingRecommendation() {
     }
     normalizedContainer.innerHTML = results.map(function(result) {
         var isWinner = recommendation && recommendation.winner.id === result.id;
+        var comparableDetails = result.isComparable
+            ? '<p><strong>Scalability:</strong> ' + escapeHtml(result.scalability) + '</p>' +
+                '<p><strong>Value score:</strong> ' + escapeHtml(String(result.valueScore)) + '/5</p>'
+            : '';
         return '<div class="pricing-normalized-card' + (isWinner ? ' winner' : '') + (!result.isViable ? ' excluded' : '') + '">' +
             '<div class="pricing-normalized-header"><h5>' + escapeHtml(result.company) + '</h5><span>' + escapeHtml(result.isViable ? pricingAnnualRange(result) : 'Excluded') + '</span></div>' +
             '<p><strong>Listed pricing:</strong> ' + escapeHtml(result.explicitPricing) + '</p>' +
             '<p><strong>Normalization:</strong> ' + escapeHtml(result.note || result.exclusionReason) + '</p>' +
-            '<p><strong>Scalability:</strong> ' + escapeHtml(result.scalability) + '</p>' +
-            '<p><strong>Value score:</strong> ' + escapeHtml(String(result.valueScore)) + '/5</p>' +
+            comparableDetails +
             (!result.isViable ? '<p class="pricing-exclusion-note"><strong>Reason:</strong> ' + escapeHtml(result.exclusionReason) + '</p>' : '') +
+            pricingListingLinksHtml(result) +
             '</div>';
     }).join('');
 }
