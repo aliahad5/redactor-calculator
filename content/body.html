@@ -1206,30 +1206,31 @@
 
         <section id="discovery" class="section">
             <h2><i data-lucide="help-circle"></i> Discovery Questions</h2>
-            <p style="color: #374151; font-size: 1em; line-height: 1.6; margin-bottom: 20px;">Use these targeted questions before demos and discovery calls to qualify prospects and surface pain points. Filter by industry or pricing model.</p>
+            <p style="color: #374151; font-size: 1em; line-height: 1.6; margin-bottom: 20px;">Use this phase-based discovery guide to diagnose operational pain, technical constraints, financial impact, and industry-specific compliance exposure during live sales calls.</p>
             <div style="display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0 24px 0; padding: 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
                 <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
                     <label for="discoveryIndustryFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="building"></i> Industry</label>
                     <select id="discoveryIndustryFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
-                        <option value="all">All Industries</option>
-                        <option value="law-enforcement">Law Enforcement</option>
-                        <option value="government">Government</option>
-                        <option value="healthcare">Healthcare</option>
-                        <option value="legal-corporate">Legal &amp; Corporate</option>
+                        <option value="law-enforcement-public-safety" selected>Law Enforcement &amp; Public Safety</option>
+                        <option value="government-municipal">Government &amp; Municipal Agencies</option>
+                        <option value="healthcare-medical">Healthcare &amp; Medical Institutions</option>
+                        <option value="legal-law-firms">Legal &amp; Law Firms</option>
+                        <option value="financial-services-banking">Financial Services &amp; Banking</option>
+                        <option value="education-universities">Education &amp; Universities</option>
                     </select>
                 </div>
                 <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
                     <label for="discoveryPricingFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="dollar-sign"></i> Pricing Model</label>
                     <select id="discoveryPricingFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
-                        <option value="all">All Models</option>
-                        <option value="single">Single License</option>
-                        <option value="enterprise">Enterprise</option>
-                        <option value="multi-user">Multi-User</option>
-                        <option value="api">API &amp; Embedded</option>
+                        <option value="flat-annual-subscription" selected>Flat Annual Subscription</option>
+                        <option value="usage-based">Pay-Per-Minute / Pay-Per-File (Usage-Based)</option>
+                        <option value="per-seat-license">Per-Seat / Per-User License</option>
+                        <option value="enterprise-custom-quote">Enterprise Custom Quote</option>
+                        <option value="freemium-free-trial">Freemium / Free Trial Model</option>
                     </select>
                 </div>
             </div>
-            <div id="discoveryContextLabel" style="margin: 0 0 14px 0; font-size: 0.9em; color: #6b7280; font-weight: 500;" aria-live="polite"></div>
+            <div id="discoveryContextLabel" style="margin: 0 0 18px 0; padding: 14px 16px; background: #edf2f7; border-left: 4px solid #2c5282; border-radius: 8px; font-size: 0.95em; color: #1f2937; font-weight: 500;" aria-live="polite"></div>
             <div id="discoveryQuestionsContainer" aria-live="polite"></div>
         </section>
         <section id="pricing-calculator" class="section active">
