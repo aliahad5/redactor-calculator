@@ -203,61 +203,187 @@ function updateComparison() {
     html += '</div>';
     document.getElementById('comparisonResult').innerHTML = html;
 }
-var discoveryQuestionSets = {
-    'law-enforcement_single': [
-        'How many videos does your team process monthly for FOIA or public records?',
-        'Are you currently handling redaction manually \u2014 how many hours per week does it take?',
-        'Does your network require offline or air-gapped deployment?'
-    ],
-    'law-enforcement_enterprise': [
-        'How many officers or evidence technicians need redaction access?',
-        'Are you managing a centralized evidence server or distributed workstations?',
-        'What evidence management system are you currently using?'
-    ],
-    'government_enterprise': [
-        'Do you process FOIA requests across multiple departments?',
-        'What compliance frameworks govern your data \u2014 CJIS, FedRAMP, or state-specific?',
-        'How are redaction decisions documented today for audit purposes?'
-    ],
-    'healthcare_any': [
-        'What PHI formats require redaction \u2014 video, images, or documents?',
-        'Do your workflows require on-premise processing for data governance?',
-        'How do you document redaction decisions for HIPAA audits?'
-    ],
-    'legal-corporate_api': [
-        'Are you looking to embed redaction into an existing platform or case management system?',
-        "What's your monthly case volume and how much redaction is currently manual?",
-        'Do you need chain-of-custody logging built into the redaction workflow?'
-    ]
-};
-var discoveryFallbackQuestions = [
-    'What types of media \u2014 video, audio, images, or documents \u2014 require redaction in your current workflow?',
-    'How much time does your team currently spend on manual redaction each week?',
-    'Which compliance or privacy requirements drive your redaction process \u2014 FOIA, HIPAA, GDPR, CJIS, or others?'
+var discoveryCorePhases = [
+    {
+        key: 'current-state',
+        title: 'Phase 1: Current State & Pain Point Identification',
+        goal: 'Goal: Identify the "Bleeding Neck"',
+        questions: [
+            'Can you walk me through your current workflow when a massive FOIA request or discovery mandate lands on your desk?',
+            'How many hours per week is your team spending manually redacting bodycam, CCTV, or document files?',
+            'What happens to your turnaround times when a complex video involves multiple faces, license plates, and sensitive audio simultaneously?',
+            'What recent trigger events, such as a missed redaction, public scrutiny, or a sudden spike in evidence requests, are shaping your urgency?'
+        ]
+    },
+    {
+        key: 'technical-environment',
+        title: 'Phase 2: Technical Environment & Deployment',
+        goal: 'Goal: Identify the "Gatekeeper Setup"',
+        questions: [
+            "What are your IT team's requirements regarding air-gapped networks, on-premise servers, or secure cloud environments?",
+            'What level of throughput do you need for standalone desktop review versus server-grade batch processing?',
+            'How important is direct integration with your existing Evidence Management System (EMS), VMS, case-management platform, or internal portal through REST API?'
+        ]
+    },
+    {
+        key: 'commercial-impact',
+        title: 'Phase 3: Financial & Commercial Impact',
+        goal: 'Goal: Build the "CFO Justification"',
+        questions: [
+            'How difficult is it to forecast your annual redaction budget when processing volume changes month to month?',
+            'What happens to costs and access when multiple users need simultaneous redaction capability?',
+            'How do you quantify the personnel cost and opportunity cost of your current manual redaction cycles?'
+        ]
+    }
 ];
-var discoveryIndustryLabels = {
-    'all': 'All Industries',
-    'law-enforcement': 'Law Enforcement',
-    'government': 'Government',
-    'healthcare': 'Healthcare',
-    'legal-corporate': 'Legal & Corporate'
-};
-var discoveryPricingLabels = {
-    'all': 'All Models',
-    'single': 'Single License',
-    'enterprise': 'Enterprise',
-    'multi-user': 'Multi-User',
-    'api': 'API & Embedded'
-};
-function getDiscoveryQuestionsResult(industry, pricingModel) {
-    if (industry === 'healthcare') {
-        return { questions: discoveryQuestionSets['healthcare_any'], matched: true };
+var discoveryPricingModelQuestions = {
+    'flat-annual-subscription': {
+        label: 'Flat Annual Subscription',
+        questions: [
+            'How does your team currently justify a fixed annual subscription when usage varies by department or season?',
+            'What internal budget owners need to see to approve predictable annual spend over variable per-file or per-minute costs?',
+            'What criteria would you use to evaluate whether bundled processing addresses budget friction during high-volume months?'
+        ]
+    },
+    'usage-based': {
+        label: 'Pay-Per-Minute / Pay-Per-File (Usage-Based)',
+        questions: [
+            'How do you forecast budget when FOIA, litigation, or audit volume can spike without notice?',
+            'What controls do you use to prevent teams from delaying redaction work because each minute or file adds cost?',
+            'How do you compare unit-cost pricing against staff time, contractor costs, and legal deadline risk?'
+        ]
+    },
+    'per-seat-user-license': {
+        label: 'Per-Seat / Per-User License',
+        questions: [
+            'How many reviewers, legal stakeholders, and technical administrators need concurrent access during peak case cycles?',
+            'What happens when per-seat licensing prevents adjacent departments from participating in the workflow?',
+            'How do you decide whether occasional reviewers need paid seats or a separate approval path?'
+        ]
+    },
+    'enterprise-custom-quote': {
+        label: 'Enterprise Custom Quote',
+        questions: [
+            'What procurement milestones, security reviews, and executive approvals must be completed before a custom quote can move forward?',
+            'Which pricing variables are most important to define early: users, deployment footprint, throughput, integrations, support, or data residency?',
+            'How do you compare custom quotes when vendors bundle redaction into broader platforms or services?'
+        ]
+    },
+    'freemium-free-trial': {
+        label: 'Freemium / Free Trial Model',
+        questions: [
+            'What must a free trial prove before your team is willing to start a procurement process?',
+            'Which real-world files, compliance checks, and workflow handoffs need to be tested during the evaluation window?',
+            'How do you prevent trial results from overstating value if the free tier excludes the scale, security, or support conditions you need?'
+        ]
     }
-    var key = industry + '_' + pricingModel;
-    if (discoveryQuestionSets[key]) {
-        return { questions: discoveryQuestionSets[key], matched: true };
+};
+var discoveryIndustryQuestionSets = {
+    'law-enforcement-public-safety': {
+        label: 'Law Enforcement & Public Safety',
+        questions: [
+            'How many bodycam, dashcam, or CCTV footage hours does your department process monthly for FOIA or court submissions?',
+            'What is your current SLA or legal deadline for delivering redacted footage to requestors, and how consistently are you meeting it?',
+            'How do you currently maintain chain-of-custody integrity when footage is sent to a third-party redaction vendor or cloud platform?',
+            'What liability or public scrutiny has your department faced due to accidental disclosure of unredacted footage or witness identity?',
+            'With CJIS compliance being non-negotiable, how does your current workflow ensure data never leaves your secured network?',
+            'What centralized Evidence Management System (EMS) do you use, and how well does your current redaction workflow integrate with it?'
+        ]
+    },
+    'government-municipal-agencies': {
+        label: 'Government & Municipal Agencies',
+        questions: [
+            'How frequently does your agency receive public records requests, and how has that volume trended over the past 12 months?',
+            'Which departments within your agency generate the highest volume of redaction requests: legal, HR, compliance, public safety, or another group?',
+            'How would you characterize your current redaction workflows: manual, partially automated, or fully automated, and where are the bottlenecks?',
+            'How do you handle redaction for mixed-format FOIA requests involving both documents and video files simultaneously?',
+            'What software procurement cycle does your agency follow, and which compliance certifications are mandatory for approval?',
+            'What is the biggest operational risk if redaction turnaround times increase during a politically sensitive public records request?'
+        ]
+    },
+    'healthcare-medical-institutions': {
+        label: 'Healthcare & Medical Institutions',
+        questions: [
+            'How does your team currently redact PHI from patient videos, medical images, or recorded consultations before sharing with third parties?',
+            'What HIPAA-specific controls does your current vendor provide, and how have those controls been independently audited?',
+            'How do you manage redaction workflows across radiology, compliance, legal, and other departments without creating data silos?',
+            'What HIPAA breach incidents or near misses have involved improperly redacted patient records or video footage?',
+            'What is your current process for handling redaction requests tied to insurance claims or litigation discovery?',
+            'Where does your institution require redaction software to operate fully on-premise because of patient data sensitivity requirements?'
+        ]
+    },
+    'legal-law-firms': {
+        label: 'Legal & Law Firms',
+        questions: [
+            'What volume of discovery material, including video depositions, surveillance footage, and documents, does your firm process per month?',
+            'How are you currently meeting court-mandated redaction deadlines when discovery volumes spike unexpectedly?',
+            "What is your firm's protocol for maintaining privilege and confidentiality when redaction is outsourced to third-party vendors?",
+            'How do you handle redaction across multi-format evidence packages, including PDFs, MP4s, and audio recordings, within a single case file?',
+            'What sanctions, case complications, or disclosure concerns have arisen from inadvertent release of unredacted sensitive information?',
+            'What level of audit trail and reporting does your current redaction workflow provide for court defensibility?'
+        ]
+    },
+    'financial-services-banking': {
+        label: 'Financial Services & Banking',
+        questions: [
+            'How does your compliance team currently redact sensitive PII or financial data from recorded calls, screen captures, or surveillance footage?',
+            'Which regulatory frameworks, including SOX, GDPR, or PCI-DSS, govern your redaction and data handling requirements?',
+            'How do you manage redaction workflows during regulatory audits or internal investigations that require fast turnaround?',
+            "What is your current vendor's data residency policy, and how does it align with your institution's cross-border data compliance requirements?",
+            'How does your team handle redaction at scale when legal, risk, HR, and other departments submit requests simultaneously?',
+            'If your current redaction process was audited today, how confident are you in its defensibility and documentation trail?'
+        ]
+    },
+    'education-universities': {
+        label: 'Education & Universities',
+        questions: [
+            'How does your institution currently handle redaction of student records, surveillance footage, or incident videos for FERPA compliance?',
+            'What is your process for responding to public records requests involving campus security footage or disciplinary hearings?',
+            'How do you manage redaction requests across multiple campuses or departments with varying technical capabilities?',
+            'What FERPA violations or compliance challenges have involved improperly handled student data or media?',
+            'What IT security requirements must any software vendor meet before being approved for use on your campus network?',
+            "How would changes in redaction turnaround time affect your compliance team's capacity to handle increasing public records volumes?"
+        ]
     }
-    return { questions: discoveryFallbackQuestions, matched: false };
+};
+function getDiscoverySections(industry, pricingModel) {
+    var pricingData = discoveryPricingModelQuestions[pricingModel] || discoveryPricingModelQuestions['flat-annual-subscription'];
+    var industryData = discoveryIndustryQuestionSets[industry] || discoveryIndustryQuestionSets['law-enforcement-public-safety'];
+    var sections = discoveryCorePhases.map(function(phase) {
+        var questions = phase.questions.slice();
+        var goal = phase.goal;
+        if (phase.key === 'commercial-impact') {
+            questions = questions.concat(pricingData.questions);
+            goal += ' · Pricing model lens: ' + pricingData.label;
+        }
+        return {
+            title: phase.title,
+            goal: goal,
+            questions: questions
+        };
+    });
+    sections.push({
+        title: 'Industry-Specific Questions: ' + industryData.label,
+        goal: 'Goal: Surface industry-specific compliance, workflow, and procurement risk',
+        questions: industryData.questions
+    });
+    return {
+        industryLabel: industryData.label,
+        pricingLabel: pricingData.label,
+        sections: sections
+    };
+}
+function renderDiscoverySection(section) {
+    var html = '<div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 4px solid #1e3a5f; padding: 18px 22px; margin-bottom: 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);">';
+    html += '<h3 style="margin: 0 0 6px 0; color: #1e3a5f; font-size: 1.08em;"><strong>' + escapeHtml(section.title) + '</strong></h3>';
+    html += '<p style="margin: 0 0 12px 0; color: #6b7280; font-size: 0.9em;">' + escapeHtml(section.goal) + '</p>';
+    html += '<ul style="margin: 0 0 0 20px; padding: 0; color: #1f2937; line-height: 1.65;">';
+    section.questions.forEach(function(question) {
+        html += '<li style="margin-bottom: 10px;">' + escapeHtml(question) + '</li>';
+    });
+    html += '</ul>';
+    html += '</div>';
+    return html;
 }
 function updateDiscoveryQuestions() {
     var industrySelect = document.getElementById('discoveryIndustryFilter');
@@ -267,23 +393,14 @@ function updateDiscoveryQuestions() {
     if (!industrySelect || !pricingSelect || !container) { return; }
     var industry = industrySelect.value;
     var pricingModel = pricingSelect.value;
-    var result = getDiscoveryQuestionsResult(industry, pricingModel);
-    var questions = result.questions;
+    var result = getDiscoverySections(industry, pricingModel);
+    var totalQuestions = result.sections.reduce(function(count, section) {
+        return count + section.questions.length;
+    }, 0);
     if (contextLabel) {
-        var industryLabel = discoveryIndustryLabels[industry] || industry;
-        var pricingLabel = discoveryPricingLabels[pricingModel] || pricingModel;
-        var prefix = result.matched ? 'Showing targeted questions for: ' : 'Showing generic fallback questions for: ';
-        contextLabel.textContent = prefix + industryLabel + ' \u00B7 ' + pricingLabel;
+        contextLabel.textContent = 'Selected industry: ' + result.industryLabel + ' \u00B7 Pricing model: ' + result.pricingLabel + ' \u00B7 ' + totalQuestions + ' questions generated';
     }
-    var html = '';
-    questions.forEach(function(question, idx) {
-        html += '<div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 4px solid #1e3a5f; padding: 18px 22px; margin-bottom: 14px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);">';
-        html += '<div style="display: flex; align-items: flex-start; gap: 14px;">';
-        html += '<span style="background: #1e3a5f; color: #ffffff; font-size: 0.75em; font-weight: 700; padding: 6px 10px; border-radius: 999px; flex-shrink: 0; letter-spacing: 0.02em;">Q' + (idx + 1) + '</span>';
-        html += '<p style="color: #1f2937; font-size: 1em; line-height: 1.6; margin: 0; flex: 1;">' + escapeHtml(question) + '</p>';
-        html += '</div>';
-        html += '</div>';
-    });
+    var html = result.sections.map(renderDiscoverySection).join('');
     container.innerHTML = html;
 }
 
