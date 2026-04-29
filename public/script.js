@@ -393,6 +393,14 @@ function updateDiscoveryQuestions() {
     if (!industrySelect || !pricingSelect || !container) { return; }
     var industry = industrySelect.value;
     var pricingModel = pricingSelect.value;
+    if (!discoveryIndustryQuestionSets[industry]) {
+        industry = 'law-enforcement-public-safety';
+        industrySelect.value = industry;
+    }
+    if (!discoveryPricingModelQuestions[pricingModel]) {
+        pricingModel = 'flat-annual-subscription';
+        pricingSelect.value = pricingModel;
+    }
     var result = getDiscoverySections(industry, pricingModel);
     var totalQuestions = result.sections.reduce(function(count, section) {
         return count + section.questions.length;
@@ -402,6 +410,16 @@ function updateDiscoveryQuestions() {
     }
     var html = result.sections.map(renderDiscoverySection).join('');
     container.innerHTML = html;
+}
+function initDiscoveryQuestions() {
+    var industrySelect = document.getElementById('discoveryIndustryFilter');
+    var pricingSelect = document.getElementById('discoveryPricingFilter');
+    [industrySelect, pricingSelect].forEach(function(select) {
+        if (!select || select.getAttribute('data-discovery-listener-attached') === 'true') { return; }
+        select.addEventListener('change', updateDiscoveryQuestions);
+        select.setAttribute('data-discovery-listener-attached', 'true');
+    });
+    updateDiscoveryQuestions();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1915,6 +1933,7 @@ if (typeof window !== 'undefined') {
     window.handleObjectCategoriesKey = handleObjectCategoriesKey;
     window.updateComparison = updateComparison;
     window.updateDiscoveryQuestions = updateDiscoveryQuestions;
+    window.initDiscoveryQuestions = initDiscoveryQuestions;
     window.updateVersionDetails = updateVersionDetails;
     window.updatePricingRecommendation = updatePricingRecommendation;
     window.togglePricingCompetitor = togglePricingCompetitor;
@@ -1938,7 +1957,7 @@ if (typeof window !== 'undefined') {
         try { updateVersionDetails(); } catch (e) {}
         try { updatePricingRecommendation(); } catch (e) {}
         try { toggleScrollButton(); } catch (e) {}
-        try { updateDiscoveryQuestions(); } catch (e) {}
+        try { initDiscoveryQuestions(); } catch (e) {}
         try { initMarketingResources(); } catch (e) {}
         if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
             try { window.lucide.createIcons(); } catch (e) {}
