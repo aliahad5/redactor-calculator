@@ -108,4 +108,14 @@ const noWinnerDecision = context.choosePricingRecommendation(
 assert.equal(noWinnerDecision.winner, null);
 assert.match(context.getPricingReason(noWinnerDecision), /No explicit-priced full-fit option/);
 
+const fallbackValueSignals = context.getNoExplicitPricedValueSignals({
+    excludedNotes: [
+        'Sighthound Custom pricing is not publicly numeric for API, OEM, large-team, or air-gapped deployments.'
+    ]
+});
+
+assert.equal(fallbackValueSignals.length, 3);
+assert.match(fallbackValueSignals.join(' '), /excluded from numeric scoring/i);
+assert.match(fallbackValueSignals.join(' '), /vendor quotes/i);
+
 console.log('pricing calculator regression tests passed');

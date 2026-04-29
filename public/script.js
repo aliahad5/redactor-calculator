@@ -1133,24 +1133,45 @@ function getTradeoffText(candidate) {
     if (!candidate) { return 'Custom-quote and non-public pricing entries were excluded from scoring.'; }
     return candidate.tradeoffs.join(' ');
 }
+function getNoExplicitPricedValueSignals(decision) {
+    var signals = [
+        'No matched option with public numeric pricing is comparable enough to score for this deployment, API, and volume profile.',
+        'Custom-quote and not-listed entries were excluded instead of estimated, preserving pricing data integrity.',
+        'Use vendor quotes to compare API, OEM, air-gapped, security, and support capabilities before making a final selection.'
+    ];
+
+    if (decision && decision.excludedNotes && decision.excludedNotes.length) {
+        signals[1] = 'Known custom-priced requirements were excluded from numeric scoring: ' + decision.excludedNotes.join(' ');
+    }
+
+    return signals;
+}
 
 function renderPricingRecommendationCard(decision, scoredCandidates) {
     var card = document.getElementById('pricingRecommendationCard');
     if (!card) { return; }
 
     if (!scoredCandidates.length) {
+        var emptyBulletHtml = getNoExplicitPricedValueSignals(decision).map(function(signal) {
+            return '<li>' + escapeHtml(signal) + '</li>';
+        }).join('');
+        var emptyExcludedHtml = decision.excludedNotes.length ?
+            '<p class="recommendation-note">Excluded from numeric scoring: ' + escapeHtml(decision.excludedNotes.join(' ')) + '</p>' : '';
         card.innerHTML =
-            '<div class="recommendation-kicker">Pricing recommendation</div>' +
+            '<div class="recommendation-kicker">' + (decision.intent === 'price-sensitive' ? 'Price-sensitive recommendation' : 'Value-sensitive recommendation') + '</div>' +
             '<h4>Recommended Solution: No explicit-priced option</h4>' +
             '<p><strong>Why (Pricing-Based):</strong> No public numeric price matched the selected filters after excluding custom quote and not-listed entries.</p>' +
-            '<p><strong>Trade-offs:</strong> Use vendor quotes for custom/API/air-gapped requirements before making a final decision.</p>';
+            '<div><strong>Why (Value-Based):</strong><ul>' + emptyBulletHtml + '</ul></div>' +
+            '<p><strong>Trade-offs:</strong> Use vendor quotes for custom/API/air-gapped requirements before making a final decision; the calculator will not rank vendors without validated pricing.</p>' +
+            emptyExcludedHtml;
         return;
     }
 
     var winner = decision.winner;
-    var bulletHtml = winner ? winner.valueSignals.slice(0, 3).map(function(signal) {
+    var valueSignals = winner ? winner.valueSignals.slice(0, 3) : getNoExplicitPricedValueSignals(decision);
+    var bulletHtml = valueSignals.map(function(signal) {
         return '<li>' + escapeHtml(signal) + '</li>';
-    }).join('') : '<li>No full-fit public-priced option matched the filters.</li>';
+    }).join('');
 
     var metricsHtml = '';
     if (decision.cheapest || decision.bestValue) {
@@ -1226,6 +1247,18 @@ function renderComparisonRows(scoredCandidates, winner) {
     var tbody = document.getElementById('compTableBody');
     if (!tbody) { return; }
     tbody.innerHTML = '';
+    if (!scoredCandidates.length) {
+        var emptyRow = document.createElement('tr');
+        emptyRow.className = 'empty-comparison-row';
+        emptyRow.innerHTML =
+            '<td data-label="Tool"><span class="tool-name">No explicit-priced option</span><span class="fit-badge">No scored match</span></td>' +
+            '<td data-label="Normalized Annual Cost"><span class="comparison-price">Not listed</span><span class="score-detail">Price efficiency: N/A</span></td>' +
+            '<td data-label="Pricing Basis">No matching competitor with public numeric pricing satisfied the selected deployment, API, and volume filters.</td>' +
+            '<td data-label="Value Signals">No value-for-money score can be calculated without validated public pricing and comparable fit.</td>' +
+            '<td data-label="Trade-offs">Request vendor quotes for custom, OEM, API, or air-gapped requirements before making a final pricing decision.</td>';
+        tbody.appendChild(emptyRow);
+        return;
+    }
 
     scoredCandidates
         .slice()
