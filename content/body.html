@@ -1232,7 +1232,7 @@
 
                 <h1 class="section-title">Find the <em>perfect plan</em> for your team.</h1>
                 <p class="section-sub">
-                    Answer four questions and get an instant Sighthound Redactor tier recommendation —
+                    Answer six questions and get an instant Sighthound Redactor tier recommendation —
                     plus a side-by-side comparison with the top alternatives for your use case.
                 </p>
 
@@ -1297,6 +1297,28 @@
                                 </select>
                             </div>
 
+                            <div class="field">
+                                <label for="monthlyMinutes">Monthly processing minutes <span class="req">*</span></label>
+                                <select id="monthlyMinutes">
+                                    <option value="">— Select volume —</option>
+                                    <option value="10">10 minutes / month</option>
+                                    <option value="100">100 minutes / month</option>
+                                    <option value="500">500 minutes / month</option>
+                                    <option value="3000">3,000 minutes / month</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="monthlyJobs">Monthly redaction jobs <span class="req">*</span></label>
+                                <select id="monthlyJobs">
+                                    <option value="">— Select jobs —</option>
+                                    <option value="1">1 job / month</option>
+                                    <option value="10">10 jobs / month</option>
+                                    <option value="50">50 jobs / month</option>
+                                    <option value="200">200 jobs / month</option>
+                                </select>
+                            </div>
+
                         </div>
 
                         <div class="action-row">
@@ -1329,15 +1351,16 @@
 
                         <!-- Comparison table -->
                         <div class="comparison-wrap">
-                            <div class="comparison-title">How Sighthound Redactor compares</div>
+                            <div class="comparison-title">How Sighthound Redactor Compares</div>
+                            <div id="pricingRecommendationCard" class="pricing-recommendation-card" aria-live="polite"></div>
                             <table class="comparison-table" id="compTable">
                                 <thead>
                                     <tr>
                                         <th>Tool</th>
-                                        <th>Known Price</th>
-                                        <th>Pricing Model</th>
-                                        <th>Free Trial</th>
-                                        <th>Sighthound Advantage</th>
+                                        <th>Normalized Annual Cost</th>
+                                        <th>Pricing Basis</th>
+                                        <th>Value Signals</th>
+                                        <th>Trade-offs</th>
                                     </tr>
                                 </thead>
                                 <tbody id="compTableBody"></tbody>
