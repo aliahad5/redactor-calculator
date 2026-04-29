@@ -5,8 +5,8 @@ import FAQItem from './FAQItem';
 import '../styles/PricingAnalysis.css';
 
 const recommendationModes = [
-  { value: 'bestPrice', label: 'Best Price', description: 'Lowest normalized explicit annual cost.' },
-  { value: 'bestValue', label: 'Best Value', description: 'Capability and scalability first, then price.' }
+  { value: 'bestPrice', label: 'Price-sensitive', description: 'Recommend the lowest-cost viable option.' },
+  { value: 'bestValue', label: 'Value-sensitive', description: 'Weigh feature value, scalability, and normalized cost.' }
 ];
 
 const userOptions = [1, 3, 5];
@@ -34,8 +34,43 @@ const annualRange = (item) => {
 const hasDeploymentFit = (competitor, deploymentNeed) => (
   deploymentNeed === 'any' || competitor.deploymentCapabilities?.includes(deploymentNeed)
 );
+const clampScore = (score) => Math.min(5, Math.max(0, score));
 
-const normalizePricing = (competitor, scenario) => {
+const scoreLabel = (score) => (
+  Number.isFinite(score) ? `${score.toFixed(2)}/5` : 'Not scored'
+);
+
+export const scalabilityScoreFor = (competitor, scenario) => {
+  if (competitor.pricingModel === 'annualPlans') {
+    return 5;
+  }
+
+  if (competitor.pricingModel === 'annualRange') {
+    const plan = competitor.plans?.[0];
+    if (plan?.amount && plan?.amountMax && plan.amountMax / plan.amount >= 10) {
+      return 2.5;
+    }
+    return 3.25;
+  }
+
+  if (competitor.pricingModel === 'monthlyPerSeatRange') {
+    return scenario.users <= 1 ? 3.25 : 2.25;
+  }
+
+  if (competitor.pricingModel === 'usagePerMinute') {
+    if (scenario.monthlyMinutes <= 10 && scenario.monthlyJobs <= 1) {
+      return 3.5;
+    }
+    if (scenario.monthlyMinutes <= 100) {
+      return 2.25;
+    }
+    return 1.5;
+  }
+
+  return 0;
+};
+
+export const normalizePricing = (competitor, scenario) => {
   if (!competitor.hasExplicitPricing) {
     return { ...competitor, isComparable: false, isViable: false, exclusionReason: 'No explicit price listed.' };
   }
@@ -98,7 +133,42 @@ const normalizePricing = (competitor, scenario) => {
   };
 };
 
-const chooseRecommendation = (results, mode) => {
+export const scoreComparisonResults = (results, scenario) => {
+  const viable = results.filter((result) => result.isComparable && result.isViable);
+  if (!viable.length) return results;
+
+  const lowestAnnual = Math.min(...viable.map((result) => result.minAnnual));
+
+  return results.map((result) => {
+    if (!result.isComparable || !result.isViable) {
+      return {
+        ...result,
+        priceEfficiencyScore: null,
+        scalabilityScore: null,
+        valueForMoneyScore: null
+      };
+    }
+
+    const priceEfficiencyScore = result.minAnnual > 0
+      ? clampScore((lowestAnnual / result.minAnnual) * 5)
+      : 0;
+    const scalabilityScore = scalabilityScoreFor(result, scenario);
+    const valueForMoneyScore = clampScore(
+      (result.valueScore * 0.45) +
+      (priceEfficiencyScore * 0.35) +
+      (scalabilityScore * 0.2)
+    );
+
+    return {
+      ...result,
+      priceEfficiencyScore,
+      scalabilityScore,
+      valueForMoneyScore
+    };
+  });
+};
+
+export const chooseRecommendation = (results, mode) => {
   const viable = results.filter((result) => result.isComparable && result.isViable);
   if (!viable.length) return null;
 
@@ -106,13 +176,16 @@ const chooseRecommendation = (results, mode) => {
     a.minAnnual - b.minAnnual || b.valueScore - a.valueScore || a.company.localeCompare(b.company)
   ));
   const byValue = [...viable].sort((a, b) => (
-    b.valueScore - a.valueScore || a.minAnnual - b.minAnnual || a.company.localeCompare(b.company)
+    (b.valueForMoneyScore ?? b.valueScore) - (a.valueForMoneyScore ?? a.valueScore) ||
+    a.minAnnual - b.minAnnual ||
+    a.company.localeCompare(b.company)
   ));
   const winner = mode === 'bestPrice' ? byPrice[0] : byValue[0];
 
   return {
     winner,
     cheapest: byPrice[0],
+    bestValue: byValue[0],
     nextLowest: byPrice.find((result) => result.id !== winner.id)
   };
 };
@@ -126,15 +199,15 @@ const pricingReason = (recommendation, mode) => {
   }
 
   if (winner.id === cheapest.id) {
-    return `${winner.company} is also the lowest normalized explicit annual cost at ${annualRange(winner)} and has the strongest value fit among selected viable options.`;
+    return `${winner.company} is also the lowest normalized explicit annual cost at ${annualRange(winner)} and has the strongest value-for-money score (${scoreLabel(winner.valueForMoneyScore)}) among selected viable options.`;
   }
 
-  return `${winner.company} is not the lowest-price option; ${cheapest.company} is lower at ${annualRange(cheapest)}. In Best Value mode, ${winner.company} wins on value score and scalability at ${annualRange(winner)}.`;
+  return `${winner.company} is not the lowest-price option; ${cheapest.company} is lower at ${annualRange(cheapest)}. In Value-sensitive mode, ${winner.company} has the highest value-for-money score (${scoreLabel(winner.valueForMoneyScore)}) after weighing feature value, normalized cost, and cost scalability.`;
 };
 
 const tradeOffsFor = (recommendation) => {
   const { winner, cheapest, nextLowest } = recommendation;
-  const tradeOffs = [...winner.tradeOffs];
+  const tradeOffs = [...(winner.tradeOffs || [])];
 
   if (winner.id !== cheapest.id) {
     tradeOffs.unshift(`${winner.company} costs ${currency(winner.minAnnual - cheapest.minAnnual)} more than ${cheapest.company}'s lowest normalized explicit price under these filters.`);
@@ -173,10 +246,13 @@ const PricingAnalysis = () => {
       .filter((competitor) => selectedCompetitorIds.includes(competitor.id))
       .map((competitor) => normalizePricing(competitor, scenario))
   ), [explicitlyPricedCompetitors, scenario, selectedCompetitorIds]);
+  const comparisonResults = useMemo(() => (
+    scoreComparisonResults(normalizedResults, scenario)
+  ), [normalizedResults, scenario]);
 
   const recommendation = useMemo(() => (
-    chooseRecommendation(normalizedResults, recommendationMode)
-  ), [normalizedResults, recommendationMode]);
+    chooseRecommendation(comparisonResults, recommendationMode)
+  ), [comparisonResults, recommendationMode]);
 
   const toggleCompetitor = (competitorId) => {
     setSelectedCompetitorIds((currentIds) => {
@@ -238,7 +314,7 @@ const PricingAnalysis = () => {
         <div className="section">
           <h2>How Sighthound Redactor Compares</h2>
           <p className="section-intro">
-            This recommendation only uses competitors with explicit pricing in the pricing analysis dataset. Quote-only and custom-only vendors are excluded until exact pricing is listed.
+            This recommendation only uses selected competitors with explicit pricing in the pricing analysis dataset. Quote-only and custom-only vendors are excluded until exact pricing is listed.
           </p>
 
           <div className="pricing-controls-panel">
@@ -321,11 +397,15 @@ const PricingAnalysis = () => {
             {recommendation ? (
               <>
                 <h3>Recommended Solution: {recommendation.winner.company}</h3>
+                <div className="recommendation-metrics">
+                  <span>Lowest cost viable option: <strong>{recommendation.cheapest.company}</strong></span>
+                  <span>Best value-for-money option: <strong>{recommendation.bestValue.company}</strong></span>
+                </div>
                 <p><strong>Why (Pricing-Based):</strong> {pricingReason(recommendation, recommendationMode)}</p>
                 <div>
                   <strong>Why (Value-Based):</strong>
                   <ul>
-                    {recommendation.winner.valueDrivers.slice(0, 3).map((driver) => (
+                    {(recommendation.winner.valueDrivers || []).slice(0, 3).map((driver) => (
                       <li key={driver}>{driver}</li>
                     ))}
                   </ul>
@@ -346,7 +426,7 @@ const PricingAnalysis = () => {
 
           <h3>Normalized Pricing Inputs</h3>
           <div className="normalized-grid">
-            {normalizedResults.map((result) => (
+            {comparisonResults.map((result) => (
               <div
                 key={result.id}
                 className={`normalized-card ${recommendation?.winner.id === result.id ? 'winner' : ''} ${!result.isViable ? 'excluded' : ''}`}
@@ -358,9 +438,22 @@ const PricingAnalysis = () => {
                 <p><strong>Listed pricing:</strong> {result.explicitPricing}</p>
                 <p><strong>Normalization:</strong> {result.note || result.exclusionReason}</p>
                 <p><strong>Scalability:</strong> {result.scalability}</p>
-                <p><strong>Value score:</strong> {result.valueScore}/5</p>
+                <p><strong>Feature-value score:</strong> {result.valueScore}/5</p>
+                {result.isViable && (
+                  <p><strong>Value-for-money score:</strong> {scoreLabel(result.valueForMoneyScore)} <span className="score-detail">(price {scoreLabel(result.priceEfficiencyScore)}, scalability {scoreLabel(result.scalabilityScore)})</span></p>
+                )}
                 {!result.isViable && (
                   <p className="exclusion-note"><strong>Reason:</strong> {result.exclusionReason}</p>
+                )}
+                {(result.capterraLink || result.g2Link) && (
+                  <div className="listing-links">
+                    {result.capterraLink && (
+                      <p><strong>Capterra Direct Link:</strong> <a href={result.capterraLink} target="_blank" rel="noopener noreferrer">{result.capterraLink}</a></p>
+                    )}
+                    {result.g2Link && (
+                      <p><strong>G2 Direct Link:</strong> <a href={result.g2Link} target="_blank" rel="noopener noreferrer">{result.g2Link}</a></p>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
