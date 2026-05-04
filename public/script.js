@@ -1,5 +1,12 @@
 var comparisonMode = 'all';
 var versionData = {
+    'v7.1.0': {
+        title: 'Version 7.1.0 Release',
+        date: 'March 25, 2026',
+        icon: 'tag',
+        heading: '',
+        highlights: []
+    },
     'v7.0.6': {
         title: 'Version 7.0.6 Release',
         date: 'March 2026',
@@ -33,6 +40,20 @@ var versionData = {
             { label: 'Undo/Redo Introduced', content: 'Full undo and redo support across the redaction workflow gives reviewers confidence to experiment and correct mistakes without losing progress.' },
             { label: 'Audit Log Export Improved', content: 'Expanded audit log export options with richer metadata, better filtering, and compliance-friendly formats for evidence handling.' }
         ]
+    },
+    'v6.6.0': {
+        title: 'Version 6.6.0 Release',
+        date: 'September 19, 2025',
+        icon: 'tag',
+        heading: '',
+        highlights: []
+    },
+    'v6.5.2': {
+        title: 'Version 6.5.2 Release',
+        date: 'August 25, 2025',
+        icon: 'tag',
+        heading: '',
+        highlights: []
     },
     'v7.0.0': {
         title: 'Version 7.0.0 Major Release',
