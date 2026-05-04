@@ -243,6 +243,20 @@ function classifyIndustry(text: string): string {
   return '🏢 Government Agencies';
 }
 
+function normalizeContractTitle(vendor: string, contractTitle: string): string {
+  const normalizedVendor = compactWhitespace(vendor).toUpperCase().replace(/[.,]/g, '');
+  const normalizedTitles: Record<string, string> = {
+    'PURDUE UNIVERSITY':
+      'DHS S&T technical support for video redaction and privacy-preserving intelligence extraction.',
+    'CIPHERTRACE INC':
+      'R&D tools and algorithms for cryptocurrency forensic analysis and transaction attribution.',
+    'THE UNIVERSITY OF SOUTHERN MISSISSIPPI':
+      'Autonomous micro-modular mobile data center cloud computing study for modeling, simulation, cybersecurity, and anomaly detection.',
+  };
+
+  return normalizedTitles[normalizedVendor] || contractTitle;
+}
+
 function isStrictlyRelevant(result: UsaSpendingAwardResult): boolean {
   const text = compactWhitespace(
     [
@@ -337,7 +351,7 @@ function toContractRecord(
 
   return {
     vendorOrganizationName: vendor,
-    contractTitle: description,
+    contractTitle: normalizeContractTitle(vendor, description),
     industrySegment: classifyIndustry(classificationText),
     contractType: buildContractType(detail),
     awardAmount: amount,
