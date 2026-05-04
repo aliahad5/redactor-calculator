@@ -4,8 +4,13 @@ var versionData = {
         title: 'Version 7.1.0 Release',
         date: 'March 25, 2026',
         icon: 'tag',
-        heading: '',
-        highlights: []
+        heading: 'Key Highlights',
+        highlights: [
+            { label: 'Smart Fill Redaction Mode', content: 'Added a dedicated redaction mode that produces more natural-looking fills than standard fixed-color masking.' },
+            { label: 'Audio Gap Handling', content: 'Videos with incomplete or irregular audio streams now get proper resampling and silence padding for cleaner processing.' },
+            { label: 'License Activation Errors', content: 'Activation failures now return clearer rejection details, including specific messages for unknown serial numbers instead of generic server errors.' },
+            { label: 'Object Creation Context Menu Fix', content: 'Existing-object context menus are suppressed while add-new-objects mode is active, preventing accidental edits during object creation.' }
+        ]
     },
     'v7.0.6': {
         title: 'Version 7.0.6 Release',
@@ -45,15 +50,22 @@ var versionData = {
         title: 'Version 6.6.0 Release',
         date: 'September 19, 2025',
         icon: 'tag',
-        heading: '',
-        highlights: []
+        heading: 'Key Highlights',
+        highlights: [
+            { label: 'Flag-File Data Reset', content: 'Placing a DATA_DROP file in the user directory now clears application data on restart while preserving licensing and user credentials for transient API workflows.' },
+            { label: 'Session Cleanup Stability', content: 'Fixed a backend crash triggered by third-party library recursion in certain storage cleanup scenarios.' },
+            { label: 'Missing Audio Padding', content: 'Videos with audio only at the beginning are padded with silence so intake, conversion, and playback stay aligned.' }
+        ]
     },
     'v6.5.2': {
         title: 'Version 6.5.2 Release',
         date: 'August 25, 2025',
         icon: 'tag',
-        heading: '',
-        highlights: []
+        heading: 'Key Highlights',
+        highlights: [
+            { label: 'Automatic CPU Fallback', content: 'If GPU detection fails, such as after untested CUDA changes, Redactor switches to CPU processing and records the event in logs.' },
+            { label: 'Improved Reconnection Handling', content: 'The transport layer now keeps clients connected through unstable network periods and shows a Reconnecting... indicator until service returns.' }
+        ]
     },
     'v7.0.0': {
         title: 'Version 7.0.0 Major Release',
