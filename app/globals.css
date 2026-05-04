@@ -808,6 +808,44 @@ tbody tr:nth-child(even):hover {
     color: var(--sh-white);
     border-color: var(--sh-blurple);
 }
+#features .comparison-filter-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+}
+
+#features .comparison-filter-tabs .filter-btn {
+    flex: 0 0 auto;
+}
+
+#features #featureTable td.data-processing-success {
+    background: rgba(31, 157, 85, 0.10);
+    color: var(--status-success);
+    font-weight: 600;
+}
+
+#features .unverified-source-tooltip {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    border-radius: 50%;
+    background: #fff6e9;
+    color: var(--sh-orange-medium);
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+    vertical-align: text-bottom;
+}
+
+#features .unverified-source-tooltip:focus-visible {
+    outline: 2px solid var(--sh-orange-light);
+    outline-offset: 2px;
+}
 
 .comparison-slider {
     background: var(--bg-surface);
