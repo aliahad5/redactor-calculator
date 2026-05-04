@@ -1158,6 +1158,81 @@
                     </div>
                 </div>
             </div>
+
+            <h3><i data-lucide="landmark"></i> FOIA / Government Contract Pricing</h3>
+            <div class="foia-contract-panel" aria-labelledby="foiaContractPricingTitle">
+                <div class="foia-contract-hero">
+                    <div>
+                        <p class="foia-contract-eyebrow">Verified public-sector benchmark data</p>
+                        <h4 id="foiaContractPricingTitle"><i data-lucide="file-search"></i> FOIA / Government Contract Pricing</h4>
+                        <p>Review public redaction, anonymization, evidence-processing, and compliance-workflow contract records with exact award amounts only. Unsupported sources return the required no-data state rather than inferred values.</p>
+                    </div>
+                    <div class="foia-contract-stat">
+                        <span id="foiaContractCount">0</span>
+                        <small>contracts shown</small>
+                    </div>
+                </div>
+                <div class="foia-contract-toolbar" aria-label="FOIA and government contract pricing filters">
+                    <div class="foia-contract-field">
+                        <label for="foiaContractSourceSelect" class="version-selector-label"><i data-lucide="database"></i> Primary Sources (USA)</label>
+                        <select id="foiaContractSourceSelect" class="version-selector foia-contract-select" onchange="handleFoiaContractSourceChange()">
+                            <option value="usaspending" selected>USASpending.gov</option>
+                            <option value="sam">SAM.gov (Contract Opportunities &amp; Awards)</option>
+                            <option value="fpds">FPDS-NG (Federal Procurement Data System)</option>
+                            <option value="usa-foia">USA.gov FOIA Libraries</option>
+                            <option value="california">California State Procurement Portal</option>
+                            <option value="texas">Texas State Procurement Portal</option>
+                            <option value="new-york">New York State Contracts Reporter</option>
+                        </select>
+                    </div>
+                    <div class="foia-contract-field">
+                        <label for="foiaContractIndustryFilter" class="version-selector-label"><i data-lucide="building-2"></i> Industry</label>
+                        <select id="foiaContractIndustryFilter" class="version-selector foia-contract-select" onchange="renderFoiaContractData()">
+                            <option value="all">All Industries</option>
+                            <option value="🚓 Law Enforcement &amp; Public Safety">🚓 Law Enforcement &amp; Public Safety</option>
+                            <option value="⚖️ Legal &amp; Compliance Teams">⚖️ Legal &amp; Compliance Teams</option>
+                            <option value="🏢 Government Agencies">🏢 Government Agencies</option>
+                            <option value="🏥 Healthcare">🏥 Healthcare</option>
+                            <option value="🚁 Drone &amp; Aerial Surveillance">🚁 Drone &amp; Aerial Surveillance</option>
+                        </select>
+                    </div>
+                    <div class="foia-contract-field">
+                        <label for="foiaContractStatusFilter" class="version-selector-label"><i data-lucide="activity"></i> Contract Status</label>
+                        <select id="foiaContractStatusFilter" class="version-selector foia-contract-select" onchange="renderFoiaContractData()">
+                            <option value="all">All Statuses</option>
+                            <option value="Past">Past</option>
+                            <option value="Active">Active</option>
+                            <option value="Upcoming">Upcoming</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="foia-contract-summary-row">
+                    <p id="foiaContractSummary" aria-live="polite">Loading verified public contract data.</p>
+                    <p id="foiaContractRetrievalNote" class="foia-contract-note"></p>
+                </div>
+                <div id="foiaContractResults" class="foia-contract-results" aria-live="polite">
+                    <div class="foia-contract-loading">Loading verified public contract data...</div>
+                </div>
+                <div class="foia-contract-references" aria-label="Public source references">
+                    <div>
+                        <strong>Federal</strong>
+                        <a href="https://www.usaspending.gov" target="_blank" rel="noopener noreferrer">USASpending.gov</a>
+                        <a href="https://sam.gov" target="_blank" rel="noopener noreferrer">SAM.gov</a>
+                        <a href="https://www.fpds.gov" target="_blank" rel="noopener noreferrer">FPDS-NG</a>
+                    </div>
+                    <div>
+                        <strong>FOIA</strong>
+                        <a href="https://www.foia.gov" target="_blank" rel="noopener noreferrer">FOIA.gov</a>
+                        <a href="https://www.usa.gov" target="_blank" rel="noopener noreferrer">USA.gov</a>
+                    </div>
+                    <div>
+                        <strong>State</strong>
+                        <a href="https://caleprocure.ca.gov" target="_blank" rel="noopener noreferrer">California State Procurement Portal</a>
+                        <a href="https://www.txsmartbuy.gov" target="_blank" rel="noopener noreferrer">Texas State Procurement Portal</a>
+                        <a href="https://www.nyscr.ny.gov" target="_blank" rel="noopener noreferrer">New York State Contracts Reporter</a>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section id="positioning" class="section">
