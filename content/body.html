@@ -1159,21 +1159,23 @@
                 </div>
             </div>
 
-            <h3><i data-lucide="landmark"></i> FOIA / Government Contract Pricing</h3>
-            <div class="foia-contract-panel" aria-labelledby="foiaContractPricingTitle">
-                <div class="foia-contract-hero">
-                    <div>
-                        <p class="foia-contract-eyebrow">Verified public-sector benchmark data</p>
-                        <h4 id="foiaContractPricingTitle"><i data-lucide="file-search"></i> FOIA / Government Contract Pricing</h4>
-                        <p>Review public redaction, anonymization, evidence-processing, and compliance-workflow contract records with exact award amounts only. Unsupported sources return the required no-data state rather than inferred values.</p>
+            <div id="foiaContractPanel" class="foia-contract-panel collapsed" aria-labelledby="foiaContractPricingTitle">
+                <div class="foia-contract-header">
+                    <div class="foia-contract-heading">
+                        <i data-lucide="landmark"></i>
+                        <div>
+                            <p class="foia-contract-eyebrow">Verified public-sector benchmark data</p>
+                            <h3 id="foiaContractPricingTitle">FOIA / Government Contract Pricing<span id="foiaContractCount" class="resource-count-pill">0</span></h3>
+                            <p>Review public redaction, anonymization, evidence-processing, and compliance-workflow contract records with exact award amounts only. Unsupported sources return the required no-data state rather than inferred values.</p>
+                        </div>
                     </div>
-                    <div class="foia-contract-stat">
-                        <span id="foiaContractCount">0</span>
-                        <small>contracts shown</small>
-                    </div>
+                    <button type="button" id="foiaContractCollapseToggle" class="pricing-summary-collapse-toggle" onclick="toggleFoiaContractSection()" aria-expanded="false" aria-controls="foiaContractPanelBody">
+                        <span id="foiaContractCollapseLabel">Expand</span>
+                        <span class="pricing-summary-collapse-icon" aria-hidden="true">⌃</span>
+                    </button>
                 </div>
-                <div class="foia-contract-toolbar" aria-label="FOIA and government contract pricing filters">
-                    <div class="foia-contract-field">
+                <div id="foiaContractPanelBody" class="foia-contract-body" hidden aria-hidden="true" inert>
+                    <div class="foia-contract-source-row">
                         <label for="foiaContractSourceSelect" class="version-selector-label"><i data-lucide="database"></i> Primary Sources (USA)</label>
                         <select id="foiaContractSourceSelect" class="version-selector foia-contract-select" onchange="handleFoiaContractSourceChange()">
                             <option value="usaspending" selected>USASpending.gov</option>
@@ -1185,51 +1187,36 @@
                             <option value="new-york">New York State Contracts Reporter</option>
                         </select>
                     </div>
-                    <div class="foia-contract-field">
-                        <label for="foiaContractIndustryFilter" class="version-selector-label"><i data-lucide="building-2"></i> Industry</label>
-                        <select id="foiaContractIndustryFilter" class="version-selector foia-contract-select" onchange="renderFoiaContractData()">
-                            <option value="all">All Industries</option>
-                            <option value="🚓 Law Enforcement &amp; Public Safety">🚓 Law Enforcement &amp; Public Safety</option>
-                            <option value="⚖️ Legal &amp; Compliance Teams">⚖️ Legal &amp; Compliance Teams</option>
-                            <option value="🏢 Government Agencies">🏢 Government Agencies</option>
-                            <option value="🏥 Healthcare">🏥 Healthcare</option>
-                            <option value="🚁 Drone &amp; Aerial Surveillance">🚁 Drone &amp; Aerial Surveillance</option>
-                        </select>
+                    <div class="resource-toolbar foia-contract-toolbar" aria-label="FOIA and government contract pricing filters">
+                        <div class="resource-search">
+                            <label for="foiaContractSearch" class="version-selector-label"><i data-lucide="search"></i> Search contract data</label>
+                            <input id="foiaContractSearch" class="resource-input" type="search" placeholder="Search vendor, title, agency, source..." oninput="renderFoiaContractData()" />
+                        </div>
+                        <div class="resource-filter">
+                            <label for="foiaContractCategoryFilter" class="version-selector-label"><i data-lucide="folder"></i> Category</label>
+                            <select id="foiaContractCategoryFilter" class="version-selector foia-contract-select" onchange="renderFoiaContractData()">
+                                <option value="all">All Categories</option>
+                                <option value="🚓 Law Enforcement &amp; Public Safety">🚓 Law Enforcement &amp; Public Safety</option>
+                                <option value="⚖️ Legal &amp; Compliance">⚖️ Legal &amp; Compliance</option>
+                                <option value="🏢 Government Agencies">🏢 Government Agencies</option>
+                                <option value="🏥 Healthcare">🏥 Healthcare</option>
+                                <option value="🚁 Drone &amp; Aerial Surveillance">🚁 Drone &amp; Aerial Surveillance</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="foia-contract-field">
-                        <label for="foiaContractStatusFilter" class="version-selector-label"><i data-lucide="activity"></i> Contract Status</label>
-                        <select id="foiaContractStatusFilter" class="version-selector foia-contract-select" onchange="renderFoiaContractData()">
-                            <option value="all">All Statuses</option>
-                            <option value="Past">Past</option>
-                            <option value="Active">Active</option>
-                            <option value="Upcoming">Upcoming</option>
-                        </select>
+                    <div class="resource-actions-bar foia-contract-actions-bar">
+                        <div>
+                            <p id="foiaContractSummary" aria-live="polite">Expand this section to load verified public contract data.</p>
+                            <p id="foiaContractRetrievalNote" class="foia-contract-note"></p>
+                        </div>
+                        <div class="resource-view-toggle" aria-label="FOIA contract view toggle">
+                            <button type="button" id="foiaContractCardToggle" class="resource-toggle active" onclick="setFoiaContractView('card', this)"><i data-lucide="layout-grid"></i> Cards</button>
+                            <button type="button" id="foiaContractTableToggle" class="resource-toggle" onclick="setFoiaContractView('table', this)"><i data-lucide="table-2"></i> Table</button>
+                            <button type="button" class="resource-toggle" onclick="resetFoiaContractFilters()"><i data-lucide="rotate-ccw"></i> Reset</button>
+                        </div>
                     </div>
-                </div>
-                <div class="foia-contract-summary-row">
-                    <p id="foiaContractSummary" aria-live="polite">Loading verified public contract data.</p>
-                    <p id="foiaContractRetrievalNote" class="foia-contract-note"></p>
-                </div>
-                <div id="foiaContractResults" class="foia-contract-results" aria-live="polite">
-                    <div class="foia-contract-loading">Loading verified public contract data...</div>
-                </div>
-                <div class="foia-contract-references" aria-label="Public source references">
-                    <div>
-                        <strong>Federal</strong>
-                        <a href="https://www.usaspending.gov" target="_blank" rel="noopener noreferrer">USASpending.gov</a>
-                        <a href="https://sam.gov" target="_blank" rel="noopener noreferrer">SAM.gov</a>
-                        <a href="https://www.fpds.gov" target="_blank" rel="noopener noreferrer">FPDS-NG</a>
-                    </div>
-                    <div>
-                        <strong>FOIA</strong>
-                        <a href="https://www.foia.gov" target="_blank" rel="noopener noreferrer">FOIA.gov</a>
-                        <a href="https://www.usa.gov" target="_blank" rel="noopener noreferrer">USA.gov</a>
-                    </div>
-                    <div>
-                        <strong>State</strong>
-                        <a href="https://caleprocure.ca.gov" target="_blank" rel="noopener noreferrer">California State Procurement Portal</a>
-                        <a href="https://www.txsmartbuy.gov" target="_blank" rel="noopener noreferrer">Texas State Procurement Portal</a>
-                        <a href="https://www.nyscr.ny.gov" target="_blank" rel="noopener noreferrer">New York State Contracts Reporter</a>
+                    <div id="foiaContractResults" class="foia-contract-results" aria-live="polite">
+                        <div class="foia-contract-empty">Expand this section to load verified public contract data.</div>
                     </div>
                 </div>
             </div>

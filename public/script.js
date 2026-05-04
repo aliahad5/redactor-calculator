@@ -2039,6 +2039,7 @@ function initPricingAnalysisDropdowns() {
     initPricingSummaryViewer();
 }
 var FOIA_CONTRACT_EMPTY_MESSAGE = 'No verified public contract data found. Recommend manual FOIA search via USASpending.gov or relevant procurement portals.';
+var foiaContractView = 'card';
 var foiaContractState = {
     source: 'usaspending',
     sourceLabel: 'USASpending.gov',
@@ -2047,19 +2048,30 @@ var foiaContractState = {
     generatedAt: '',
     error: '',
     loading: false,
+    hasLoaded: false,
     requestToken: 0
 };
 
 function getFoiaContractControls() {
     return {
+        panel: document.getElementById('foiaContractPanel'),
+        body: document.getElementById('foiaContractPanelBody'),
+        toggle: document.getElementById('foiaContractCollapseToggle'),
+        collapseLabel: document.getElementById('foiaContractCollapseLabel'),
         source: document.getElementById('foiaContractSourceSelect'),
-        industry: document.getElementById('foiaContractIndustryFilter'),
-        status: document.getElementById('foiaContractStatusFilter'),
+        search: document.getElementById('foiaContractSearch'),
+        category: document.getElementById('foiaContractCategoryFilter'),
         summary: document.getElementById('foiaContractSummary'),
         note: document.getElementById('foiaContractRetrievalNote'),
         results: document.getElementById('foiaContractResults'),
-        count: document.getElementById('foiaContractCount')
+        count: document.getElementById('foiaContractCount'),
+        cardToggle: document.getElementById('foiaContractCardToggle'),
+        tableToggle: document.getElementById('foiaContractTableToggle')
     };
+}
+
+function getFoiaContractInputValue(element) {
+    return element ? String(element.value || '').trim() : '';
 }
 
 function getFoiaSelectedSourceLabel(select) {
@@ -2069,32 +2081,45 @@ function getFoiaSelectedSourceLabel(select) {
     return select.options[select.selectedIndex].textContent.trim();
 }
 
-function getFoiaFilteredContracts() {
-    var controls = getFoiaContractControls();
-    var industry = controls.industry ? controls.industry.value : 'all';
-    var status = controls.status ? controls.status.value : 'all';
-    return foiaContractState.records.filter(function(record) {
-        var industryMatch = industry === 'all' || record.industrySegment === industry;
-        var statusMatch = status === 'all' || record.contractStatus === status;
-        return industryMatch && statusMatch;
-    });
+function normalizeFoiaIndustrySegment(value) {
+    return value === '⚖️ Legal & Compliance Teams' ? '⚖️ Legal & Compliance' : String(value || '');
 }
 
-function groupFoiaContractsByAgency(records) {
-    var groups = {};
-    records.forEach(function(record) {
-        var agency = record.agencyDepartment || 'Agency / Department not listed';
-        if (!groups[agency]) { groups[agency] = []; }
-        groups[agency].push(record);
-    });
-    return Object.keys(groups).sort().map(function(agency) {
-        groups[agency].sort(function(a, b) {
-            return (b.awardAmount || 0) - (a.awardAmount || 0);
-        });
-        return {
-            agency: agency,
-            records: groups[agency]
-        };
+function normalizeFoiaVerificationStatus(value) {
+    return value === '✅ Verified' ? '✅ Verified' : '⚠️ Partial';
+}
+
+function getFoiaVerificationClass(value) {
+    return normalizeFoiaVerificationStatus(value) === '✅ Verified' ? 'verified' : 'partial';
+}
+
+function getFoiaSearchText(record) {
+    return [
+        record.vendorOrganizationName,
+        record.contractTitle,
+        normalizeFoiaIndustrySegment(record.industrySegment),
+        record.contractType,
+        record.awardAmountDisplay,
+        record.agencyDepartment,
+        record.contractStatus,
+        record.contractPeriod,
+        record.source,
+        record.sourceUrl,
+        record.description,
+        record.awardId,
+        normalizeFoiaVerificationStatus(record.verificationStatus)
+    ].join(' ').toLowerCase();
+}
+
+function getFoiaFilteredContracts() {
+    var controls = getFoiaContractControls();
+    var query = getFoiaContractInputValue(controls.search).toLowerCase();
+    var category = getFoiaContractInputValue(controls.category) || 'all';
+    return foiaContractState.records.filter(function(record) {
+        var industry = normalizeFoiaIndustrySegment(record.industrySegment);
+        var categoryMatch = category === 'all' || industry === category;
+        var queryMatch = !query || getFoiaSearchText(record).indexOf(query) !== -1;
+        return categoryMatch && queryMatch;
     });
 }
 
@@ -2102,56 +2127,99 @@ function renderFoiaField(label, value, isHtml) {
     return '<div><dt>' + escapeHtml(label) + '</dt><dd>' + (isHtml ? value : escapeHtml(value || 'Not publicly listed')) + '</dd></div>';
 }
 
+function renderFoiaSourceLink(record, label) {
+    if (!record.sourceUrl) {
+        return escapeHtml(label || record.source || 'Not publicly listed');
+    }
+    return '<a href="' + escapeHtml(record.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(label || record.source || 'Open source') + '</a>';
+}
+
 function renderFoiaContractCard(record) {
-    var sourceUrl = record.sourceUrl || '';
-    var verificationClass = record.verificationStatus === '✅ Verified' ? 'verified' : 'partial';
-    var html = '<article class="foia-contract-card">';
-    html += '<div class="foia-contract-card-header">';
-    html += '<h6>' + escapeHtml(record.vendorOrganizationName || 'Vendor / Organization not listed') + '</h6>';
+    var industry = normalizeFoiaIndustrySegment(record.industrySegment);
+    var verification = normalizeFoiaVerificationStatus(record.verificationStatus);
+    var verificationClass = getFoiaVerificationClass(record.verificationStatus);
+    var html = '<article class="resource-card foia-contract-card">';
+    html += '<div class="resource-card-top">';
+    html += '<span class="resource-pill foia-industry-pill">' + escapeHtml(industry || 'Industry not listed') + '</span>';
     html += '<span class="foia-contract-status">' + escapeHtml(record.contractStatus || 'Status not listed') + '</span>';
     html += '</div>';
+    html += '<h4>' + escapeHtml(record.vendorOrganizationName || 'Vendor / Organization not listed') + '</h4>';
     html += '<dl class="foia-contract-field-list">';
     html += renderFoiaField('Vendor / Organization Name', record.vendorOrganizationName);
     html += renderFoiaField('Contract Title', record.contractTitle);
-    html += renderFoiaField('Industry Segment', record.industrySegment);
-    html += renderFoiaField('Contract Type', record.contractType);
+    html += renderFoiaField('Industry Tag', industry);
     html += renderFoiaField('Award Amount', record.awardAmountDisplay);
-    html += renderFoiaField('Agency / Department', record.agencyDepartment);
+    html += renderFoiaField('Agency', record.agencyDepartment);
     html += renderFoiaField('Contract Status', record.contractStatus);
     html += renderFoiaField('Contract Period', record.contractPeriod);
     html += renderFoiaField('Source', record.source);
-    html += renderFoiaField('Source URL', sourceUrl ? '<a href="' + escapeHtml(sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(sourceUrl) + '</a>' : 'Not publicly listed', true);
-    html += renderFoiaField('Verification Status', '<span class="foia-verification ' + verificationClass + '">' + escapeHtml(record.verificationStatus || '⚠️ Partial') + '</span>', true);
+    html += renderFoiaField('Source Link', renderFoiaSourceLink(record, 'Open public record'), true);
+    html += renderFoiaField('Verification Badge', '<span class="foia-verification ' + verificationClass + '">' + escapeHtml(verification) + '</span>', true);
     html += '</dl>';
     html += '</article>';
     return html;
 }
 
-function renderFoiaContractGroup(group) {
-    var total = group.records.reduce(function(sum, record) {
-        return sum + (Number(record.awardAmount) || 0);
-    }, 0);
-    var totalLabel = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(total);
-    var html = '<section class="foia-contract-agency-group">';
-    html += '<div class="foia-contract-agency-header">';
-    html += '<h5>' + escapeHtml(group.agency) + '</h5>';
-    html += '<span>' + group.records.length + ' records · ' + escapeHtml(totalLabel) + '</span>';
-    html += '</div>';
-    html += '<div class="foia-contract-card-grid">';
-    html += group.records.map(renderFoiaContractCard).join('');
-    html += '</div>';
-    html += '</section>';
+function renderFoiaContractCards(records) {
+    return '<div class="resource-cards-grid foia-contract-card-grid">' + records.map(renderFoiaContractCard).join('') + '</div>';
+}
+
+function renderFoiaContractTable(records) {
+    var html = '<div class="resource-table-wrapper foia-contract-table-wrapper"><table class="resource-table foia-contract-table"><thead><tr>';
+    [
+        'Vendor / Organization',
+        'Contract Title',
+        'Industry',
+        'Contract Type',
+        'Award Amount',
+        'Agency',
+        'Status',
+        'Contract Period',
+        'Source',
+        'Verification'
+    ].forEach(function(label) {
+        html += '<th scope="col">' + escapeHtml(label) + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    records.forEach(function(record) {
+        var industry = normalizeFoiaIndustrySegment(record.industrySegment);
+        var verification = normalizeFoiaVerificationStatus(record.verificationStatus);
+        var verificationClass = getFoiaVerificationClass(record.verificationStatus);
+        html += '<tr>';
+        html += '<td data-label="Vendor / Organization">' + escapeHtml(record.vendorOrganizationName || '—') + '</td>';
+        html += '<td data-label="Contract Title">' + escapeHtml(record.contractTitle || '—') + '</td>';
+        html += '<td data-label="Industry">' + escapeHtml(industry || '—') + '</td>';
+        html += '<td data-label="Contract Type">' + escapeHtml(record.contractType || '—') + '</td>';
+        html += '<td data-label="Award Amount">' + escapeHtml(record.awardAmountDisplay || '—') + '</td>';
+        html += '<td data-label="Agency">' + escapeHtml(record.agencyDepartment || '—') + '</td>';
+        html += '<td data-label="Status">' + escapeHtml(record.contractStatus || '—') + '</td>';
+        html += '<td data-label="Contract Period">' + escapeHtml(record.contractPeriod || '—') + '</td>';
+        html += '<td data-label="Source">' + renderFoiaSourceLink(record, record.source || 'Open source') + '</td>';
+        html += '<td data-label="Verification"><span class="foia-verification ' + verificationClass + '">' + escapeHtml(verification) + '</span></td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table></div>';
     return html;
+}
+
+function updateFoiaContractBodyHeight(force) {
+    var controls = getFoiaContractControls();
+    if (!controls.panel || !controls.body || controls.body.hidden) { return; }
+    if (!force && controls.panel.classList.contains('collapsed')) { return; }
+    controls.body.style.setProperty('--foia-contract-body-height', controls.body.scrollHeight + 'px');
 }
 
 function renderFoiaContractData() {
     var controls = getFoiaContractControls();
     if (!controls.results) { return; }
+
+    if (!foiaContractState.hasLoaded && !foiaContractState.loading) {
+        if (controls.count) { controls.count.textContent = '0'; }
+        if (controls.summary) { controls.summary.textContent = 'Expand this section to load verified public contract data.'; }
+        if (controls.note) { controls.note.textContent = ''; }
+        controls.results.innerHTML = '<div class="foia-contract-empty">Expand this section to load verified public contract data.</div>';
+        return;
+    }
 
     var filtered = getFoiaFilteredContracts();
     var total = foiaContractState.records.length;
@@ -2164,6 +2232,7 @@ function renderFoiaContractData() {
             controls.summary.textContent = 'Retrieving verified public contract data from ' + sourceLabel + '.';
         }
         controls.results.innerHTML = '<div class="foia-contract-loading">Loading verified public contract data...</div>';
+        updateFoiaContractBodyHeight(true);
         return;
     }
 
@@ -2172,6 +2241,7 @@ function renderFoiaContractData() {
             controls.summary.textContent = 'Unable to retrieve verified public contract data from ' + sourceLabel + '.';
         }
         controls.results.innerHTML = '<div class="foia-contract-empty"><strong>' + escapeHtml(FOIA_CONTRACT_EMPTY_MESSAGE) + '</strong><p>' + escapeHtml(foiaContractState.error) + '</p></div>';
+        updateFoiaContractBodyHeight(true);
         return;
     }
 
@@ -2180,14 +2250,17 @@ function renderFoiaContractData() {
             controls.summary.textContent = total ? 'No records match the selected filters for ' + sourceLabel + '.' : 'No verified public contract data found for ' + sourceLabel + '.';
         }
         controls.results.innerHTML = '<div class="foia-contract-empty">' + escapeHtml(FOIA_CONTRACT_EMPTY_MESSAGE) + '</div>';
+        updateFoiaContractBodyHeight(true);
         return;
     }
 
     if (controls.summary) {
         controls.summary.textContent = 'Showing ' + filtered.length + ' of ' + total + ' verified public contract records from ' + sourceLabel + '.';
     }
-    controls.results.innerHTML = groupFoiaContractsByAgency(filtered).map(renderFoiaContractGroup).join('');
+    controls.results.innerHTML = foiaContractView === 'table' ? renderFoiaContractTable(filtered) : renderFoiaContractCards(filtered);
     enforcePricingAnalysisLinkTargets(controls.results);
+    refreshFoiaContractViewButtons();
+    updateFoiaContractBodyHeight(true);
     if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
         try { window.lucide.createIcons(); } catch (e) {}
     }
@@ -2204,6 +2277,8 @@ function loadFoiaContractData() {
     foiaContractState.records = [];
     foiaContractState.error = '';
     foiaContractState.loading = true;
+    foiaContractState.hasLoaded = true;
+    foiaContractState.retrievalNote = '';
     renderFoiaContractData();
 
     if (typeof fetch !== 'function') {
@@ -2246,25 +2321,99 @@ function handleFoiaContractSourceChange() {
     loadFoiaContractData();
 }
 
-function initFoiaContractPricing() {
+function refreshFoiaContractViewButtons() {
     var controls = getFoiaContractControls();
-    if (!controls.source || controls.source.getAttribute('data-foia-contract-ready') === 'true') {
-        if (controls.source) { renderFoiaContractData(); }
-        return;
+    var isCard = foiaContractView !== 'table';
+    if (controls.cardToggle) {
+        controls.cardToggle.classList.toggle('active', isCard);
+        controls.cardToggle.setAttribute('aria-pressed', isCard ? 'true' : 'false');
     }
-    [
-        { element: controls.source, handler: handleFoiaContractSourceChange },
-        { element: controls.industry, handler: renderFoiaContractData },
-        { element: controls.status, handler: renderFoiaContractData }
-    ].forEach(function(config) {
-        if (!config.element || config.element.getAttribute('data-foia-contract-listener-attached') === 'true') { return; }
-        config.element.addEventListener('change', config.handler);
-        config.element.setAttribute('data-foia-contract-listener-attached', 'true');
-    });
-    controls.source.setAttribute('data-foia-contract-ready', 'true');
-    loadFoiaContractData();
+    if (controls.tableToggle) {
+        controls.tableToggle.classList.toggle('active', !isCard);
+        controls.tableToggle.setAttribute('aria-pressed', isCard ? 'false' : 'true');
+    }
 }
 
+function setFoiaContractView(view) {
+    foiaContractView = view === 'table' ? 'table' : 'card';
+    refreshFoiaContractViewButtons();
+    renderFoiaContractData();
+}
+
+function resetFoiaContractFilters() {
+    var controls = getFoiaContractControls();
+    if (controls.search) { controls.search.value = ''; }
+    if (controls.category) { controls.category.value = 'all'; }
+    foiaContractView = 'card';
+    refreshFoiaContractViewButtons();
+    if (controls.source && controls.source.value !== 'usaspending') {
+        controls.source.value = 'usaspending';
+        loadFoiaContractData();
+        return;
+    }
+    if (!foiaContractState.hasLoaded) {
+        loadFoiaContractData();
+        return;
+    }
+    renderFoiaContractData();
+}
+
+function toggleFoiaContractSection() {
+    var controls = getFoiaContractControls();
+    if (!controls.panel || !controls.body || !controls.toggle) { return; }
+    var shouldCollapse = !controls.panel.classList.contains('collapsed');
+    var icon = controls.toggle.querySelector('.pricing-summary-collapse-icon');
+    if (shouldCollapse) {
+        updateFoiaContractBodyHeight(true);
+        controls.panel.classList.add('collapsed');
+        controls.toggle.setAttribute('aria-expanded', 'false');
+        controls.body.setAttribute('aria-hidden', 'true');
+        controls.body.setAttribute('inert', '');
+        if (controls.collapseLabel) { controls.collapseLabel.textContent = 'Expand'; }
+        if (icon) { icon.textContent = '⌃'; }
+        window.setTimeout(function() {
+            if (controls.panel.classList.contains('collapsed')) {
+                controls.body.hidden = true;
+            }
+        }, 360);
+        return;
+    }
+
+    controls.body.hidden = false;
+    controls.body.removeAttribute('inert');
+    controls.body.setAttribute('aria-hidden', 'false');
+    controls.toggle.setAttribute('aria-expanded', 'true');
+    if (controls.collapseLabel) { controls.collapseLabel.textContent = 'Collapse'; }
+    if (icon) { icon.textContent = '⌄'; }
+    updateFoiaContractBodyHeight(true);
+    window.requestAnimationFrame(function() {
+        controls.panel.classList.remove('collapsed');
+        updateFoiaContractBodyHeight(true);
+        if (!foiaContractState.hasLoaded && !foiaContractState.loading) {
+            loadFoiaContractData();
+        }
+    });
+}
+
+function initFoiaContractPricing() {
+    var controls = getFoiaContractControls();
+    if (!controls.panel || !controls.source) { return; }
+    if (controls.source.getAttribute('data-foia-contract-ready') === 'true') {
+        renderFoiaContractData();
+        return;
+    }
+    controls.source.setAttribute('data-foia-contract-ready', 'true');
+    controls.panel.classList.add('collapsed');
+    if (controls.body) {
+        controls.body.hidden = true;
+        controls.body.setAttribute('aria-hidden', 'true');
+        controls.body.setAttribute('inert', '');
+    }
+    if (controls.toggle) { controls.toggle.setAttribute('aria-expanded', 'false'); }
+    if (controls.collapseLabel) { controls.collapseLabel.textContent = 'Expand'; }
+    refreshFoiaContractViewButtons();
+    renderFoiaContractData();
+}
 var MARKETING_RESOURCE_STORAGE_KEY = 'redactorMarketingResources.v1';
 var marketingResourceView = 'card';
 var marketingResources = [];
@@ -3856,6 +4005,9 @@ if (typeof window !== 'undefined') {
     window.togglePricingSummarySection = togglePricingSummarySection;
     window.handleFoiaContractSourceChange = handleFoiaContractSourceChange;
     window.renderFoiaContractData = renderFoiaContractData;
+    window.setFoiaContractView = setFoiaContractView;
+    window.resetFoiaContractFilters = resetFoiaContractFilters;
+    window.toggleFoiaContractSection = toggleFoiaContractSection;
     window.toggleScrollButton = toggleScrollButton;
     window.renderMarketingResources = renderMarketingResources;
     window.setMarketingResourceView = setMarketingResourceView;
@@ -3888,6 +4040,7 @@ if (typeof window !== 'undefined') {
     window.addEventListener('scroll', toggleScrollButton);
     window.addEventListener('resize', function() {
         try { updatePricingSummaryBodyHeight(); } catch (e) {}
+        try { updateFoiaContractBodyHeight(); } catch (e) {}
     });
 
     if (document.readyState === 'loading') {
