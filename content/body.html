@@ -1,4 +1,15 @@
 <div class="container">
+        <div class="global-search" role="search" aria-label="Global tool search">
+            <div class="global-search-header">
+                <label for="globalToolSearchInput" class="global-search-label">Global Search</label>
+                <span id="globalSearchCount" class="global-search-count" aria-live="polite"></span>
+            </div>
+            <div class="global-search-input-wrap">
+                <input id="globalToolSearchInput" class="global-search-input" type="search" placeholder="Search anything — competitors, features, pricing, strategy…" autocomplete="off" aria-controls="globalSearchResults" aria-expanded="false" />
+                <button id="globalSearchClear" class="global-search-clear" type="button" aria-label="Clear search" hidden>×</button>
+            </div>
+            <div id="globalSearchResults" class="global-search-results" hidden></div>
+        </div>
         <header>
             <h1><i data-lucide="shield-check"></i> Sighthound Redactor</h1>
             <h1 style="font-size: 1.6em; color: #2c5282;"><i data-lucide="bar-chart-3"></i> Competitive Analysis Hub</h1>
