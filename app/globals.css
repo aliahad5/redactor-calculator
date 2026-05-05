@@ -954,6 +954,70 @@ tbody tr:nth-child(even):hover {
     margin: 10px 0;
     color: var(--fg-2);
 }
+
+.release-source-note {
+    font-size: 0.9em;
+    color: var(--fg-3);
+}
+
+.release-source-note code,
+.release-note-body code {
+    padding: 2px 5px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--sh-navy);
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.9em;
+}
+
+.release-note-body {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+    color: var(--fg-2);
+}
+
+.release-note-body h5 {
+    margin: 12px 0 2px 0;
+    color: var(--sh-navy);
+    font-size: 1em;
+}
+
+.release-note-body p {
+    margin: 0;
+    line-height: 1.65;
+}
+
+.release-note-body ul,
+.release-note-body ol {
+    margin: 0 0 0 22px;
+    padding: 0;
+}
+
+.release-note-body li {
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.release-note-body a {
+    color: var(--sh-blurple);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.release-note-figure {
+    margin: 8px 0;
+}
+
+.release-note-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+}
 #pricing .pricing-dropdown-wrapper {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
