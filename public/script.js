@@ -1,85 +1,206 @@
 var comparisonMode = 'all';
-var versionData = {
-    'v7.1.0': {
-        title: 'Version 7.1.0 Release',
-        date: 'March 25, 2026',
-        icon: 'tag',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Smart Fill Redaction Mode', content: 'Added a dedicated redaction mode that produces more natural-looking fills than standard fixed-color masking.' },
-            { label: 'Audio Gap Handling', content: 'Videos with incomplete or irregular audio streams now get proper resampling and silence padding for cleaner processing.' },
-            { label: 'License Activation Errors', content: 'Activation failures now return clearer rejection details, including specific messages for unknown serial numbers instead of generic server errors.' },
-            { label: 'Object Creation Context Menu Fix', content: 'Existing-object context menus are suppressed while add-new-objects mode is active, preventing accidental edits during object creation.' }
-        ]
-    },
-    'v7.0.6': {
-        title: 'Version 7.0.6 Release',
-        date: 'March 2026',
-        icon: 'rocket',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'GPU Optimization', content: 'Better stability for teams with varying GPU configurations. Users can now safely disable CUDA at the driver level, making enterprise deployments more flexible.' },
-            { label: 'Early License Validation', content: 'Invalid license errors now surface immediately—no wasted processing time. This reduces frustration and speeds up deployments.' },
-            { label: 'Improved Error Messages', content: 'Error messages are now human-readable, making troubleshooting faster for teams without technical expertise.' },
-            { label: 'Non-Standard Resolution Video Fix', content: 'Fixed critical bug affecting non-standard video resolutions (including screen recordings). This broadens use cases for corporate/evidence redaction.' }
-        ]
-    },
-    'v7.0.5': {
-        title: 'Version 7.0.5 Release',
-        date: 'February 2026',
-        icon: 'layers',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Batch Queue Management', content: 'New batch queue controls let operators pause, reorder, and prioritize large redaction jobs, improving throughput for high-volume teams.' },
-            { label: 'Multi-User Session Stability', content: 'Improved concurrency handling in server mode reduces session drops and conflicts when multiple users work simultaneously.' },
-            { label: 'Docker Enhancements', content: 'Updated container images with smaller footprint, faster startup times, and smoother integration into existing orchestration pipelines.' }
-        ]
-    },
-    'v7.0.3': {
-        title: 'Version 7.0.3 Release',
-        date: 'January 2026',
-        icon: 'sparkles',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Screen/Text Detection Added', content: 'New AI detection models identify on-screen text and monitor content within video frames, broadening redaction coverage for sensitive media.' },
-            { label: 'Undo/Redo Introduced', content: 'Full undo and redo support across the redaction workflow gives reviewers confidence to experiment and correct mistakes without losing progress.' },
-            { label: 'Audit Log Export Improved', content: 'Expanded audit log export options with richer metadata, better filtering, and compliance-friendly formats for evidence handling.' }
-        ]
-    },
-    'v6.6.0': {
-        title: 'Version 6.6.0 Release',
-        date: 'September 19, 2025',
-        icon: 'tag',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Flag-File Data Reset', content: 'Placing a DATA_DROP file in the user directory now clears application data on restart while preserving licensing and user credentials for transient API workflows.' },
-            { label: 'Session Cleanup Stability', content: 'Fixed a backend crash triggered by third-party library recursion in certain storage cleanup scenarios.' },
-            { label: 'Missing Audio Padding', content: 'Videos with audio only at the beginning are padded with silence so intake, conversion, and playback stay aligned.' }
-        ]
-    },
-    'v6.5.2': {
-        title: 'Version 6.5.2 Release',
-        date: 'August 25, 2025',
-        icon: 'tag',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Automatic CPU Fallback', content: 'If GPU detection fails, such as after untested CUDA changes, Redactor switches to CPU processing and records the event in logs.' },
-            { label: 'Improved Reconnection Handling', content: 'The transport layer now keeps clients connected through unstable network periods and shows a Reconnecting... indicator until service returns.' }
-        ]
-    },
-    'v7.0.0': {
-        title: 'Version 7.0.0 Major Release',
-        date: 'December 2025',
-        icon: 'star',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'New UI', content: 'Redesigned interface with a modern layout, clearer workflows, and improved accessibility for first-time and daily users alike.' },
-            { label: 'Server-Mode Processing', content: 'Introduced dedicated server-mode processing for centralized deployments, enabling enterprise-grade throughput and multi-user workflows.' },
-            { label: 'REST API v2', content: 'Launched a completely revamped REST API with expanded endpoints, improved authentication, and better integration support for evidence systems.' },
-            { label: 'Docker Support Launched', content: 'Official Docker images released for the first time, simplifying deployment across Linux, air-gapped, and containerized environments.' }
-        ]
-    }
+var RELEASE_NOTES_SOURCE_PATH = '/data/docs-redactor-com-release-notes.md';
+var releaseNotesState = {
+    releases: [],
+    isLoaded: false,
+    error: null,
+    loadingPromise: null
 };
+
+function createReleaseId(version) {
+    return 'v' + String(version || '').replace(/^v/i, '').trim();
+}
+
+function parseReleaseNotesMarkdown(markdown) {
+    var releases = [];
+    var current = null;
+    String(markdown || '').replace(/\r\n/g, '\n').split('\n').forEach(function(line) {
+        var releaseMatch = line.match(/^##\s+(.+?)(?:\s+[–-]\s+(.+))?\s*$/);
+        if (releaseMatch) {
+            current = {
+                version: releaseMatch[1].trim().replace(/^v/i, ''),
+                date: (releaseMatch[2] || 'Date not listed').trim(),
+                bodyLines: []
+            };
+            current.id = createReleaseId(current.version);
+            releases.push(current);
+            return;
+        }
+        if (current) {
+            current.bodyLines.push(line);
+        }
+    });
+
+    return releases.map(function(release) {
+        while (release.bodyLines.length && !release.bodyLines[0].trim()) {
+            release.bodyLines.shift();
+        }
+        while (release.bodyLines.length && !release.bodyLines[release.bodyLines.length - 1].trim()) {
+            release.bodyLines.pop();
+        }
+        release.body = release.bodyLines.join('\n');
+        return release;
+    }).filter(function(release) {
+        return release.version && release.body;
+    });
+}
+
+function convertReleaseInlineMarkdown(text) {
+    var html = escapeHtml(text)
+        .replace(/\\\[/g, '[')
+        .replace(/\\\]/g, ']')
+        .replace(/\\_/g, '_')
+        .replace(/\\-/g, '-');
+
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    return html;
+}
+
+function renderReleaseMarkdown(markdown) {
+    var output = [];
+    var paragraphLines = [];
+    var listType = null;
+
+    function flushParagraph() {
+        if (!paragraphLines.length) { return; }
+        output.push('<p>' + convertReleaseInlineMarkdown(paragraphLines.join(' ')) + '</p>');
+        paragraphLines = [];
+    }
+
+    function closeList() {
+        if (!listType) { return; }
+        output.push('</' + listType + '>');
+        listType = null;
+    }
+
+    function openList(type) {
+        if (listType === type) { return; }
+        closeList();
+        output.push('<' + type + '>');
+        listType = type;
+    }
+
+    String(markdown || '').replace(/\r\n/g, '\n').split('\n').forEach(function(line) {
+        var trimmed = line.trim();
+        var headingMatch;
+        var imageMatch;
+        var unorderedMatch;
+        var orderedMatch;
+
+        if (!trimmed) {
+            flushParagraph();
+            closeList();
+            return;
+        }
+
+        imageMatch = trimmed.match(/^!\[([^\]]*)\]\((https?:\/\/[^)]+)\)$/);
+        if (imageMatch) {
+            flushParagraph();
+            closeList();
+            output.push('<figure class="release-note-figure"><img class="release-note-image" src="' + escapeHtml(imageMatch[2]) + '" alt="' + escapeHtml(imageMatch[1] || '') + '" loading="lazy"></figure>');
+            return;
+        }
+
+        headingMatch = trimmed.match(/^#{3,6}\s+(.+)$/);
+        if (headingMatch) {
+            flushParagraph();
+            closeList();
+            output.push('<h5>' + convertReleaseInlineMarkdown(headingMatch[1]) + '</h5>');
+            return;
+        }
+
+        headingMatch = trimmed.match(/^\*\*([^*]+)\*\*:?\s*$/);
+        if (headingMatch) {
+            flushParagraph();
+            closeList();
+            output.push('<h5>' + convertReleaseInlineMarkdown(headingMatch[1]) + '</h5>');
+            return;
+        }
+
+        unorderedMatch = line.match(/^\s*-\s+(.+)$/);
+        if (unorderedMatch) {
+            flushParagraph();
+            openList('ul');
+            output.push('<li>' + convertReleaseInlineMarkdown(unorderedMatch[1]) + '</li>');
+            return;
+        }
+
+        orderedMatch = line.match(/^\s*\d+\.\s+(.+)$/);
+        if (orderedMatch) {
+            flushParagraph();
+            openList('ol');
+            output.push('<li>' + convertReleaseInlineMarkdown(orderedMatch[1]) + '</li>');
+            return;
+        }
+
+        paragraphLines.push(trimmed);
+    });
+
+    flushParagraph();
+    closeList();
+    return output.join('');
+}
+
+function getReleaseById(id) {
+    for (var i = 0; i < releaseNotesState.releases.length; i += 1) {
+        if (releaseNotesState.releases[i].id === id) {
+            return releaseNotesState.releases[i];
+        }
+    }
+    return null;
+}
+
+function populateVersionSelector() {
+    var selector = document.getElementById('versionSelector');
+    if (!selector) { return; }
+    var selectedValue = selector.value;
+    selector.innerHTML = '';
+    releaseNotesState.releases.forEach(function(release, index) {
+        var option = document.createElement('option');
+        option.value = release.id;
+        option.textContent = release.id + ' — ' + release.date;
+        if ((selectedValue && release.id === selectedValue) || (!selectedValue && index === 0)) {
+            option.selected = true;
+        }
+        selector.appendChild(option);
+    });
+}
+
+function loadReleaseNotes() {
+    if (releaseNotesState.isLoaded) {
+        return Promise.resolve(releaseNotesState.releases);
+    }
+    if (releaseNotesState.loadingPromise) {
+        return releaseNotesState.loadingPromise;
+    }
+    if (typeof fetch !== 'function') {
+        releaseNotesState.error = 'Release notes could not be loaded because fetch is unavailable.';
+        return Promise.reject(new Error(releaseNotesState.error));
+    }
+
+    releaseNotesState.loadingPromise = fetch(RELEASE_NOTES_SOURCE_PATH, { cache: 'no-store' })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Release notes request failed with status ' + response.status + '.');
+            }
+            return response.text();
+        })
+        .then(function(markdown) {
+            releaseNotesState.releases = parseReleaseNotesMarkdown(markdown);
+            releaseNotesState.isLoaded = true;
+            releaseNotesState.error = null;
+            populateVersionSelector();
+            return releaseNotesState.releases;
+        })
+        .catch(function(error) {
+            releaseNotesState.error = error && error.message ? error.message : 'Release notes could not be loaded.';
+            throw error;
+        });
+
+    return releaseNotesState.loadingPromise;
+}
 function escapeHtml(text) {
     var div = document.createElement('div');
     div.textContent = text == null ? '' : text;
@@ -89,16 +210,33 @@ function updateVersionDetails() {
     var selector = document.getElementById('versionSelector');
     var container = document.getElementById('versionDetails');
     if (!selector || !container) { return; }
-    var data = versionData[selector.value];
-    if (!data) { container.innerHTML = ''; return; }
-    var html = '<span class="version-meta">' + escapeHtml(selector.value) + ' · ' + escapeHtml(data.date) + '</span>';
-    html += '<h4><i data-lucide="' + escapeHtml(data.icon) + '"></i> ' + escapeHtml(data.title) + '</h4>';
-    if (data.heading) {
-        html += '<p style="margin: 4px 0 12px 0; font-weight: 600; color: #1e3a5f;">' + escapeHtml(data.heading) + '</p>';
+    if (releaseNotesState.error && !releaseNotesState.isLoaded) {
+        container.innerHTML = '<p class="release-source-note">Release notes could not be loaded from ' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + ': ' + escapeHtml(releaseNotesState.error) + '</p>';
+        return;
     }
-    data.highlights.forEach(function(item) {
-        html += '<p><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.content) + '</p>';
-    });
+    if (!releaseNotesState.isLoaded) {
+        container.innerHTML = '<p class="release-source-note">Loading release notes from ' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + '…</p>';
+        loadReleaseNotes()
+            .then(function() { updateVersionDetails(); })
+            .catch(function() { updateVersionDetails(); });
+        return;
+    }
+
+    if (releaseNotesState.error) {
+        container.innerHTML = '<p class="release-source-note">Release notes could not be loaded from ' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + ': ' + escapeHtml(releaseNotesState.error) + '</p>';
+        return;
+    }
+
+    var release = getReleaseById(selector.value) || releaseNotesState.releases[0];
+    if (!release) {
+        container.innerHTML = '<p class="release-source-note">No release notes are available in the saved source file.</p>';
+        return;
+    }
+
+    var html = '<span class="version-meta">' + escapeHtml(release.id) + ' · ' + escapeHtml(release.date) + '</span>';
+    html += '<h4><i data-lucide="file-text"></i> Redactor ' + escapeHtml(release.version) + ' Release Notes</h4>';
+    html += '<p class="release-source-note">Source: saved copy of docs.redactor.com release notes at <code>' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + '</code>.</p>';
+    html += '<div class="release-note-body">' + renderReleaseMarkdown(release.body) + '</div>';
     container.innerHTML = html;
     if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
