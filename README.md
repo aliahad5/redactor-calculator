@@ -21,8 +21,6 @@ redactor-calculator/
 ├── content/
 │   └── body.html         # The original <body> markup (minus the inline <script>)
 ├── public/
-│   ├── data/
-│   │   └── docs-redactor-com-release-notes.md  # Saved official Redactor release notes source
 │   └── script.js         # All original JS (switchTab, calculatePricing, etc.)
 ├── extract-body.ps1      # Helper: regenerates content/body.html from the source HTML
 ├── next.config.mjs
@@ -37,7 +35,6 @@ redactor-calculator/
 1. `app/layout.tsx` loads the Google Fonts, the Lucide CDN, and `/public/script.js` (which defines every global function used by the inline `onclick` handlers in the markup).
 2. `app/page.tsx` reads `content/body.html` on the server and injects it into the page with `dangerouslySetInnerHTML`. The browser re-parses that HTML, so the inline `onclick="switchTab(...)"` handlers continue to work against the global functions defined in `script.js`.
 3. `script.js` also runs its own initialization (`updateComparison`, `updateVersionDetails`, `updateDiscoveryQuestions`, `toggleScrollButton`, `lucide.createIcons()`) once the DOM is ready.
-4. The Product Updates tab loads `/data/docs-redactor-com-release-notes.md` and renders the saved official Redactor release notes instead of hardcoded release summaries.
 
 ## Run locally
 
