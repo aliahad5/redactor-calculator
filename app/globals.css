@@ -1574,6 +1574,14 @@ tbody tr:nth-child(even):hover {
     line-height: 1.45;
     overflow-wrap: anywhere;
 }
+#pricing .foia-contract-title-short {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
 
 #pricing .foia-contract-field-list a,
 #pricing .foia-contract-table a {

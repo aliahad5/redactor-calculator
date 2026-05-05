@@ -2051,6 +2051,11 @@ var foiaContractState = {
     hasLoaded: false,
     requestToken: 0
 };
+var FOIA_CONTRACT_TITLE_SHORTENED_VENDORS = {
+    'MINDPOINT GROUP LLC': true,
+    'THE BOEING COMPANY': true,
+    'HONEYWELL INTERNATIONAL INC': true
+};
 
 function getFoiaContractControls() {
     return {
@@ -2093,6 +2098,14 @@ function getFoiaVerificationClass(value) {
     return normalizeFoiaVerificationStatus(value) === '✅ Verified' ? 'verified' : 'partial';
 }
 
+function normalizeFoiaVendorName(value) {
+    return String(value || '').replace(/[.,]/g, '').replace(/\s+/g, ' ').trim().toUpperCase();
+}
+
+function shouldShortenFoiaContractTitle(record) {
+    return !!FOIA_CONTRACT_TITLE_SHORTENED_VENDORS[normalizeFoiaVendorName(record && record.vendorOrganizationName)];
+}
+
 function getFoiaSearchText(record) {
     return [
         record.vendorOrganizationName,
@@ -2133,10 +2146,18 @@ function truncateContractTitle(text, maxLines) {
     }
     return truncated;
 }
+function renderFoiaContractTitle(record, emptyValue) {
+    var rawTitle = record && record.contractTitle ? record.contractTitle : '';
+    var displayTitle = rawTitle ? truncateContractTitle(rawTitle, 3) : (emptyValue || '—');
+    if (!shouldShortenFoiaContractTitle(record)) {
+        return escapeHtml(displayTitle);
+    }
+    return '<span class="foia-contract-title-short" title="' + escapeHtml(rawTitle || displayTitle) + '">' + escapeHtml(displayTitle) + '</span>';
+}
 
 function renderFoiaField(label, value, isHtml) {
     var displayValue = value;
-    if (label === 'Contract Title' && value) {
+    if (!isHtml && label === 'Contract Title' && value) {
         displayValue = truncateContractTitle(value, 3);
     }
     return '<div><dt>' + escapeHtml(label) + '</dt><dd>' + (isHtml ? displayValue : escapeHtml(displayValue || 'Not publicly listed')) + '</dd></div>';
@@ -2161,7 +2182,7 @@ function renderFoiaContractCard(record) {
     html += '<h4>' + escapeHtml(record.vendorOrganizationName || 'Vendor / Organization not listed') + '</h4>';
     html += '<dl class="foia-contract-field-list">';
     html += renderFoiaField('Vendor / Organization Name', record.vendorOrganizationName);
-    html += renderFoiaField('Contract Title', record.contractTitle);
+    html += renderFoiaField('Contract Title', renderFoiaContractTitle(record, 'Not publicly listed'), true);
     html += renderFoiaField('Industry Tag', industry);
     html += renderFoiaField('Award Amount', record.awardAmountDisplay);
     html += renderFoiaField('Agency', record.agencyDepartment);
@@ -2200,10 +2221,9 @@ function renderFoiaContractTable(records) {
         var industry = normalizeFoiaIndustrySegment(record.industrySegment);
         var verification = normalizeFoiaVerificationStatus(record.verificationStatus);
         var verificationClass = getFoiaVerificationClass(record.verificationStatus);
-        var truncatedTitle = record.contractTitle ? truncateContractTitle(record.contractTitle, 3) : '—';
         html += '<tr>';
         html += '<td data-label="Vendor / Organization">' + escapeHtml(record.vendorOrganizationName || '—') + '</td>';
-        html += '<td data-label="Contract Title">' + escapeHtml(truncatedTitle) + '</td>';
+        html += '<td data-label="Contract Title">' + renderFoiaContractTitle(record, '—') + '</td>';
         html += '<td data-label="Industry">' + escapeHtml(industry || '—') + '</td>';
         html += '<td data-label="Contract Type">' + escapeHtml(record.contractType || '—') + '</td>';
         html += '<td data-label="Award Amount">' + escapeHtml(record.awardAmountDisplay || '—') + '</td>';
