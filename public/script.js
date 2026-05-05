@@ -2123,8 +2123,23 @@ function getFoiaFilteredContracts() {
     });
 }
 
+function truncateContractTitle(text, maxLines) {
+    if (!text) return text;
+    maxLines = maxLines || 3;
+    var lines = String(text).split(/\n/).slice(0, maxLines);
+    var truncated = lines.join('\n');
+    if (String(text).split(/\n/).length > maxLines) {
+        truncated += '...';
+    }
+    return truncated;
+}
+
 function renderFoiaField(label, value, isHtml) {
-    return '<div><dt>' + escapeHtml(label) + '</dt><dd>' + (isHtml ? value : escapeHtml(value || 'Not publicly listed')) + '</dd></div>';
+    var displayValue = value;
+    if (label === 'Contract Title' && value) {
+        displayValue = truncateContractTitle(value, 3);
+    }
+    return '<div><dt>' + escapeHtml(label) + '</dt><dd>' + (isHtml ? displayValue : escapeHtml(displayValue || 'Not publicly listed')) + '</dd></div>';
 }
 
 function renderFoiaSourceLink(record, label) {
@@ -2185,9 +2200,10 @@ function renderFoiaContractTable(records) {
         var industry = normalizeFoiaIndustrySegment(record.industrySegment);
         var verification = normalizeFoiaVerificationStatus(record.verificationStatus);
         var verificationClass = getFoiaVerificationClass(record.verificationStatus);
+        var truncatedTitle = record.contractTitle ? truncateContractTitle(record.contractTitle, 3) : '—';
         html += '<tr>';
         html += '<td data-label="Vendor / Organization">' + escapeHtml(record.vendorOrganizationName || '—') + '</td>';
-        html += '<td data-label="Contract Title">' + escapeHtml(record.contractTitle || '—') + '</td>';
+        html += '<td data-label="Contract Title">' + escapeHtml(truncatedTitle) + '</td>';
         html += '<td data-label="Industry">' + escapeHtml(industry || '—') + '</td>';
         html += '<td data-label="Contract Type">' + escapeHtml(record.contractType || '—') + '</td>';
         html += '<td data-label="Award Amount">' + escapeHtml(record.awardAmountDisplay || '—') + '</td>';
