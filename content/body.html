@@ -1,4 +1,15 @@
 <div class="container">
+        <div class="global-search" role="search" aria-label="Global tool search">
+            <div class="global-search-header">
+                <label for="globalToolSearchInput" class="global-search-label">Global Search</label>
+                <span id="globalSearchCount" class="global-search-count" aria-live="polite"></span>
+            </div>
+            <div class="global-search-input-wrap">
+                <input id="globalToolSearchInput" class="global-search-input" type="search" placeholder="Search anything — competitors, features, pricing, strategy…" autocomplete="off" aria-controls="globalSearchResults" aria-expanded="false" />
+                <button id="globalSearchClear" class="global-search-clear" type="button" aria-label="Clear search" hidden>×</button>
+            </div>
+            <div id="globalSearchResults" class="global-search-results" hidden></div>
+        </div>
         <header>
             <h1><i data-lucide="shield-check"></i> Sighthound Redactor</h1>
             <h1 style="font-size: 1.6em; color: #2c5282;"><i data-lucide="bar-chart-3"></i> Competitive Analysis Hub</h1>
@@ -96,9 +107,12 @@
             <div class="version-selector-wrapper">
                 <label for="versionSelector" class="version-selector-label">Select a version to view details:</label>
                 <select id="versionSelector" class="version-selector" onchange="updateVersionDetails()">
+                    <option value="v7.1.0">v7.1.0 — March 25, 2026</option>
                     <option value="v7.0.6" selected>v7.0.6 — March 2026</option>
                     <option value="v7.0.5">v7.0.5 — February 2026</option>
                     <option value="v7.0.3">v7.0.3 — January 2026</option>
+                    <option value="v6.6.0">v6.6.0 — September 19, 2025</option>
+                    <option value="v6.5.2">v6.5.2 — August 25, 2025</option>
                     <option value="v7.0.0">v7.0.0 — December 2025</option>
                 </select>
             </div>
@@ -398,7 +412,7 @@
             <h2><i data-lucide="table"></i> Feature Comparison Matrix</h2>
             <h3><i data-lucide="arrow-left-right"></i> Side-by-Side Competitor Comparison Tool</h3>
             <div class="comparison-slider">
-                <p style="margin-bottom: 15px; font-weight: 600; color: #1a3a52;">Compare two solutions across face, audio, video, document, and deployment capabilities.</p>
+                <p style="margin-bottom: 15px; font-weight: 600; color: #1a3a52;">Compare two solutions across face, audio, video, document, deployment, and data processing capabilities.</p>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 200px;"><label for="compareA" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c5282;">Solution A</label><select id="compareA" onchange="updateComparison()" style="width: 100%; padding: 8px; border: 2px solid #cbd5e0; border-radius: 5px; font-size: 0.9em;"><option value="sighthound">Sighthound Redactor</option><option value="veritone">Veritone Redact</option><option value="caseguard">CaseGuard Studio</option><option value="fastredaction">FastRedaction</option><option value="motiondsp">MotionDSP Spotlight</option><option value="clipr">CLIPr</option><option value="assemblyai">AssemblyAI</option><option value="lantero">Lantero Redact</option><option value="pimloc">Pimloc Secure Redact</option><option value="vidizmo">VIDIZMO Redactor.ai</option><option value="facit">Facit Data Systems</option><option value="suspect">Suspect Technologies</option><option value="redactable">Redactable</option><option value="extract">Extract Systems</option><option value="idox">iDox.ai</option><option value="everlaw">Everlaw</option><option value="transperfect">TransPerfect</option></select></div>
                     <div style="flex: 1; min-width: 200px;"><label for="compareB" style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c5282;">Solution B</label><select id="compareB" onchange="updateComparison()" style="width: 100%; padding: 8px; border: 2px solid #cbd5e0; border-radius: 5px; font-size: 0.9em;"><option value="veritone">Veritone Redact</option><option value="sighthound">Sighthound Redactor</option><option value="caseguard">CaseGuard Studio</option><option value="fastredaction">FastRedaction</option><option value="motiondsp">MotionDSP Spotlight</option><option value="clipr">CLIPr</option><option value="assemblyai">AssemblyAI</option><option value="lantero">Lantero Redact</option><option value="pimloc">Pimloc Secure Redact</option><option value="vidizmo">VIDIZMO Redactor.ai</option><option value="facit">Facit Data Systems</option><option value="suspect">Suspect Technologies</option><option value="redactable">Redactable</option><option value="extract">Extract Systems</option><option value="idox">iDox.ai</option><option value="everlaw">Everlaw</option><option value="transperfect">TransPerfect</option></select></div>
@@ -429,7 +443,7 @@
                 <button class="filter-btn" onclick="filterFeatureCompany('TransPerfect', this)">TransPerfect</button>
             </div>
             <h3><i data-lucide="columns-2"></i> Side-by-Side Comparisons Filter</h3>
-            <div class="filter-group">
+            <div class="filter-group comparison-filter-tabs">
                 <button class="filter-btn active" onclick="filterComparisonType('all', this)">All</button>
                 <button class="filter-btn" onclick="filterComparisonType('face', this)">Face</button>
                 <button class="filter-btn" onclick="filterComparisonType('audio', this)">Audio</button>
@@ -443,6 +457,7 @@
                         <tr data-feature-type="face video document" class="object-categories-row"><td><div class="object-categories-label" onclick="toggleObjectCategories(this)" onkeydown="handleObjectCategoriesKey(event, this)" role="button" tabindex="0" aria-expanded="false"><span class="object-categories-arrow">▶</span><strong>Object Categories</strong><span class="object-categories-hint">(click to expand)</span></div><div class="object-categories-details" hidden>Faces &amp; Heads | IDs &amp; Passports | Vehicles | License Plates | Documents &amp; Screens | Audio Segments</div></td><td><span class="icon-check">✓</span> Full Suite</td><td><span class="icon-check">✓</span> Multi-Object</td><td><span class="icon-check">✓</span> Full Suite</td><td><span class="icon-partial">⚠</span> Faces + Plates</td><td><span class="icon-partial">⚠</span> Faces + Plates</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-cross">✗</span> Audio Only</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-partial">⚠</span> Partial Suite</td><td><span class="icon-partial">⚠</span> Faces Only</td><td><span class="icon-check">✓</span> Multi-Object</td><td><span class="icon-partial">⚠</span> Faces Only</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-partial">⚠</span> Docs Only</td><td><span class="icon-partial">⚠</span> Limited Suite</td><td><span class="icon-partial">⚠</span> Docs + Faces</td><td><span class="icon-partial">⚠</span> Limited Suite</td></tr>
                         <tr data-feature-type="audio"><td><strong>Audio Redaction</strong></td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-check">✓</span> Strong</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-partial">⚠</span> Partial</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td></tr>
                         <tr data-feature-type="video"><td><strong>Batch Processing</strong></td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td></tr>
+                        <tr data-feature-type="deployment data-processing"><td><strong>Data Processing Location (On-Premise / Cloud / Hybrid)</strong></td><td class="data-processing-success"><span class="icon-check">✅</span> On-Premise / Cloud / Hybrid / Air-Gapped</td><td>☁️ Cloud Only (AWS GovCloud)</td><td>🖥️ On-Premise Only</td><td>☁️ Cloud Only (AWS)</td><td>🖥️ On-Premise (Windows Desktop)</td><td>☁️ / 🖥️ Cloud / Partial Hybrid</td><td>☁️ Cloud API Only</td><td>☁️ Cloud SaaS</td><td>☁️ / 🖥️ Cloud / On-Premise (Limited)</td><td>☁️ Cloud Only</td><td><span class="icon-partial">⚠️</span> Cloud / On-Premise <span class="unverified-source-tooltip" tabindex="0" title="Source unverified — not confirmed via Capterra or G2." aria-label="Source unverified — not confirmed via Capterra or G2.">ⓘ</span></td><td><span class="icon-partial">⚠️</span> On-Premise / Cloud <span class="unverified-source-tooltip" tabindex="0" title="Source unverified — not confirmed via Capterra or G2." aria-label="Source unverified — not confirmed via Capterra or G2.">ⓘ</span></td><td>☁️ Cloud SaaS</td><td>🖥️ On-Premise</td><td>☁️ Cloud</td><td>☁️ Cloud SaaS</td><td>☁️ Enterprise SaaS</td></tr>
                         <tr data-feature-type="video"><td><strong>Undo/Redo (v7.0.3)</strong></td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-check">✓</span> Yes</td><td><span class="icon-check">✓</span> Full</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-partial">⚠</span> Limited</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-cross">✗</span> No</td><td><span class="icon-cross">✗</span> No</td></tr>
                     </tbody>
                 </table>
@@ -480,6 +495,8 @@
                             <option value="competitor-14">iDox.ai</option>
                             <option value="competitor-15">Everlaw</option>
                             <option value="competitor-16">TransPerfect</option>
+                            <option value="competitor-17">Naltero</option>
+                            <option value="competitor-18">Clipral</option>
                         </select>
                     </div>
                     <div class="pricing-compare-field">
@@ -502,6 +519,8 @@
                             <option value="competitor-14">iDox.ai</option>
                             <option value="competitor-15">Everlaw</option>
                             <option value="competitor-16">TransPerfect</option>
+                            <option value="competitor-17">Naltero</option>
+                            <option value="competitor-18">Clipral</option>
                         </select>
                     </div>
                     <button type="button" class="pricing-compare-button" onclick="comparePricingCompetitors()" aria-controls="pricingComparisonResult">Compare</button>
@@ -525,11 +544,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Official Sighthound product page routes pricing to Redactor.com, where public plans are listed for hosted trial, desktop Pro, server Enterprise, and custom API/team deployments. Pro desktop licenses are purchased one at a time; multi-user, server, cloud, and API deployments route to sales or quote flows.</p>
                     </div>
                 </template>
@@ -546,11 +565,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/184450/Veritone-Redact/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/184450/Veritone-Redact/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction product. Official site routes prospects to sales/contact flow; no public dollar pricing was listed on the allowed sources.</p>
                     </div>
                 </template>
@@ -567,11 +586,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/10030197/CaseGuard/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/10030197/CaseGuard/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/caseguard-studio/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/caseguard-studio/pricing</a></p>
                     <p><strong>Notes:</strong> Multi-format redaction suite covering documents, images, audio, and video. Official pricing page lists plan names, feature comparisons, and Enterprise availability for 20+ seats, but no public dollar amounts were visible in the verified page content.</p>
                     </div>
                 </template>
@@ -588,11 +607,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction tool. Pay-as-you-go pricing is transparent, but total cost scales with uploaded video minutes.</p>
                     </div>
                 </template>
@@ -609,11 +628,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video enhancement and forensic redaction workflow. &#9888;&#65039; Spotlight Pro pricing is ambiguous because public product pricing showed $204 USD while the FAQ directs users to contact MotionDSP for Pro pricing.</p>
                     </div>
                 </template>
@@ -630,11 +649,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video intelligence and indexing platform rather than a dedicated redaction tool. Free tier is limited to 1 user and 5 annual hours.</p>
                     </div>
                 </template>
@@ -651,11 +670,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/214210/Assembly/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/214210/Assembly/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Free / Pay as you go</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Usage-based / Custom</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> <a href="https://www.g2.com/products/assemblyai-speech-to-text-api/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/assemblyai-speech-to-text-api/pricing</a></p>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/assemblyai-speech-to-text-api/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/assemblyai-speech-to-text-api/pricing</a></p>
                     <p><strong>Notes:</strong> Audio-only API vendor; PII audio redaction is separate from video/image/document redaction.</p>
                     </div>
                 </template>
@@ -672,11 +691,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Document redaction tool. Official site describes per-page, per-user, and hybrid commercial models but does not publish dollar amounts.</p>
                     </div>
                 </template>
@@ -693,11 +712,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/10041695/Secure-Redaction/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/10041695/Secure-Redaction/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/secure-redact/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/secure-redact/pricing</a></p>
                     <p><strong>Notes:</strong> Video/image redaction platform. Basic includes up to 10 minutes/month; Pro includes 30 minutes/month with top-up &pound;5 / $6.50 per minute; Advanced includes 60 minutes/month with top-up &pound;4.50 / $6 per minute.</p>
                     </div>
                 </template>
@@ -714,11 +733,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction platform. Official terms reference monthly/annual order forms and a 7-day free trial; VIDIZMO free-trial pages also reference a 14-day trial. No public dollar pricing was listed on allowed sources.</p>
                     </div>
                 </template>
@@ -735,11 +754,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video identity redaction tool. Official pricing page names tiers and a 7-day trial, but public dollar amounts were not available in the verified page content.</p>
                     </div>
                 </template>
@@ -756,11 +775,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Video redaction / face redaction product page was live, but no public pricing was available on the allowed sources.</p>
                     </div>
                 </template>
@@ -777,11 +796,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/264580/Redactable/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/264580/Redactable/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/redactable/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/redactable/pricing</a></p>
                     <p><strong>Notes:</strong> Document redaction platform. &#9888;&#65039; Live pricing page also displayed $23/month near Starter, likely a monthly/annual toggle conflict; use the live page and flag the ambiguity.</p>
                     </div>
                 </template>
@@ -798,11 +817,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Document redaction product for records and identity data. Official site routes users to demos/consultants rather than public prices.</p>
                     </div>
                 </template>
@@ -819,11 +838,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/10002118/iDox-ai-redact/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/10002118/iDox-ai-redact/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/idox-ai/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/idox-ai/pricing</a></p>
                     <p><strong>Notes:</strong> Document redaction and document AI product. Enterprise minimums include 3 users and 50,000 pages; free trial is limited to 20 pages total and first 2 pages per document.</p>
                     </div>
                 </template>
@@ -840,11 +859,11 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/137171/Everlaw/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/137171/Everlaw/</a></p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> No pricing available / Contact vendor</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> <a href="https://www.g2.com/products/everlaw/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/everlaw/pricing</a></p>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/everlaw/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/everlaw/pricing</a></p>
                     <p><strong>Notes:</strong> eDiscovery platform, not a standalone video redaction tool. Official pricing is based on data managed and usage; redaction is included in the broader legal platform.</p>
                     </div>
                 </template>
@@ -861,12 +880,28 @@
                     <h5>Capterra Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; Capterra Direct Link:</strong> No verified Capterra product listing found</p>
+                    <p><strong>Capterra Direct Link:</strong> No verified Capterra product listing found</p>
                     <h5>G2 Listing</h5>
                     <p><strong>&mdash; Starting Price (as listed):</strong> Not publicly listed</p>
                     <p><strong>&mdash; Pricing Model Shown:</strong> Not publicly listed</p>
-                    <p><strong>&mdash; G2 Direct Link:</strong> No verified G2 pricing listing found</p>
+                    <p><strong>G2 Direct Link:</strong> No verified G2 pricing listing found</p>
                     <p><strong>Notes:</strong> Legal/eDiscovery services provider. Redaction is part of broader legal and data workflows, not a publicly priced standalone redaction product.</p>
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-17">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
+                    <h4><i data-lucide="dollar-sign"></i> 17. Naltero</h4>
+                    <p><strong>Competitor Name:</strong> Naltero</p>
+                    <h5>G2 Listing</h5>
+                    <p><strong>G2 Direct Link:</strong> <a href="https://www.g2.com/products/naltero/pricing" target="_blank" rel="noopener noreferrer">https://www.g2.com/products/naltero/pricing</a></p>
+                    </div>
+                </template>
+                <template data-pricing-template="competitor-18">
+                    <div class="pricing-dropdown-panel pricing-competitor-panel">
+                    <h4><i data-lucide="dollar-sign"></i> 18. Clipral</h4>
+                    <p><strong>Competitor Name:</strong> Clipral</p>
+                    <h5>Capterra Listing</h5>
+                    <p><strong>Capterra Direct Link:</strong> <a href="https://www.capterra.com/p/10020412/Clipral/" target="_blank" rel="noopener noreferrer">https://www.capterra.com/p/10020412/Clipral/</a></p>
                     </div>
                 </template>
                 </div>
@@ -1121,6 +1156,68 @@
                     </div>
                 </div>
             </div>
+
+            <div id="foiaContractPanel" class="foia-contract-panel collapsed" aria-labelledby="foiaContractPricingTitle">
+                <div class="foia-contract-header">
+                    <div class="foia-contract-heading">
+                        <i data-lucide="landmark"></i>
+                        <div>
+                            <p class="foia-contract-eyebrow">Verified public-sector benchmark data</p>
+                            <h3 id="foiaContractPricingTitle">FOIA / Government Contract Pricing<span id="foiaContractCount" class="resource-count-pill">0</span></h3>
+                            <p>Review public redaction, anonymization, evidence-processing, and compliance-workflow contract records with exact award amounts only. Unsupported sources return the required no-data state rather than inferred values.</p>
+                        </div>
+                    </div>
+                    <button type="button" id="foiaContractCollapseToggle" class="pricing-summary-collapse-toggle" onclick="toggleFoiaContractSection()" aria-expanded="false" aria-controls="foiaContractPanelBody">
+                        <span id="foiaContractCollapseLabel">Expand</span>
+                        <span class="pricing-summary-collapse-icon" aria-hidden="true">⌃</span>
+                    </button>
+                </div>
+                <div id="foiaContractPanelBody" class="foia-contract-body" hidden aria-hidden="true" inert>
+                    <div class="foia-contract-source-row">
+                        <label for="foiaContractSourceSelect" class="version-selector-label"><i data-lucide="database"></i> Primary Sources (USA)</label>
+                        <select id="foiaContractSourceSelect" class="version-selector foia-contract-select" onchange="handleFoiaContractSourceChange()">
+                            <option value="usaspending" selected>USASpending.gov</option>
+                            <option value="sam">SAM.gov (Contract Opportunities &amp; Awards)</option>
+                            <option value="fpds">FPDS-NG (Federal Procurement Data System)</option>
+                            <option value="usa-foia">USA.gov FOIA Libraries</option>
+                            <option value="california">California State Procurement Portal</option>
+                            <option value="texas">Texas State Procurement Portal</option>
+                            <option value="new-york">New York State Contracts Reporter</option>
+                        </select>
+                    </div>
+                    <div class="resource-toolbar foia-contract-toolbar" aria-label="FOIA and government contract pricing filters">
+                        <div class="resource-search">
+                            <label for="foiaContractSearch" class="version-selector-label"><i data-lucide="search"></i> Search contract data</label>
+                            <input id="foiaContractSearch" class="resource-input" type="search" placeholder="Search vendor, title, agency, source..." oninput="renderFoiaContractData()" />
+                        </div>
+                        <div class="resource-filter">
+                            <label for="foiaContractCategoryFilter" class="version-selector-label"><i data-lucide="folder"></i> Category</label>
+                            <select id="foiaContractCategoryFilter" class="version-selector foia-contract-select" onchange="renderFoiaContractData()">
+                                <option value="all">All Categories</option>
+                                <option value="🚓 Law Enforcement &amp; Public Safety">🚓 Law Enforcement &amp; Public Safety</option>
+                                <option value="⚖️ Legal &amp; Compliance">⚖️ Legal &amp; Compliance</option>
+                                <option value="🏢 Government Agencies">🏢 Government Agencies</option>
+                                <option value="🏥 Healthcare">🏥 Healthcare</option>
+                                <option value="🚁 Drone &amp; Aerial Surveillance">🚁 Drone &amp; Aerial Surveillance</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="resource-actions-bar foia-contract-actions-bar">
+                        <div>
+                            <p id="foiaContractSummary" aria-live="polite">Expand this section to load verified public contract data.</p>
+                            <p id="foiaContractRetrievalNote" class="foia-contract-note"></p>
+                        </div>
+                        <div class="resource-view-toggle" aria-label="FOIA contract view toggle">
+                            <button type="button" id="foiaContractCardToggle" class="resource-toggle active" onclick="setFoiaContractView('card', this)"><i data-lucide="layout-grid"></i> Cards</button>
+                            <button type="button" id="foiaContractTableToggle" class="resource-toggle" onclick="setFoiaContractView('table', this)"><i data-lucide="table-2"></i> Table</button>
+                            <button type="button" class="resource-toggle" onclick="resetFoiaContractFilters()"><i data-lucide="rotate-ccw"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div id="foiaContractResults" class="foia-contract-results" aria-live="polite">
+                        <div class="foia-contract-empty">Expand this section to load verified public contract data.</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section id="positioning" class="section">
@@ -1205,23 +1302,34 @@
 
         <section id="discovery" class="section">
             <h2><i data-lucide="help-circle"></i> Discovery Questions</h2>
-            <p style="color: #374151; font-size: 1em; line-height: 1.6; margin-bottom: 20px;">Use this phase-based discovery guide to diagnose operational pain, technical constraints, financial impact, and industry-specific compliance exposure during live sales calls.</p>
+            <p style="color: #374151; font-size: 1em; line-height: 1.6; margin-bottom: 20px;">Use this gated discovery guide to diagnose operational pain, technical constraints, financial impact, and compliance exposure during live sales calls. Select sector, industry, and pricing model before generating questions.</p>
             <div style="display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0 24px 0; padding: 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
+                <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
+                    <label for="discoverySectorFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="layers"></i> Sector Type</label>
+                    <select id="discoverySectorFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
+                        <option value="">— Select sector type —</option>
+                        <option value="public-sector">Public Sector</option>
+                        <option value="private-sector">Private Sector</option>
+                        <option value="non-profit-ngo">Non-Profit / NGO</option>
+                    </select>
+                </div>
                 <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
                     <label for="discoveryIndustryFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="building"></i> Industry</label>
                     <select id="discoveryIndustryFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
-                        <option value="law-enforcement-public-safety" selected>Law Enforcement &amp; Public Safety</option>
-                        <option value="government-municipal">Government &amp; Municipal Agencies</option>
-                        <option value="healthcare-medical">Healthcare &amp; Medical Institutions</option>
-                        <option value="legal-law-firms">Legal &amp; Law Firms</option>
-                        <option value="financial-services-banking">Financial Services &amp; Banking</option>
-                        <option value="education-universities">Education &amp; Universities</option>
+                        <option value="">— Select industry —</option>
+                        <option value="law-enforcement-public-safety">Law Enforcement &amp; Public Safety [CJIS]</option>
+                        <option value="government-municipal">Government &amp; Municipal Agencies [FOIA]</option>
+                        <option value="healthcare-medical">Healthcare &amp; Medical Institutions [HIPAA]</option>
+                        <option value="legal-law-firms">Legal &amp; Law Firms [Attorney-Client Privilege]</option>
+                        <option value="financial-services-banking">Financial Services &amp; Banking [SOX / GDPR / PCI-DSS]</option>
+                        <option value="education-universities">Education &amp; Universities [FERPA]</option>
                     </select>
                 </div>
                 <div style="flex: 1 1 240px; min-width: 220px; display: flex; flex-direction: column;">
                     <label for="discoveryPricingFilter" style="display: block; margin-bottom: 8px; font-weight: 600; color: #1e3a5f; font-size: 0.95em;"><i data-lucide="dollar-sign"></i> Pricing Model</label>
                     <select id="discoveryPricingFilter" onchange="updateDiscoveryQuestions()" style="width: 100%; padding: 10px 14px; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.95em; font-weight: 500; color: #1f2937; font-family: inherit; cursor: pointer; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);">
-                        <option value="flat-annual-subscription" selected>Flat Annual Subscription</option>
+                        <option value="">— Select pricing model —</option>
+                        <option value="flat-annual-subscription">Flat Annual Subscription</option>
                         <option value="usage-based">Pay-Per-Minute / Pay-Per-File (Usage-Based)</option>
                         <option value="per-seat-license">Per-Seat / Per-User License</option>
                         <option value="enterprise-custom-quote">Enterprise Custom Quote</option>
