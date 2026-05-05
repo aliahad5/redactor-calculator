@@ -15,8 +15,8 @@
             <h1 style="font-size: 1.6em; color: #2c5282;"><i data-lucide="bar-chart-3"></i> Competitive Analysis Hub</h1>
             <p class="subtitle">AI-Powered Video, Audio & Image Redaction Solutions - Market Analysis for Sales & Marketing</p>
             <div class="meta-info">
-                <span><strong>Last Updated:</strong> April 29, 2026</span>
-                <span><strong>Latest Version:</strong> Sighthound Redactor v7.0.6</span>
+                <span><strong>Last Updated:</strong> March 25, 2026</span>
+                <span><strong>Latest Version:</strong> Sighthound Redactor v7.1.0</span>
                 <span><strong>Competitors Analyzed:</strong> 23 Primary Solutions</span>
             </div>
 
@@ -37,7 +37,7 @@
         <section id="executive" class="section">
             <h2><i data-lucide="clipboard-list"></i> Executive Summary</h2>
             <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #2c5282;">
-                <p><strong>Sighthound Redactor v7.0.6</strong> (released March 2026) is a hybrid desktop/server AI-powered redaction solution positioned for enterprise deployment. The competitive landscape includes <strong>14 primary competitors</strong> ranging from specialized video tools to comprehensive multi-format solutions.</p>
+                <p><strong>Sighthound Redactor v7.1.0</strong> (released March 25, 2026) is a hybrid desktop/server AI-powered redaction solution positioned for enterprise deployment. The competitive landscape includes <strong>14 primary competitors</strong> ranging from specialized video tools to comprehensive multi-format solutions.</p>
             </div>
 
             <h3><i data-lucide="pie-chart"></i> Key Market Segments</h3>
@@ -67,32 +67,32 @@
             <h3><i data-lucide="sparkles"></i> Redactor Feature Highlights</h3>
             <div class="positioning-grid">
                 <div class="card">
-                    <h4><i data-lucide="video"></i> Video Redaction</h4>
-                    <p>Automatically detect and redact heads, people, vehicles, and license plates, now expanded to detect IDs, screens, and documents in media.</p>
-                </div>
-                <div class="card">
-                    <h4><i data-lucide="scan-face"></i> Face & Head Detection</h4>
-                    <p>AI-powered face and head tracking with automatic blurring across video frames.</p>
+                    <h4><i data-lucide="wand-sparkles"></i> Smart Fill Redaction Mode</h4>
+                    <p>"Smart Fill" is now available as a dedicated redaction mode in the export UI, providing visually more pleasing redaction compared to fixed color filling.</p>
                 </div>
                 <div class="card">
                     <h4><i data-lucide="mic-off"></i> Audio Redaction</h4>
-                    <p>Detect and mute sensitive spoken content automatically or with manual control.</p>
+                    <p>Redactor supports standalone audio redaction, allowing users to mute, bleep, or remove speech and sensitive information in audio files (without needing video) like MP3, WAV, and AAC.</p>
                 </div>
                 <div class="card">
-                    <h4><i data-lucide="file-text"></i> ID & Document Detection</h4>
-                    <p>Identify IDs, passports, screens, and sensitive documents in video and images.</p>
+                    <h4><i data-lucide="file-search"></i> More Detection Classes</h4>
+                    <p>Redactor can now detect these new classes: Documents in general; IDs, e.g. driver licenses or passports; Screens (laptops, monitors, phones). These classes are also selectable via the API.</p>
                 </div>
                 <div class="card">
-                    <h4><i data-lucide="car"></i> License Plate Recognition</h4>
-                    <p>Automatically detect and redact vehicle license plates across footage.</p>
+                    <h4><i data-lucide="video"></i> H.265 Importing</h4>
+                    <p>It is now possible to import H.265 (aka HEVC) video files into Redactor. Rendering will still happen i the H.264 format (highest compatibility for video playback)</p>
                 </div>
                 <div class="card">
-                    <h4><i data-lucide="layers"></i> Batch Processing</h4>
-                    <p>Process hundreds of videos simultaneously with server-grade throughput.</p>
+                    <h4><i data-lucide="undo-2"></i> Undo/Redo Support</h4>
+                    <p>Support for such actions via the common [Ctrl]+[Z] (undo) and [Ctrl]+[Y] keyboard input. This covers all areas of editing (boxes, audio regions, grouping).</p>
                 </div>
                 <div class="card">
-                    <h4><i data-lucide="server"></i> Deployment Flexibility</h4>
-                    <p>Desktop, server, Docker, or air-gapped — works on your network, your rules.</p>
+                    <h4><i data-lucide="image-off"></i> Background Redaction</h4>
+                    <p>Two features were added to make background (aka as reverse) redaction possible: an object can be marked a _As background_, and an object can be marked with the _Keep unredacted_ flag.</p>
+                </div>
+                <div class="card">
+                    <h4><i data-lucide="clipboard-list"></i> Audit Data Generation</h4>
+                    <p>For 1+ videos (when not being opened) audit logs can be requested via the context menu. It will yield a ZIP file containing pairs (for each video) of two files.</p>
                 </div>
             </div>
         </section>
