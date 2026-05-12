@@ -1,5 +1,58 @@
 var comparisonMode = 'all';
 var versionData = {
+    'v7.1.3': {
+        title: 'Version 7.1.3 Release',
+        date: 'May 5, 2026',
+        icon: 'tag',
+        releaseNotes: `Version         : 7.1.3
+Release Date    : May 5, 2026
+
+NEW FEATURES:
+- Out-of-Disk-Space Protection
+  When disk usage exceeds threshold, server replies with HTTP 503
+  to all requests except /health and resumes automatically once
+  it drops. Configurable via REDACTOR_OODSTRACK_THRESHOLD_PCT
+  (default 90%) and REDACTOR_OODSTRACK_INTERVALS.
+
+- Memory Diagnostics
+  New tracker samples heap usage, logs high-water marks, and can
+  write a V8 heap snapshot when usage exceeds a configurable
+  percentage of heap limit. Controlled via
+  REDACTOR_DIAG_OOMTRACK_INTVL, REDACTOR_DIAG_OOMTRACK_DUMP_PCT,
+  and REDACTOR_DIAG_OOMTRACK_DUMP_PATH.
+
+- Hide API User Identity in Video List
+  New REDACTOR_UI_SHOW_USERNAME_API env var controls whether
+  api:<id> / emb:<user> shows in the "In Use" overlay.
+  Hidden by default.
+
+- Optional Persisted Redaction History
+  Per-session history persistence is now opt-in via
+  REDACTOR_HISTORY_ENABLED env var (default 0=off), reducing
+  disk I/O for high-throughput API workloads.
+
+UPDATES:
+- Server Stability
+  Internal optimizations for more robust and responsive backend
+  under concurrent API and regular user load.
+
+- Operational Logging
+  Active session and operation counts logged on each change.
+  OS resource limits logged at startup.
+
+BUG FIXES:
+- KeepAlive Interval with Polling Transport
+  REDACTOR_FORCE_POLLING_TRANSPORT=1 could hit server with too
+  many keepAlive POSTs. Now back to regular intervals.
+
+- Box Border Visuals
+  Borders for background / keep-unredacted boxes did not render
+  properly. Visual concept improved for better visibility.
+
+- Reaction to Malformed Requests
+  All endpoint flows now validated against malformed traffic
+  observed on publicly-exposed / non-firewalled hosts.`
+    },
     'v7.1.0': {
         title: 'Version 7.1.0 Release',
         date: 'March 25, 2026',
@@ -81,12 +134,16 @@ function updateVersionDetails() {
     if (!data) { container.innerHTML = ''; return; }
     var html = '<span class="version-meta">' + escapeHtml(selector.value) + ' · ' + escapeHtml(data.date) + '</span>';
     html += '<h4><i data-lucide="' + escapeHtml(data.icon) + '"></i> ' + escapeHtml(data.title) + '</h4>';
-    if (data.heading) {
-        html += '<p style="margin: 4px 0 12px 0; font-weight: 600; color: #1e3a5f;">' + escapeHtml(data.heading) + '</p>';
+    if (data.releaseNotes) {
+        html += '<pre style="white-space: pre-wrap; font-family: inherit; margin: 0; color: var(--fg-2); line-height: 1.6;">' + escapeHtml(data.releaseNotes) + '</pre>';
+    } else {
+        if (data.heading) {
+            html += '<p style="margin: 4px 0 12px 0; font-weight: 600; color: #1e3a5f;">' + escapeHtml(data.heading) + '</p>';
+        }
+        data.highlights.forEach(function(item) {
+            html += '<p><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.content) + '</p>';
+        });
     }
-    data.highlights.forEach(function(item) {
-        html += '<p><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.content) + '</p>';
-    });
     container.innerHTML = html;
     if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
