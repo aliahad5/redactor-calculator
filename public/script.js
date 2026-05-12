@@ -10,16 +10,23 @@ var releaseNotesState = {
 function createReleaseId(version) {
     return 'v' + String(version || '').replace(/^v/i, '').trim();
 }
+function cleanReleaseNotesHeadingText(text) {
+    return String(text || '')
+        .replace(/\s*\[\u00b6\]\([^)]+\)\s*/g, '')
+        .replace(/\\([#[\]_*])/g, '$1')
+        .trim();
+}
 
 function parseReleaseNotesMarkdown(markdown) {
     var releases = [];
     var current = null;
-    String(markdown || '').replace(/\r\n/g, '\n').split('\n').forEach(function(line) {
-        var releaseMatch = line.match(/^##\s+(.+?)(?:\s+[–-]\s+(.+))?\s*$/);
+    String(markdown || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').forEach(function(line) {
+        var releaseMatch = line.match(/^##\s+([0-9]+(?:\.[0-9]+)+)\s*(.*)$/);
         if (releaseMatch) {
+            var date = cleanReleaseNotesHeadingText(releaseMatch[2]).replace(/^[\s\-\u2013\u2014]+/, '').trim();
             current = {
                 version: releaseMatch[1].trim().replace(/^v/i, ''),
-                date: (releaseMatch[2] || 'Date not listed').trim(),
+                date: date || 'Date not listed',
                 bodyLines: []
             };
             current.id = createReleaseId(current.version);
@@ -53,7 +60,7 @@ function convertReleaseInlineMarkdown(text) {
         .replace(/\\-/g, '-');
 
     html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)(?:\s+&quot;[^&]+&quot;)?\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
     html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     return html;
 }
@@ -62,6 +69,8 @@ function renderReleaseMarkdown(markdown) {
     var output = [];
     var paragraphLines = [];
     var listType = null;
+    var inCodeBlock = false;
+    var codeLines = [];
 
     function flushParagraph() {
         if (!paragraphLines.length) { return; }
@@ -81,13 +90,35 @@ function renderReleaseMarkdown(markdown) {
         output.push('<' + type + '>');
         listType = type;
     }
+    function flushCodeBlock() {
+        if (!inCodeBlock) { return; }
+        output.push('<pre class="release-note-code"><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>');
+        codeLines = [];
+        inCodeBlock = false;
+    }
 
-    String(markdown || '').replace(/\r\n/g, '\n').split('\n').forEach(function(line) {
+    String(markdown || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').forEach(function(line) {
         var trimmed = line.trim();
         var headingMatch;
         var imageMatch;
         var unorderedMatch;
         var orderedMatch;
+        if (/^```/.test(trimmed)) {
+            flushParagraph();
+            closeList();
+            if (inCodeBlock) {
+                flushCodeBlock();
+            } else {
+                inCodeBlock = true;
+                codeLines = [];
+            }
+            return;
+        }
+
+        if (inCodeBlock) {
+            codeLines.push(line);
+            return;
+        }
 
         if (!trimmed) {
             flushParagraph();
@@ -107,7 +138,7 @@ function renderReleaseMarkdown(markdown) {
         if (headingMatch) {
             flushParagraph();
             closeList();
-            output.push('<h5>' + convertReleaseInlineMarkdown(headingMatch[1]) + '</h5>');
+            output.push('<h5>' + convertReleaseInlineMarkdown(cleanReleaseNotesHeadingText(headingMatch[1])) + '</h5>');
             return;
         }
 
@@ -140,6 +171,7 @@ function renderReleaseMarkdown(markdown) {
 
     flushParagraph();
     closeList();
+    flushCodeBlock();
     return output.join('');
 }
 
@@ -235,7 +267,7 @@ function updateVersionDetails() {
 
     var html = '<span class="version-meta">' + escapeHtml(release.id) + ' · ' + escapeHtml(release.date) + '</span>';
     html += '<h4><i data-lucide="file-text"></i> Redactor ' + escapeHtml(release.version) + ' Release Notes</h4>';
-    html += '<p class="release-source-note">Source: saved copy of docs.redactor.com release notes at <code>' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + '</code>.</p>';
+    html += '<p class="release-source-note">Source: attached dev.sighthound.com release-notes markdown saved at <code>' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + '</code>.</p>';
     html += '<div class="release-note-body">' + renderReleaseMarkdown(release.body) + '</div>';
     container.innerHTML = html;
     if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
