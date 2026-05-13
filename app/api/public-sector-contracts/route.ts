@@ -173,6 +173,79 @@ const USASPENDING_FIELDS = [
   'Awarding Sub Agency',
   'Description',
 ];
+const VERIFIED_COMPETITORS: ReadonlyArray<{
+  competitorName: string;
+  aliases: readonly string[];
+}> = [
+  {
+    competitorName: 'Sighthound Redactor',
+    aliases: ['Sighthound', 'Sighthound Redactor'],
+  },
+  {
+    competitorName: 'Veritone Redact',
+    aliases: ['Veritone', 'Veritone Redact'],
+  },
+  {
+    competitorName: 'CaseGuard Studio',
+    aliases: ['CaseGuard', 'CaseGuard Studio'],
+  },
+  {
+    competitorName: 'FastRedaction',
+    aliases: ['FastRedaction', 'Fast Redaction'],
+  },
+  {
+    competitorName: 'MotionDSP Spotlight',
+    aliases: ['MotionDSP', 'Motion DSP', 'MotionDSP Spotlight'],
+  },
+  {
+    competitorName: 'CLIPr',
+    aliases: ['CLIPr', 'CLIPR'],
+  },
+  {
+    competitorName: 'AssemblyAI',
+    aliases: ['AssemblyAI', 'Assembly AI'],
+  },
+  {
+    competitorName: 'Lantero Redact',
+    aliases: ['Lantero', 'Lantero Redact'],
+  },
+  {
+    competitorName: 'Pimloc / SecureRedact',
+    aliases: ['Pimloc', 'SecureRedact', 'Secure Redact'],
+  },
+  {
+    competitorName: 'VIDIZMO / Redactor.ai',
+    aliases: ['VIDIZMO', 'Redactor.ai', 'Redactor AI', 'RedactorAI'],
+  },
+  {
+    competitorName: 'Facit Data Systems',
+    aliases: ['Facit Data Systems', 'Facit', 'Identity Cloak'],
+  },
+  {
+    competitorName: 'Suspect Technologies',
+    aliases: ['Suspect Technologies', 'ExactRedact', 'Exact Redact'],
+  },
+  {
+    competitorName: 'Redactable',
+    aliases: ['Redactable'],
+  },
+  {
+    competitorName: 'Extract Systems',
+    aliases: ['Extract Systems', 'ID Shield'],
+  },
+  {
+    competitorName: 'iDox.ai',
+    aliases: ['iDox.ai', 'iDox AI', 'iDoxAI', 'iDox'],
+  },
+  {
+    competitorName: 'Everlaw',
+    aliases: ['Everlaw'],
+  },
+  {
+    competitorName: 'TransPerfect',
+    aliases: ['TransPerfect'],
+  },
+];
 
 const cache = new Map<SourceKey, CachedPayload>();
 
@@ -186,6 +259,37 @@ function compactWhitespace(value: string): string {
 
 function getString(value: unknown): string {
   return typeof value === 'string' ? compactWhitespace(value) : '';
+}
+function normalizeCompetitorTerm(value: string): string {
+  return compactWhitespace(value)
+    .replace(/&/g, ' AND ')
+    .replace(/[^a-zA-Z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+}
+
+function normalizedTermContains(normalizedValue: string, normalizedTerm: string): boolean {
+  return (
+    normalizedValue === normalizedTerm ||
+    normalizedValue.startsWith(`${normalizedTerm} `) ||
+    normalizedValue.endsWith(` ${normalizedTerm}`) ||
+    normalizedValue.includes(` ${normalizedTerm} `)
+  );
+}
+
+function isVerifiedCompetitorVendor(vendor: string): boolean {
+  const normalizedVendor = normalizeCompetitorTerm(vendor);
+  if (!normalizedVendor) {
+    return false;
+  }
+
+  return VERIFIED_COMPETITORS.some((competitor) =>
+    competitor.aliases.some((alias) => {
+      const normalizedAlias = normalizeCompetitorTerm(alias);
+      return normalizedAlias ? normalizedTermContains(normalizedVendor, normalizedAlias) : false;
+    })
+  );
 }
 
 function formatCurrency(amount: number): string {
@@ -341,8 +445,20 @@ function toContractRecord(
   const agency = getString(result['Awarding Agency'] || result['Awarding Sub Agency']);
   const description = getString(detail?.description || result.Description);
   const awardId = getString(result['Award ID']);
+  const sourceUrl = getSourceUrl(result, source);
 
-  if (!vendor || !description || !agency || !awardId || !Number.isFinite(amount) || !startDate || !endDate) {
+  if (
+    !vendor ||
+    !isVerifiedCompetitorVendor(vendor) ||
+    !description ||
+    !agency ||
+    !awardId ||
+    !Number.isFinite(amount) ||
+    !startDate ||
+    !endDate ||
+    sourceUrl === 'https://www.usaspending.gov' ||
+    sourceUrl === 'https://www.fpds.gov'
+  ) {
     return null;
   }
 
@@ -360,7 +476,7 @@ function toContractRecord(
     contractStatus: getContractStatus(startDate, endDate),
     contractPeriod: `${formatDate(startDate)} → ${formatDate(endDate)}`,
     source: config.label,
-    sourceUrl: getSourceUrl(result, source),
+    sourceUrl,
     verificationStatus: config.verificationStatus,
     awardId,
     description,
@@ -460,7 +576,7 @@ async function getFederalAwardResults(): Promise<FederalAwardResults> {
         }
         successfulSearches += 1;
         (data.results || []).forEach((result) => {
-          if (!isStrictlyRelevant(result)) {
+          if (!isStrictlyRelevant(result) || !isVerifiedCompetitorVendor(getString(result['Recipient Name']))) {
             return;
           }
           const key = getAwardKey(result);
