@@ -3,7 +3,7 @@ import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sighthound Redactor - Competitive Analysis Hub',
+  title: 'Sighthound Redactor ? Competitive Analysis Hub',
   description:
     'AI-Powered Video, Audio & Image Redaction Solutions - Market Analysis for Sales & Marketing',
 };
