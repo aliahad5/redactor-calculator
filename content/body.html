@@ -988,15 +988,77 @@
             <section id="alpr-executive-summary" class="section alpr-section active" data-alpr-index="0">
                 <h2><i data-lucide="clipboard-list"></i> Executive Summary</h2>
                 <div class="alpr-placeholder">
-                    <p class="alpr-eyebrow">Sighthound ALPR+ — Executive Summary</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain a data-backed overview of ALPR+ market position, target segments, competitive scenarios, and sales priorities.</p>
-                    <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Competitive Landscape</p>
+                    <h3><i data-lucide="radar"></i> Market Position</h3>
+                    <p>ALPR demand is expanding beyond public safety into parking, tolling/ITS, access control, retail/QSR, fleet operations, and embedded analytics as buyers move from plate capture to real-time vehicle intelligence. Official vendor pages increasingly foreground privacy, retention, auditability, deployment control, and data-sovereignty needs; no public market-size figure is asserted here.</p>
+
+                    <h3><i data-lucide="pie-chart"></i> Six Primary Market Segments</h3>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4><i data-lucide="shield"></i> Law Enforcement &amp; Public Safety</h4>
+                            <p>BOLO alerts, patrol automation, investigations, and UAV/aerial use cases where plate reads and MMCG help identify vehicles even when plates are partial or unavailable.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="parking-circle"></i> Parking, EV &amp; Access Control</h4>
+                            <p>Automates entry, payments, EV bay monitoring, gated access, overstay detection, and unauthorized-vehicle workflows.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="traffic-cone"></i> Smart City, ITS &amp; Tolling</h4>
+                            <p>Supports traffic enforcement, tolling, roadway monitoring, and city operations that need real-time and batch analytics integrated into existing systems.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="store"></i> Retail, QSR &amp; Automotive Services</h4>
+                            <p>Turns vehicle visits into operational signals for drive-thrus, service lanes, loyalty workflows, and customer-experience optimization.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="truck"></i> Fleet, Logistics &amp; Yard Operations</h4>
+                            <p>Monitors deliveries, fleet movement, dwell time, and exceptions across depots, warehouses, and private facilities.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="code-2"></i> Developers, OEMs &amp; Integrators</h4>
+                            <p>Embeds vehicle analytics into applications through REST, JSON outputs, RTSP streams, RabbitMQ, Docker, and custom API workflows.</p>
+                        </div>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(0, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel0" class="alpr-prompt-panel" hidden></div>
+
+                    <h3><i data-lucide="badge"></i> Top 5 Competitors in Sales Evaluations</h3>
+                    <p><strong>Deal-frequency note:</strong> Ranking reflects this hub's 19-competitor sales-analysis input, not public market-share data.</p>
+                    <ol style="margin-left: 20px;">
+                        <li><strong>Flock Safety:</strong> Appears in law-enforcement and community-safety evaluations because its official LPR offering combines deploy-anywhere cameras, subscription support, real-time alerts, audit trails, and a national LPR network.</li>
+                        <li><strong>Rekor:</strong> Appears when buyers want camera-flexible ALPR, roadway intelligence, vehicle attributes, public pricing tiers, and cloud/on-prem options across Scout, CarCheck, SDK, and edge systems.</li>
+                        <li><strong>Plate Recognizer:</strong> Appears in developer, parking, and SMB evaluations because it publishes API/SDK/Stream products, on-prem/cloud deployment, webhooks, public pricing, and a free trial path.</li>
+                        <li><strong>Genetec AutoVu:</strong> Appears in enterprise security, parking, and law-enforcement accounts already standardizing on Genetec Security Center, fixed/mobile ALPR, and unified operations.</li>
+                        <li><strong>Leonardo ELSAG:</strong> Appears in hardware-led public-safety procurements because Leonardo publishes fixed, mobile, solar, video, and enterprise operations LPR options; NDI and Jenoptik are adjacent hardware-led comparables in this analysis <strong>[UNVERIFIED as a public deal-frequency grouping]</strong>.</li>
+                    </ol>
+
+                    <h3><i data-lucide="sparkles"></i> Differentiated ALPR+ Capabilities</h3>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4><i data-lucide="car"></i> MMCG Vehicle Analytics</h4>
+                            <p><strong>Feature:</strong> Detailed Vehicle Analytics provides make, model, color, and generation, and the product FAQ states vehicle details can still be returned when the plate is not visible.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="server"></i> Deployment Flexibility</h4>
+                            <p><strong>Feature:</strong> ALPR+ supports on-premise, cloud, edge, Docker, Windows, Linux, existing IP cameras, and Sighthound Compute hardware for buyers with strict data-control requirements.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="plug"></i> API-First Proof Path</h4>
+                            <p><strong>Feature:</strong> REST API, RTSP, JSON results, RabbitMQ integration, and the no-sign-up Test Drive let technical buyers validate with real images before procurement.</p>
+                        </div>
+                    </div>
+
+                    <h3><i data-lucide="target"></i> Top Competitive Scenarios &amp; Win Themes</h3>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Vs. Flock Safety:</strong> Lead with deployment and data-path control for buyers that need owned cameras, private infrastructure, edge processing, or workflows outside a managed public-safety network.</li>
+                        <li><strong>Vs. Rekor / Plate Recognizer:</strong> Lead with MMCG validation and API flexibility; ask buyers to compare same-image outputs, plate-missing scenarios, and Docker/on-prem integration needs.</li>
+                        <li><strong>Vs. Genetec / ELSAG / NDI / Jenoptik:</strong> Lead with software-first modernization: add ALPR+ to existing cameras and systems, then add purpose-built hardware only where site conditions require it.</li>
+                    </ul>
+
+                    <div class="strength-box">
+                        <h4><i data-lucide="trending-up"></i> Six-Month Sales Recommendation</h4>
+                        <p>Prioritize regulated and integration-heavy opportunities in public safety, parking/access, smart city/ITS, and developer/OEM segments where MMCG, on-prem/edge deployment, and API control matter more than commodity plate reads. Standardize sales motions around the free ALPR+ Test Drive, same-image competitor comparisons, and three battlecards: Flock-managed network, Rekor/Plate Recognizer API, and hardware-led ALPR modernization.</p>
+                    </div>
+
+                    <p><small>Sources/caveat: <a href="https://www.sighthound.com/products/alpr" target="_blank" rel="noopener">Sighthound ALPR+</a>, <a href="https://www.sighthound.com/products/alpr/demo" target="_blank" rel="noopener">Test Drive</a>, <a href="https://www.flocksafety.com/products/license-plate-readers" target="_blank" rel="noopener">Flock</a>, <a href="https://www.rekor.ai/software/scout" target="_blank" rel="noopener">Rekor</a>, <a href="https://platerecognizer.com/stream/" target="_blank" rel="noopener">Plate Recognizer</a>, <a href="https://www.genetec.com/products/unified-security/autovu/law-enforcement" target="_blank" rel="noopener">Genetec AutoVu</a>, <a href="https://www.leonardocompany-us.com/lpr/products" target="_blank" rel="noopener">Leonardo ELSAG</a>, <a href="https://www.ndi-rs.com/" target="_blank" rel="noopener">NDI</a>, and <a href="https://www.jenoptik.us/products/civil-security/alpr" target="_blank" rel="noopener">Jenoptik</a> pages accessed Jun. 4, 2026; deal frequency is sales-analysis input, not public market share.</small></p>
                 </div>
             </section>
             <section id="alpr-product-updates" class="section alpr-section" data-alpr-index="1">
