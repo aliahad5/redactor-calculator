@@ -1696,17 +1696,106 @@
             </section>
             <section id="alpr-product-updates" class="section alpr-section" data-alpr-index="1">
                 <h2><i data-lucide="package"></i> Product Updates</h2>
-                <div class="alpr-placeholder">
-                    <p class="alpr-eyebrow">Sighthound ALPR+ — Product Updates</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain verified ALPR+ capabilities, deployment options, API notes, hardware options, and current product resources.</p>
-                    <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
-                    </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(1, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel1" class="alpr-prompt-panel" hidden></div>
+                <h3><i data-lucide="cpu"></i> ALPR+ Capability Brief</h3>
+                <div class="strength-box">
+                    <p>Sighthound ALPR+ combines AI-powered object recognition, object tracking, vehicle identification, license plate recognition, and detailed vehicle information in one vehicle analytics platform.</p>
+                    <p>The product page describes ALPR+ as powered by Gen 6 AI and designed for precise vehicle detection, recognition, and analytics across local servers, edge devices, and cloud environments.</p>
+                    <p>For technical buyers, the core differentiation is that ALPR+ is not limited to plate reads: it can return license plate strings and regions alongside vehicle make, model, color, generation, type, and orientation data for integration workflows.</p>
                 </div>
+
+                <h3><i data-lucide="scan-line"></i> Published ALPR+ Capabilities</h3>
+                <div class="positioning-grid">
+                    <div class="card">
+                        <h4><i data-lucide="badge"></i> License Plate Recognition</h4>
+                        <p>Detects license plates, recognizes alphanumeric plate strings, and identifies plate regions; Sighthound states its LPR models can read alphanumeric plates globally, with region recognition documented for US states, Canadian provinces/territories, and European Union countries.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="car-front"></i> MMCG Vehicle Analytics</h4>
+                        <p>Returns vehicle make, model, color, and generation so evaluators can identify vehicles even when the license plate is not visible; Sighthound notes vehicle-recognition models are primarily trained for US, Canada, and EU vehicle markets.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="boxes"></i> Object Detection</h4>
+                        <p>Detects multiple object classes including vehicles, people, faces, cars, trucks, buses, motorbikes, and license plates depending on the API or SIO pipeline configuration.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="route"></i> Object Tracking</h4>
+                        <p>Monitors objects across frames in real time; SIO exposes tracker configuration options for stream workflows where tracking is needed and hardware headroom supports the performance cost.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="compass"></i> Vehicle Type &amp; Orientation</h4>
+                        <p>Determines vehicle type and positioning to support situational awareness beyond a plate string alone.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="file-json"></i> Structured Vehicle Output</h4>
+                        <p>REST and SIO workflows return detailed vehicle and license plate annotations in JSON, including detection coordinates, scores, plate string/region, vehicle color, and make/model/generation fields.</p>
+                    </div>
+                </div>
+
+                <h3><i data-lucide="server"></i> Deployment Modes &amp; Fit</h3>
+                <div class="positioning-grid">
+                    <div class="card">
+                        <h4><i data-lucide="building-2"></i> On-Premise</h4>
+                        <p>Best for organizations that need to keep video processing inside their own network, control data flow, and manage infrastructure directly.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="cloud"></i> Cloud</h4>
+                        <p>Best for teams that prioritize scalable access, remote management, and centralized API workflows over fully local processing.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="router"></i> Edge Devices</h4>
+                        <p>Best when low latency, reduced bandwidth, and processing near the camera are more important than centralizing every frame upstream.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="monitor-cog"></i> Windows + Linux</h4>
+                        <p>Best for buyers that need to align ALPR+ with existing operating-system standards; the product page and SIO docs document Windows and Linux support.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="container"></i> Docker Container</h4>
+                        <p>Best for repeatable self-hosted deployments, gateway-based REST API services, model-cache persistence, GPU-enabled hosts, and standard container operations.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="plug"></i> Custom Integration</h4>
+                        <p>Best for systems integrators and OEMs that need to embed vehicle analytics through REST calls, SIO pipelines, RTSP streams, RabbitMQ-controlled workflows, or Python output extensions.</p>
+                    </div>
+                </div>
+
+                <h3><i data-lucide="workflow"></i> API &amp; Integration Ecosystem</h3>
+                <div class="strength-box">
+                    <ul style="margin-left: 20px;">
+                        <li><strong>REST image API:</strong> Vehicle Analytics REST API supports <code>POST /v11/images:annotate</code> using image URLs or base64 image content, with <code>VEHICLE_DETECTION</code> and <code>LICENSE_PLATE_DETECTION</code> feature requests and JSON responses.</li>
+                        <li><strong>Hosted preview and self-hosted gateway:</strong> Developer docs show a Sighthound-hosted preview endpoint and a Docker Compose self-hosted REST gateway backed by SIO Vehicle Analytics.</li>
+                        <li><strong>RTSP and video pipelines:</strong> SIO VehicleAnalytics includes file, folder-watch, RTSP, GStreamer RTSP, direct SDK-style, and image-loop entry points for image, video, stream, embedded, and performance-test workflows.</li>
+                        <li><strong>RabbitMQ / AMQP control:</strong> SIO Aqueduct can launch or stop pipelines remotely by listening on a RabbitMQ broker and AMQP queue for pipeline control commands.</li>
+                        <li><strong>Python customization:</strong> SIO pipeline extensions can intercept, modify, filter, or redirect JSON output without changing the core pipeline behavior.</li>
+                        <li><strong>Spec note:</strong> Public developer pages document request/response formats and code samples; confirm current ALPR+ OpenAPI artifact availability with Sighthound before committing to generated-client workflows.</li>
+                    </ul>
+                </div>
+
+                <h3><i data-lucide="camera"></i> Hardware Options &amp; Fit</h3>
+                <div class="positioning-grid">
+                    <div class="card">
+                        <h4><i data-lucide="cctv"></i> Camera-Agnostic Software</h4>
+                        <p>Use existing IP cameras when the site already has suitable views and vehicle speeds; Sighthound notes ALPR+ can work with almost any IP camera, while specialized LPR cameras are recommended for fast-moving traffic scenarios.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="camera"></i> Sighthound Compute Camera</h4>
+                        <p>Adds value for new or difficult fixed installations that need high-resolution imaging, edge processing, flexible lens options, rugged IP67 hardware, and real-time analytics directly at the source.</p>
+                    </div>
+                    <div class="card">
+                        <h4><i data-lucide="hard-drive"></i> Sighthound Compute Node</h4>
+                        <p>Adds value when buyers want Sighthound-managed edge compute for ALPR+ while preserving camera flexibility, reducing upstream bandwidth, and keeping analytics close to existing video sources.</p>
+                    </div>
+                </div>
+
+                <h3><i data-lucide="rocket"></i> Recommended First Steps for Technical Evaluators</h3>
+                <div class="strength-box">
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Developer portal:</strong> Start with <a href="https://dev.sighthound.com/" target="_blank" rel="noopener">https://dev.sighthound.com/</a> for Vehicle Analytics REST API, Docker, SIO, RTSP, and pipeline documentation.</li>
+                        <li><strong>Free test drive:</strong> Validate sample images, upload evaluator images, inspect JSON output, and review sample API requests at <a href="https://www.sighthound.com/products/alpr/demo" target="_blank" rel="noopener">https://www.sighthound.com/products/alpr/demo</a>.</li>
+                    </ul>
+                </div>
+
+                <p><small>Sources/caveat: <a href="https://www.sighthound.com/products/alpr" target="_blank" rel="noopener">ALPR+ product page</a>, <a href="https://www.sighthound.com/products/alpr/demo" target="_blank" rel="noopener">ALPR+ test drive</a>, and <a href="https://dev.sighthound.com/" target="_blank" rel="noopener">Sighthound Developer Portal</a> pages accessed Jun. 4, 2026; performance and accuracy benchmarks are intentionally omitted from this section.</small></p>
             </section>
             <section id="alpr-icp-personas" class="section alpr-section" data-alpr-index="2">
                 <h2><i data-lucide="users"></i> ICP &amp; Personas</h2>
