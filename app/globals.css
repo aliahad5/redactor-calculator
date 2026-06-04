@@ -2340,3 +2340,277 @@ a:hover {
         width: 100%;
     }
 }
+
+
+/* =========================================================
+   PRODUCT SWITCHER + ALPR+ HUB
+   ========================================================= */
+.product-header {
+    transition: border-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard);
+}
+
+.product-header.product-alpr::before {
+    background: linear-gradient(135deg, #064e3b 0%, #34d399 100%);
+}
+
+.product-switcher-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.product-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+}
+
+.product-switcher__label {
+    color: var(--fg-3);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.product-switcher__select {
+    min-width: 220px;
+    padding: 9px 38px 9px 12px;
+    background: var(--bg-raised) url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234f60dc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--sh-navy);
+    font-family: var(--font-sans);
+    font-size: 0.94em;
+    font-weight: 600;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard), background-color var(--dur-base) var(--ease-standard);
+}
+
+.product-switcher__select:hover,
+.product-switcher__select:focus {
+    border-color: var(--sh-blurple-300);
+    box-shadow: var(--shadow-focus);
+    outline: none;
+}
+
+.product-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.82em;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.product-pill-redactor {
+    background: #1e3a5f;
+    color: #60a5fa;
+}
+
+.product-pill-alpr {
+    background: #064e3b;
+    color: #34d399;
+}
+
+.product-heading[hidden],
+.nav-tabs[hidden],
+.product-hub[hidden] {
+    display: none !important;
+}
+
+.product-heading {
+    animation: fadeIn 0.24s ease;
+}
+
+.product-heading-alpr h1 i[data-lucide],
+.product-header.product-alpr h2 i[data-lucide],
+.product-header.product-alpr h3 i[data-lucide],
+.alpr-section h2 i[data-lucide],
+.alpr-section h3 i[data-lucide] {
+    color: #059669;
+}
+
+.alpr-header-title {
+    color: #064e3b !important;
+    font-size: 1.6em !important;
+}
+
+.alpr-nav .nav-tab:hover {
+    color: #047857;
+    background: #ecfdf5;
+}
+
+.alpr-nav .nav-tab.active {
+    color: #047857;
+    border-bottom-color: #10b981;
+}
+
+.product-hub {
+    animation: fadeIn 0.24s ease;
+}
+
+.alpr-section {
+    border-top: 4px solid #10b981;
+}
+
+.alpr-placeholder {
+    display: grid;
+    gap: 16px;
+    padding: 24px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-lg);
+}
+
+.alpr-eyebrow {
+    margin: 0;
+    color: #047857;
+    font-size: 0.78em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.alpr-placeholder h3 {
+    margin-top: 0;
+}
+
+.alpr-populate-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid #a7f3d0;
+    border-left: 4px solid #10b981;
+    border-radius: var(--radius-md);
+    color: #065f46;
+    font-weight: 500;
+}
+
+.alpr-populate-note i[data-lucide] {
+    color: #059669;
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
+
+.alpr-prompt-toggle,
+.alpr-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 11px 18px;
+    background: #064e3b;
+    color: #ffffff;
+    border: 1px solid #064e3b;
+    border-radius: var(--radius-button);
+    font-family: var(--font-sans);
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+}
+
+.alpr-prompt-toggle:hover,
+.alpr-prompt-toggle.active,
+.alpr-copy-btn:hover {
+    background: #047857;
+    border-color: #047857;
+    color: #ffffff;
+}
+
+.alpr-prompt-toggle:active,
+.alpr-copy-btn:active {
+    transform: scale(0.98);
+}
+
+.alpr-prompt-panel {
+    display: grid;
+    gap: 12px;
+    padding: 18px;
+    background: #061a16;
+    border: 1px solid #0f3d33;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.alpr-prompt-panel[hidden] {
+    display: none;
+}
+
+.alpr-prompt-toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.alpr-prompt-toolbar strong {
+    display: block;
+    color: #d1fae5;
+    font-size: 0.95em;
+}
+
+.alpr-prompt-toolbar span {
+    display: block;
+    color: #6ee7b7;
+    font-size: 0.82em;
+    margin-top: 2px;
+}
+
+.alpr-prompt-code {
+    max-height: 520px;
+    overflow: auto;
+    margin: 0;
+    padding: 18px;
+    background: #020617;
+    color: #e5e7eb;
+    border: 1px solid #1f2937;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.alpr-prompt-code code {
+    color: inherit;
+    font-family: inherit;
+}
+
+@media (max-width: 768px) {
+    .product-switcher-row {
+        align-items: stretch;
+    }
+    .product-switcher,
+    .product-switcher__select,
+    .product-pill {
+        width: 100%;
+    }
+    .product-switcher {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .alpr-prompt-toggle,
+    .alpr-copy-btn {
+        width: 100%;
+    }
+}

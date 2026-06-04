@@ -1,4 +1,275 @@
 var comparisonMode = 'all';
+var ALPR_PROMPTS = [
+  {
+    tab: "Executive Summary",
+    objective: "Generate a data-backed executive summary for the Sighthound ALPR+ competitive landscape covering market positioning, key segments, and top competitive scenarios for sales and marketing leadership.",
+    context: [
+      "Product: Sighthound ALPR+ — sighthound.com/products/alpr",
+      "Gen 6 AI engine; self-reported 99% accuracy; up to 160 FPS on GPU; 1B+ images/year",
+      "Key differentiator: MMCG analytics (make, model, color, generation) — no public competitor documents equivalent depth for US/CA/EU vehicles since 1991",
+      "Deployment: on-premise, cloud, edge, Docker, Windows + Linux",
+      "Free test drive available at sighthound.com/products/alpr/demo — no sign-up required",
+      "19 competitors analyzed across ALPR platforms, hardware vendors, tolling/ITS, and video analytics"
+    ],
+    instructions: [
+      "Summarize the ALPR market in 2-3 sentences including key growth drivers and regulatory trends",
+      "Identify Sighthound ALPR+'s 6 primary market segments with one-sentence descriptions",
+      "List the top 5 competitors by deal frequency and explain why each appears in competitive evaluations",
+      "State the top 3 differentiated capabilities vs. the competitive set, each tied to a specific product feature",
+      "Identify the single most important win theme for each of the top 3 competitive scenarios",
+      "Close with a 2-sentence strategic recommendation for the sales team's focus for the next 6 months"
+    ],
+    constraints: [
+      "Do not fabricate market size figures — only cite publicly verifiable sources or explicitly flag as estimate",
+      "Do not claim Sighthound has certifications or partnerships not published on the official website",
+      "Do not reference Sighthound Redactor or any other Sighthound product — this is ALPR+ only",
+      "Do not use vague superlatives without supporting data from the official product page",
+      "Flag any competitor claim that cannot be verified from the competitor's official website",
+      "Keep to one printed page — this is for executive consumption"
+    ]
+  },
+  {
+    tab: "Product Updates",
+    objective: "Generate a current capability brief for Sighthound ALPR+ for use by sales reps and channel partners when explaining the platform's technical differentiation.",
+    context: [
+      "All capabilities must be sourced from sighthound.com/products/alpr and dev.sighthound.com",
+      "Gen 6 AI; LPR for 100+ countries; MMCG for US/CA/EU vehicles since 1991",
+      "Deployment: on-premise, cloud, edge, Docker, Windows + Linux",
+      "API: REST, RTSP, webhooks, RabbitMQ, OpenAPI spec",
+      "Hardware: Sighthound Compute Camera (IP67) + Compute Node",
+      "Pricing: NOT publicly listed — 2023 press release reference ($29/camera/month ALPR Pro) may be outdated"
+    ],
+    instructions: [
+      "Write a 3-sentence product overview suitable for a technical buyer",
+      "List all published ALPR capabilities with one-line explanations (LPR, MMCG, object detection, tracking, vehicle orientation)",
+      "List all deployment modes with a one-line description of when each is the right fit",
+      "Describe the API and integration ecosystem using technical terminology",
+      "Describe the hardware options and when they add value vs. camera-agnostic software deployment",
+      "Close with the developer portal URL and free test drive URL as recommended first steps"
+    ],
+    constraints: [
+      "Do not add capabilities not documented on sighthound.com/products/alpr or dev.sighthound.com",
+      "Do not present self-reported accuracy benchmarks (99%, 160 FPS) without noting they are vendor-published",
+      "Do not claim the product is certified under CJIS, FedRAMP, or any compliance framework — reference architecture only",
+      "Do not include pricing — current ALPR+ pricing is not publicly listed",
+      "Do not mention Sighthound Redactor or other Sighthound products under any circumstances",
+      "Note explicitly: ALPR+ pricing is not publicly listed — direct all pricing questions to the sales team"
+    ]
+  },
+  {
+    tab: "ICP & Personas",
+    objective: "Generate detailed ideal customer profiles and buyer personas for Sighthound ALPR+ across all 6 primary verticals for use by sales reps and marketing teams.",
+    context: [
+      "Verticals: law enforcement, parking & EV, smart city/ITS, retail/QSR, transportation/logistics, developer/integrator",
+      "Deployment flexibility is the key differentiator for data-sovereign and air-gapped buyers",
+      "MMCG analytics is the key differentiator for investigative and vehicle identification use cases",
+      "API-first architecture is the key differentiator for developer and systems integrator buyers",
+      "Free test drive with no sign-up required reduces qualification friction"
+    ],
+    instructions: [
+      "For each of 6 primary buyer personas, write: job title + org type, primary pain point, key capability needs, buying influence level, success metrics, common objections, and best talk track phrase",
+      "Identify whether each persona is a technical gatekeeper, budget owner, or operational recommender",
+      "Identify the trigger event that most commonly initiates an ALPR purchase evaluation for each persona",
+      "For each persona, identify which competitor they are most likely evaluating at the time they find Sighthound",
+      "Close with a prioritization matrix: which persona closes fastest / highest ACV / highest volume"
+    ],
+    constraints: [
+      "Do not assume specific pricing for any buyer — note that ALPR+ current pricing is not publicly listed",
+      "Do not create personas for Sighthound Redactor customers — ALPR+ buyers only",
+      "Do not make compliance certification claims — reference architecture capabilities only",
+      "Represent each persona's concerns honestly, including scenarios where a competitor might be a better fit",
+      "Do not present organizational size or budget ranges as hard facts — flag as representative estimates"
+    ]
+  },
+  {
+    tab: "Competitor Profiles",
+    objective: "Generate a structured one-page competitor profile for a single named ALPR market competitor covering positioning, deployment, pricing, strengths, weaknesses, and Sighthound ALPR+ win strategy.",
+    context: [
+      "Always fetch current information from the competitor's official website before writing",
+      "19 competitors in scope: Rekor, Vaidio (formerly IronYun), Eagle Eye Networks, PlateSmart, Flock Safety, Lumana, BriefCam, Senstar, Q-Free (Intrada), Tattile, Axis, Adaptive Recognition, Parking Logix, Perceptics, Kapsch TrafficCom, Neology, Leonardo (ELSAG), Jenoptik, NDI Recognition Systems",
+      "Sighthound differentiates on: MMCG, deployment flexibility, API-first, camera-agnostic, ALPR Engine OEM tier",
+      "IronYun rebranded to Vaidio in March 2025 — always use the current name Vaidio"
+    ],
+    instructions: [
+      "Fetch the competitor's official website and note the URL and access date",
+      "Write 2-3 sentences summarizing the competitor's market position and core product approach",
+      "List their deployment modes (cloud, on-prem, edge, hardware-only) with confidence level for each",
+      "State their pricing model — if not publicly listed, write that explicitly; never estimate",
+      "List 3 genuine strengths with brief supporting rationale from official sources",
+      "List 3 honest weaknesses (deployment gaps, analytics limitations, ecosystem constraints)",
+      "Write 3 specific win themes for Sighthound, each tied to a concrete ALPR+ capability",
+      "Write 2 discovery questions that naturally surface the competitor's limitations",
+      "Note 1-2 scenarios where this competitor legitimately wins the deal"
+    ],
+    constraints: [
+      "Only use data from the competitor's official website — never infer or fabricate capabilities",
+      "If pricing is not publicly listed, state 'not publicly listed — contact vendor' — never estimate",
+      "Do not disparage competitors — present factual capability gaps only",
+      "Do not confuse IronYun with Vaidio — Vaidio is the current brand name as of March 2025",
+      "Flag any data point older than 18 months with its source date clearly noted",
+      "Do not claim Sighthound is superior on any dimension where the evidence is unclear or absent",
+      "Note Flock Safety's ~$8.4B valuation (April 2026) when relevant — always cite the source"
+    ]
+  },
+  {
+    tab: "Feature Comparison",
+    objective: "Generate an accurate side-by-side feature comparison matrix for Sighthound ALPR+ vs. 2-4 named competitors across ALPR depth, analytics, deployment, and integration dimensions.",
+    context: [
+      "Sighthound ALPR+ documented features: LPR (100+ countries), MMCG, object detection, real-time processing, on-prem/cloud/edge/Docker, REST API, RTSP, webhooks, RabbitMQ, OpenAPI spec",
+      "MMCG is the primary feature gap — most competitors provide plate reads only, not full make/model/color/generation",
+      "Deployment flexibility (on-prem + cloud + edge + air-gapped) is the secondary differentiator",
+      "Three feature states to use: Yes (documented on official site), Partial (limited or module-only), No (not offered), ? (not publicly documented)"
+    ],
+    instructions: [
+      "Define comparison categories: LPR coverage, MMCG analytics, object detection, real-time processing, on-premise, cloud, edge/IoT, air-gapped, REST API, Docker, 100+ country plates",
+      "Populate each competitor's column from official product documentation only",
+      "Use Yes / Partial / No / ? states consistently — never guess",
+      "Include source URLs for each competitor's feature claims in a footnotes section",
+      "Add a 'Sighthound advantage' column row noting the specific win condition for each feature row",
+      "Call out MMCG as the single most significant differentiator row with a visual marker"
+    ],
+    constraints: [
+      "Only use features documented on official vendor websites — never infer capabilities",
+      "Clearly distinguish between a full platform feature and a partner add-on or module",
+      "Do not present ? (unknown) as No — unknown is unknown, not absence",
+      "If Sighthound lacks a feature vs. a specific competitor, note it honestly in the matrix",
+      "Do not compare accuracy benchmarks unless both vendors publish results from the same methodology",
+      "Flag any feature data older than 18 months with a date note"
+    ]
+  },
+  {
+    tab: "Pricing Analysis",
+    objective: "Generate a pricing model comparison for Sighthound ALPR+ vs. key competitors to help sales reps frame TCO conversations and handle pricing objections with accurate context.",
+    context: [
+      "Sighthound ALPR+ current pricing: NOT publicly listed on the official website as of May 2026",
+      "2023 press release reference (potentially outdated): ALPR Pro from $29/camera/month; ALPR Free tier available",
+      "Competitor models: per-lookup (Plate Recognizer), per-camera sub (Rekor, ~$12/cam/mo per third-party reports), hardware bundles (Flock, Leonardo, Jenoptik), government contracts (Kapsch, Perceptics, NDI), not listed (most others)",
+      "All pricing figures must be verified from official sources or explicitly flagged as unverified estimates"
+    ],
+    instructions: [
+      "For each competitor, state their pricing model type with source and date",
+      "Show a hypothetical TCO comparison at 3 scale points: 5 cameras, 25 cameras, 100 cameras — flagging all figures as estimates",
+      "Show the volume crossover point where per-lookup pricing becomes more expensive than a subscription model",
+      "Write 3 pricing objection responses for the most common scenarios (per-lookup, hardware bundle, existing vendor)",
+      "Provide guidance on when to lead with pricing vs. when to lead with TCO and ROI",
+      "Close with a call-to-action directing buyers to sighthound.com/contact-us for a custom quote"
+    ],
+    constraints: [
+      "Always flag that ALPR+ current pricing is not publicly listed — direct buyers to the sales team",
+      "Never fabricate Sighthound ALPR+ pricing figures — use the 2023 ALPR Pro reference only with explicit date caveat",
+      "Do not present competitor pricing estimates as verified facts unless sourced from the official vendor website",
+      "Do not make ROI guarantees — use 'potential' and 'estimated' language throughout",
+      "Note that government buyers may have access to different pricing via procurement vehicles",
+      "Do not compare pricing until both vendors' current quotes are available"
+    ]
+  },
+  {
+    tab: "Positioning Strategy",
+    objective: "Generate a complete positioning strategy for Sighthound ALPR+ including elevator pitches, win themes, competitive trap questions, and talk tracks for the top 5 competitive scenarios.",
+    context: [
+      "Core differentiators from sighthound.com: MMCG analytics, deployment flexibility, camera-agnostic, REST API/Docker ecosystem, Gen 6 AI at 1B+ images/year",
+      "Top 5 competitors by deal frequency: Flock Safety, Rekor, Plate Recognizer, Genetec AutoVu, hardware vendors (ELSAG, NDI, Jenoptik)",
+      "MMCG is the single strongest win theme vs. most competitors who offer plate reads only",
+      "Deployment flexibility wins against Flock Safety and Eagle Eye Networks (both cloud-only/mandatory)"
+    ],
+    instructions: [
+      "Write a 2-sentence elevator pitch for each of 5 primary verticals: law enforcement, parking, smart city, retail, developer",
+      "List 5 core win themes — each tied to a specific ALPR+ capability and the competitor gap it exposes",
+      "Write 5 trap questions that expose competitor weaknesses naturally during discovery",
+      "Write 3 kill phrases to avoid and their better replacements (what not to say vs. what to say instead)",
+      "Write 3 full talk tracks (150 words each) for: vs. Flock Safety, vs. Rekor, vs. a hardware-only vendor",
+      "Close with a 'when to walk away' section — 3 scenarios where a competitor is genuinely the better fit"
+    ],
+    constraints: [
+      "Do not use vague superlatives — every positioning claim must be tied to a documented ALPR+ capability",
+      "Do not disparage competitors — expose limitations through facts and questions, not opinion",
+      "Do not make compliance claims beyond what is documented on the official product page",
+      "Do not create talk tracks that misrepresent competitor capabilities or pricing",
+      "Flag any pricing figure used in talk tracks as requiring sales team verification",
+      "Maintain a professional, enterprise B2B tone throughout — no casual language"
+    ]
+  },
+  {
+    tab: "Discovery Questions",
+    objective: "Generate a structured discovery question guide for Sighthound ALPR+ sales calls, organized by vertical, to qualify pain, expose competitor gaps, and surface the right capabilities.",
+    context: [
+      "5 primary verticals: law enforcement, parking & EV, smart city/ITS, retail/QSR, developer/integrator",
+      "Key qualifiers: deployment constraint (air-gapped?), integration requirement (existing VMS/CAD?), camera scale, MMCG need, lookup volume",
+      "Top objections by vertical: LE ('We have Flock'), Parking ('We tried ALPR before'), Developer ('Plate Recognizer is cheaper')"
+    ],
+    instructions: [
+      "For each of 5 verticals, write 6-8 discovery questions organized into: pain/problem, technical constraint, competitive displacement, and budget/timeline",
+      "Mark each question as: Open (use to start), Probing (follow-up), or Qualifying (go/no-go decision)",
+      "Include one trap question per vertical that surfaces a key competitor limitation without naming the competitor",
+      "Include one MMCG question per vertical that opens the conversation about vehicle analytics beyond plates",
+      "Close with a 5-question qualification scorecard that classifies the opportunity as hot, warm, or cold"
+    ],
+    constraints: [
+      "All questions must be open-ended — no leading questions that presuppose the answer",
+      "Do not ask questions that could put the prospect in a legally sensitive position",
+      "Do not imply that a competitor's product is inferior — let the prospect surface the gap",
+      "Do not mix law enforcement questions into the retail or developer sections",
+      "Note that ALPR data-retention laws are evolving — do not ask questions that presuppose specific compliance requirements are met",
+      "Do not design questions to deceive the prospect — the goal is genuine qualification"
+    ]
+  },
+  {
+    tab: "Pricing Calculator",
+    objective: "Generate a pricing estimation framework for Sighthound ALPR+ that sales reps use in pre-sales conversations to frame value and compare against competitors before a formal quote.",
+    context: [
+      "Sighthound ALPR+ current pricing: NOT publicly listed as of May 2026",
+      "2023 press reference (verify with sales): ALPR Pro from $29/camera/month; ALPR Free tier; ALPR Engine OEM tier",
+      "Competitor models for comparison: per-lookup (Plate Recognizer), per-camera sub (Rekor), hardware bundle (Flock, LE vendors)",
+      "Key TCO inputs: camera count, deployment type, use case vertical, required feature tier"
+    ],
+    instructions: [
+      "Define 4 input variables: camera count, deployment type, use case vertical, feature tier",
+      "Map inputs to 3 Sighthound tiers: Free (limited), Pro (per-camera), Engine (OEM/developer)",
+      "For each tier, provide a TCO comparison at 3 scale points with competitor estimates — flag all figures as estimates",
+      "Calculate and show the volume crossover point where per-lookup pricing becomes more expensive than a subscription",
+      "Include an ROI example for law enforcement: manual lookup hours saved × hourly rate × 12 months vs. ALPR+ annual cost",
+      "Close with the contact sales CTA: sighthound.com/contact-us"
+    ],
+    constraints: [
+      "Label all pricing figures clearly as estimates or 2023 press reference — never present as current confirmed pricing",
+      "Do not fabricate current Sighthound ALPR+ pricing under any circumstances",
+      "Do not use competitor pricing that is not publicly verifiable — note source and date for any figure cited",
+      "Do not present ROI calculations as guaranteed outcomes — use 'potential' and 'estimated' language",
+      "Always include a 'verify with sales team' note on any output containing pricing",
+      "Do not design the calculator to mislead buyers — present honest comparative TCO math"
+    ]
+  },
+  {
+    tab: "Key Marketing Resources",
+    objective: "Generate a curated list of all key marketing resources, technical documentation, and sales collateral for Sighthound ALPR+ for use by sales reps, channel partners, and marketing teams.",
+    context: [
+      "Official product page: sighthound.com/products/alpr",
+      "Developer portal: dev.sighthound.com",
+      "ALPR+ Factsheet (July 2024): publicly linked from the product page — may not reflect current Gen 6 capabilities",
+      "Free test drive: sighthound.com/products/alpr/demo (no sign-up required)",
+      "Solution pages: law enforcement, parking & EV, retail & QSR, education & campus, transportation & logistics"
+    ],
+    instructions: [
+      "List all official Sighthound ALPR+ web pages with verified URLs and one-line descriptions",
+      "List all technical and developer documentation with verified URLs",
+      "List any publicly available datasheets or PDFs linked from the official website",
+      "List all official solution pages by vertical with URLs",
+      "Identify 3-4 content gaps (resources that should exist but do not appear to be publicly available)",
+      "Recommend the free test drive URL as the primary CTA for top-of-funnel outreach"
+    ],
+    constraints: [
+      "Only list resources that are publicly accessible from sighthound.com or dev.sighthound.com",
+      "Do not fabricate URLs — only list URLs that have been verified as live and accessible",
+      "Do not list Sighthound Redactor or other Sighthound product pages as ALPR+ resources",
+      "Do not list third-party review sites (G2, Capterra, Slashdot) as official Sighthound resources",
+      "Note if the July 2024 factsheet may not reflect current capabilities — recommend marketing review",
+      "Flag the 2023 pricing press release as the most recent public pricing reference and recommend it be updated"
+    ]
+  }
+];
+var activeProduct = 'redactor';
+var activeRedactorTab = 'pricing-calculator';
+var activeAlprTab = 0;
 var versionData = {
     'v7.1.0': {
         title: 'Version 7.1.0 Release',
@@ -92,12 +363,160 @@ function updateVersionDetails() {
         lucide.createIcons();
     }
 }
-function switchTab(tabName, element) {
-    document.querySelectorAll('.section').forEach(function(section) { section.classList.remove('active'); });
-    document.querySelectorAll('.nav-tab').forEach(function(tab) { tab.classList.remove('active'); });
-    document.getElementById(tabName).classList.add('active');
-    if (element) { element.classList.add('active'); }
-    scrollToTop();
+function getRedactorTabButton(tabName) {
+    return document.querySelector('#redactorNav .nav-tab[data-redactor-tab="' + tabName + '"]');
+}
+function getAlprTabButton(index) {
+    return document.querySelector('#alprNav .nav-tab[data-alpr-index="' + index + '"]');
+}
+function refreshLucideIcons() {
+    if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
+}
+function updateProductTitle() {
+    document.title = activeProduct === 'alpr-plus'
+        ? 'Sighthound ALPR+ — Competitive Intelligence Hub'
+        : 'Sighthound Redactor — Competitive Analysis Hub';
+}
+function switchTab(tabName, element, skipScroll) {
+    activeRedactorTab = tabName || activeRedactorTab || 'pricing-calculator';
+    document.querySelectorAll('#redactorHub > .section').forEach(function(section) { section.classList.remove('active'); });
+    document.querySelectorAll('#redactorNav .nav-tab').forEach(function(tab) { tab.classList.remove('active'); });
+    var section = document.getElementById(activeRedactorTab);
+    if (section) { section.classList.add('active'); }
+    var button = element || getRedactorTabButton(activeRedactorTab);
+    if (button) { button.classList.add('active'); }
+    if (!skipScroll) { scrollToTop(); }
+}
+function switchAlprTab(index, element, skipScroll) {
+    activeAlprTab = Number(index) || 0;
+    document.querySelectorAll('#alprPlusHub .alpr-section').forEach(function(section) { section.classList.remove('active'); });
+    document.querySelectorAll('#alprNav .nav-tab').forEach(function(tab) { tab.classList.remove('active'); });
+    var section = document.querySelector('#alprPlusHub .alpr-section[data-alpr-index="' + activeAlprTab + '"]');
+    if (section) { section.classList.add('active'); }
+    var button = element || getAlprTabButton(activeAlprTab);
+    if (button) { button.classList.add('active'); }
+    if (!skipScroll) { scrollToTop(); }
+}
+function switchProduct(product, options) {
+    options = options || {};
+    activeProduct = product === 'alpr-plus' ? 'alpr-plus' : 'redactor';
+    var isAlpr = activeProduct === 'alpr-plus';
+    var header = document.getElementById('productHeader');
+    var select = document.getElementById('productSelect');
+    var badge = document.getElementById('productBadge');
+    var redactorHeader = document.getElementById('redactorHeaderContent');
+    var alprHeader = document.getElementById('alprHeaderContent');
+    var redactorNav = document.getElementById('redactorNav');
+    var alprNav = document.getElementById('alprNav');
+    var redactorHub = document.getElementById('redactorHub');
+    var alprHub = document.getElementById('alprPlusHub');
+    if (select) { select.value = activeProduct; }
+    if (header) {
+        header.classList.toggle('product-redactor', !isAlpr);
+        header.classList.toggle('product-alpr', isAlpr);
+    }
+    if (badge) {
+        badge.textContent = isAlpr ? 'ALPR+' : 'Redactor';
+        badge.className = 'product-pill ' + (isAlpr ? 'product-pill-alpr' : 'product-pill-redactor');
+    }
+    if (redactorHeader) { redactorHeader.hidden = isAlpr; }
+    if (alprHeader) { alprHeader.hidden = !isAlpr; }
+    if (redactorNav) { redactorNav.hidden = isAlpr; }
+    if (alprNav) { alprNav.hidden = !isAlpr; }
+    if (redactorHub) { redactorHub.hidden = isAlpr; }
+    if (alprHub) { alprHub.hidden = !isAlpr; }
+    if (isAlpr) {
+        activeAlprTab = 0;
+        switchAlprTab(0, getAlprTabButton(0), true);
+    } else {
+        switchTab(activeRedactorTab || 'pricing-calculator', getRedactorTabButton(activeRedactorTab || 'pricing-calculator'), true);
+    }
+    updateProductTitle();
+    refreshLucideIcons();
+    if (!options.skipScroll) { scrollToTop(); }
+}
+function formatAlprPromptList(items) {
+    if (!items || !items.length) { return '- None specified.'; }
+    return items.map(function(item) { return '- ' + item; }).join('\n');
+}
+function getAlprPromptText(index) {
+    var prompt = ALPR_PROMPTS[index];
+    if (!prompt) { return ''; }
+    return [
+        'OBJECTIVE',
+        prompt.objective,
+        '',
+        'CONTEXT',
+        formatAlprPromptList(prompt.context),
+        '',
+        'INSTRUCTIONS',
+        formatAlprPromptList(prompt.instructions),
+        '',
+        'CONSTRAINTS',
+        formatAlprPromptList(prompt.constraints),
+        '',
+        'EXPECTED OUTPUT',
+        '- Complete draft content for the "' + prompt.tab + '" section of the Sighthound ALPR+ Competitive Intelligence Hub.',
+        '- Use sourced, verifiable claims only and clearly flag any estimates or unverified competitor data.',
+        '- Keep the output ready to paste into the corresponding ALPR+ tab without referencing Sighthound Redactor.'
+    ].join('\n');
+}
+function renderAlprPromptPanel(index) {
+    var prompt = ALPR_PROMPTS[index];
+    if (!prompt) { return '<p>Prompt data is unavailable for this section.</p>'; }
+    var promptText = getAlprPromptText(index);
+    var html = '<div class="alpr-prompt-toolbar">';
+    html += '<div><strong>WARP / Claude Code Prompt</strong><span>' + escapeHtml(prompt.tab) + '</span></div>';
+    html += '<button type="button" class="alpr-copy-btn" onclick="copyAlprPrompt(' + index + ', this)"><i data-lucide="copy"></i> Copy prompt</button>';
+    html += '</div>';
+    html += '<pre class="alpr-prompt-code"><code>' + escapeHtml(promptText) + '</code></pre>';
+    return html;
+}
+function toggleAlprPrompt(index, button) {
+    var panel = document.getElementById('alprPromptPanel' + index);
+    if (!panel) { return; }
+    var isOpening = panel.hasAttribute('hidden');
+    if (isOpening) {
+        panel.innerHTML = renderAlprPromptPanel(index);
+        panel.removeAttribute('hidden');
+        if (button) {
+            button.textContent = 'Hide AI Prompt for this section';
+            button.classList.add('active');
+        }
+        refreshLucideIcons();
+    } else {
+        panel.setAttribute('hidden', '');
+        if (button) {
+            button.textContent = 'View AI Prompt for this section (WARP / Claude Code)';
+            button.classList.remove('active');
+        }
+    }
+}
+function copyAlprPrompt(index, button) {
+    var text = getAlprPromptText(index);
+    function markCopied() {
+        if (!button) { return; }
+        var original = button.innerHTML;
+        button.innerHTML = 'Copied';
+        setTimeout(function() {
+            button.innerHTML = original;
+            refreshLucideIcons();
+        }, 1400);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(markCopied).catch(function() {
+            fallbackCopyMarketingText(text);
+            markCopied();
+        });
+    } else {
+        fallbackCopyMarketingText(text);
+        markCopied();
+    }
+}
+function initializeProductSwitcher() {
+    switchProduct(activeProduct || 'redactor', { skipScroll: true });
 }
 function toggleAccordion(header) {
     var item = header.parentElement;
@@ -2032,6 +2451,10 @@ function initMarketingResources() {
 // (This is redundant when loaded as a regular script, but ensures reliability.)
 if (typeof window !== 'undefined') {
     window.switchTab = switchTab;
+    window.switchProduct = switchProduct;
+    window.switchAlprTab = switchAlprTab;
+    window.toggleAlprPrompt = toggleAlprPrompt;
+    window.copyAlprPrompt = copyAlprPrompt;
     window.toggleAccordion = toggleAccordion;
     window.filterIcp = filterIcp;
     window.filterCompetitorProfiles = filterCompetitorProfiles;
@@ -2062,6 +2485,7 @@ if (typeof window !== 'undefined') {
 
     // Initialization: run after the DOM / page hydrates
     function __redactorInit() {
+        try { initializeProductSwitcher(); } catch (e) {}
         try { updateComparison(); } catch (e) {}
         try { updateVersionDetails(); } catch (e) {}
         try { updatePricingRecommendation(); } catch (e) {}

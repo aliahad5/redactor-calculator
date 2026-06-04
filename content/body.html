@@ -1,28 +1,65 @@
 <div class="container">
-        <header>
-            <h1><i data-lucide="shield-check"></i> Sighthound Redactor</h1>
-            <h1 style="font-size: 1.6em; color: #2c5282;"><i data-lucide="bar-chart-3"></i> Competitive Analysis Hub</h1>
-            <p class="subtitle">AI-Powered Video, Audio & Image Redaction Solutions - Market Analysis for Sales & Marketing</p>
-            <div class="meta-info">
-                <span><strong>Last Updated:</strong> April 16, 2026</span>
-                <span><strong>Latest Version:</strong> Sighthound Redactor v7.0.6</span>
-                <span><strong>Competitors Analyzed:</strong> 23 Primary Solutions</span>
+        <header id="productHeader" class="product-header product-redactor">
+            <div class="product-switcher-row">
+                <div class="product-switcher" aria-label="Product switcher">
+                    <label for="productSelect" class="product-switcher__label">Product</label>
+                    <select id="productSelect" class="product-switcher__select" onchange="switchProduct(this.value)">
+                        <option value="redactor" selected>Sighthound Redactor</option>
+                        <option value="alpr-plus">Sighthound ALPR+</option>
+                    </select>
+                </div>
+                <span id="productBadge" class="product-pill product-pill-redactor">Redactor</span>
             </div>
 
-            <div class="nav-tabs">
-                <button class="nav-tab" onclick="switchTab('executive', this)">Executive Summary</button>
-                <button class="nav-tab" onclick="switchTab('product', this)">Product Updates</button>
-                <button class="nav-tab" onclick="switchTab('icp', this)">ICP & Personas</button>
-                <button class="nav-tab" onclick="switchTab('competitors', this)">Competitor Profiles</button>
-                <button class="nav-tab" onclick="switchTab('features', this)">Feature Comparison</button>
-                <button class="nav-tab" onclick="switchTab('pricing', this)">Pricing Analysis</button>
-                <button class="nav-tab" onclick="switchTab('positioning', this)">Positioning Strategy</button>
-                <button class="nav-tab" onclick="switchTab('discovery', this)">Discovery Questions</button>
-                <button class="nav-tab active" onclick="switchTab('pricing-calculator', this)">Pricing Calculator</button>
-                <button class="nav-tab" onclick="switchTab('resources', this)">Key Marketing Resources</button>
+            <div id="redactorHeaderContent" class="product-heading product-heading-redactor">
+                <h1><i data-lucide="shield-check"></i> Sighthound Redactor</h1>
+                <h1 style="font-size: 1.6em; color: #2c5282;"><i data-lucide="bar-chart-3"></i> Competitive Analysis Hub</h1>
+                <p class="subtitle">AI-Powered Video, Audio &amp; Image Redaction Solutions - Market Analysis for Sales &amp; Marketing</p>
+                <div class="meta-info">
+                    <span><strong>Last Updated:</strong> April 16, 2026</span>
+                    <span><strong>Latest Version:</strong> Sighthound Redactor v7.0.6</span>
+                    <span><strong>Competitors Analyzed:</strong> 23 Primary Solutions</span>
+                </div>
+            </div>
+
+            <div id="alprHeaderContent" class="product-heading product-heading-alpr" hidden>
+                <h1><i data-lucide="scan-line"></i> Sighthound ALPR+</h1>
+                <h1 class="alpr-header-title"><i data-lucide="bar-chart-3"></i> Competitive Intelligence Hub</h1>
+                <p class="subtitle">AI-Powered ALPR &amp; Vehicle Analytics - Market Analysis for Sales &amp; Marketing</p>
+                <div class="meta-info">
+                    <span><strong>Product:</strong> Sighthound ALPR+</span>
+                    <span><strong>Status:</strong> Placeholder hub ready for sourced content</span>
+                    <span><strong>Focus:</strong> AI-Powered ALPR &amp; Vehicle Analytics</span>
+                </div>
+            </div>
+
+            <div id="redactorNav" class="nav-tabs">
+                <button class="nav-tab" data-redactor-tab="executive" onclick="switchTab('executive', this)">Executive Summary</button>
+                <button class="nav-tab" data-redactor-tab="product" onclick="switchTab('product', this)">Product Updates</button>
+                <button class="nav-tab" data-redactor-tab="icp" onclick="switchTab('icp', this)">ICP &amp; Personas</button>
+                <button class="nav-tab" data-redactor-tab="competitors" onclick="switchTab('competitors', this)">Competitor Profiles</button>
+                <button class="nav-tab" data-redactor-tab="features" onclick="switchTab('features', this)">Feature Comparison</button>
+                <button class="nav-tab" data-redactor-tab="pricing" onclick="switchTab('pricing', this)">Pricing Analysis</button>
+                <button class="nav-tab" data-redactor-tab="positioning" onclick="switchTab('positioning', this)">Positioning Strategy</button>
+                <button class="nav-tab" data-redactor-tab="discovery" onclick="switchTab('discovery', this)">Discovery Questions</button>
+                <button class="nav-tab active" data-redactor-tab="pricing-calculator" onclick="switchTab('pricing-calculator', this)">Pricing Calculator</button>
+                <button class="nav-tab" data-redactor-tab="resources" onclick="switchTab('resources', this)">Key Marketing Resources</button>
+            </div>
+            <div id="alprNav" class="nav-tabs alpr-nav" hidden>
+                <button class="nav-tab active" data-alpr-index="0" onclick="switchAlprTab(0, this)">Executive Summary</button>
+                <button class="nav-tab" data-alpr-index="1" onclick="switchAlprTab(1, this)">Product Updates</button>
+                <button class="nav-tab" data-alpr-index="2" onclick="switchAlprTab(2, this)">ICP &amp; Personas</button>
+                <button class="nav-tab" data-alpr-index="3" onclick="switchAlprTab(3, this)">Competitor Profiles</button>
+                <button class="nav-tab" data-alpr-index="4" onclick="switchAlprTab(4, this)">Feature Comparison</button>
+                <button class="nav-tab" data-alpr-index="5" onclick="switchAlprTab(5, this)">Pricing Analysis</button>
+                <button class="nav-tab" data-alpr-index="6" onclick="switchAlprTab(6, this)">Positioning Strategy</button>
+                <button class="nav-tab" data-alpr-index="7" onclick="switchAlprTab(7, this)">Discovery Questions</button>
+                <button class="nav-tab" data-alpr-index="8" onclick="switchAlprTab(8, this)">Pricing Calculator</button>
+                <button class="nav-tab" data-alpr-index="9" onclick="switchAlprTab(9, this)">Key Marketing Resources</button>
             </div>
         </header>
 
+        <div id="redactorHub" class="product-hub product-hub-redactor">
         <section id="executive" class="section">
             <h2><i data-lucide="clipboard-list"></i> Executive Summary</h2>
             <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #2c5282;">
@@ -945,6 +982,150 @@
             <div id="resourceSections" class="resource-section-list" aria-live="polite"></div>
         </section>
 
+        </div>
+
+        <div id="alprPlusHub" class="product-hub product-hub-alpr" hidden>
+            <section id="alpr-executive-summary" class="section alpr-section active" data-alpr-index="0">
+                <h2><i data-lucide="clipboard-list"></i> Executive Summary</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Executive Summary</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain a data-backed overview of ALPR+ market position, target segments, competitive scenarios, and sales priorities.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(0, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel0" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-product-updates" class="section alpr-section" data-alpr-index="1">
+                <h2><i data-lucide="package"></i> Product Updates</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Product Updates</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain verified ALPR+ capabilities, deployment options, API notes, hardware options, and current product resources.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(1, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel1" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-icp-personas" class="section alpr-section" data-alpr-index="2">
+                <h2><i data-lucide="users"></i> ICP &amp; Personas</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — ICP &amp; Personas</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain ideal customer profiles and buyer personas for ALPR+ verticals, technical gatekeepers, budget owners, and operational recommenders.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(2, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel2" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-competitor-profiles" class="section alpr-section" data-alpr-index="3">
+                <h2><i data-lucide="badge"></i> Competitor Profiles</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Competitor Profiles</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain sourced one-page ALPR competitor profiles with positioning, strengths, weaknesses, and Sighthound win themes.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(3, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel3" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-feature-comparison" class="section alpr-section" data-alpr-index="4">
+                <h2><i data-lucide="columns-3"></i> Feature Comparison</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Feature Comparison</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain side-by-side ALPR feature matrices covering plate reads, MMCG analytics, deployment, and integration capabilities.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(4, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel4" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-pricing-analysis" class="section alpr-section" data-alpr-index="5">
+                <h2><i data-lucide="wallet"></i> Pricing Analysis</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Pricing Analysis</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain pricing-model comparisons and TCO framing using only verified or clearly caveated public pricing references.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(5, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel5" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-positioning-strategy" class="section alpr-section" data-alpr-index="6">
+                <h2><i data-lucide="target"></i> Positioning Strategy</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Positioning Strategy</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain ALPR+ elevator pitches, competitive win themes, trap questions, talk tracks, and walk-away guidance.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(6, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel6" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-discovery-questions" class="section alpr-section" data-alpr-index="7">
+                <h2><i data-lucide="help-circle"></i> Discovery Questions</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Discovery Questions</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain vertical-specific discovery questions that qualify pain, technical constraints, competitive context, and buying urgency.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(7, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel7" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-pricing-calculator" class="section alpr-section" data-alpr-index="8">
+                <h2><i data-lucide="calculator"></i> Pricing Calculator</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Pricing Calculator</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain an ALPR+ pricing estimation framework for pre-sales conversations, with all figures clearly marked for sales verification.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(8, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel8" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+            <section id="alpr-key-marketing-resources" class="section alpr-section" data-alpr-index="9">
+                <h2><i data-lucide="folder-open"></i> Key Marketing Resources</h2>
+                <div class="alpr-placeholder">
+                    <p class="alpr-eyebrow">Sighthound ALPR+ — Key Marketing Resources</p>
+                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
+                    <p>This section will contain official ALPR+ marketing, technical, solution, and developer resources with verified URLs.</p>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    </div>
+                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(9, this)">View AI Prompt for this section (WARP / Claude Code)</button>
+                    <div id="alprPromptPanel9" class="alpr-prompt-panel" hidden></div>
+                </div>
+            </section>
+        </div>
 
     </div>
 
