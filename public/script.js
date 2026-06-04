@@ -270,75 +270,240 @@ var ALPR_PROMPTS = [
 var activeProduct = 'redactor';
 var activeRedactorTab = 'pricing-calculator';
 var activeAlprTab = 0;
-var versionData = {
-    'v7.1.0': {
-        title: 'Version 7.1.0 Release',
-        date: 'March 25, 2026',
-        icon: 'tag',
-        heading: '',
-        highlights: []
-    },
-    'v7.0.6': {
-        title: 'Version 7.0.6 Release',
-        date: 'March 2026',
-        icon: 'rocket',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'GPU Optimization', content: 'Better stability for teams with varying GPU configurations. Users can now safely disable CUDA at the driver level, making enterprise deployments more flexible.' },
-            { label: 'Early License Validation', content: 'Invalid license errors now surface immediately—no wasted processing time. This reduces frustration and speeds up deployments.' },
-            { label: 'Improved Error Messages', content: 'Error messages are now human-readable, making troubleshooting faster for teams without technical expertise.' },
-            { label: 'Non-Standard Resolution Video Fix', content: 'Fixed critical bug affecting non-standard video resolutions (including screen recordings). This broadens use cases for corporate/evidence redaction.' }
-        ]
-    },
-    'v7.0.5': {
-        title: 'Version 7.0.5 Release',
-        date: 'February 2026',
-        icon: 'layers',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Batch Queue Management', content: 'New batch queue controls let operators pause, reorder, and prioritize large redaction jobs, improving throughput for high-volume teams.' },
-            { label: 'Multi-User Session Stability', content: 'Improved concurrency handling in server mode reduces session drops and conflicts when multiple users work simultaneously.' },
-            { label: 'Docker Enhancements', content: 'Updated container images with smaller footprint, faster startup times, and smoother integration into existing orchestration pipelines.' }
-        ]
-    },
-    'v7.0.3': {
-        title: 'Version 7.0.3 Release',
-        date: 'January 2026',
-        icon: 'sparkles',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'Screen/Text Detection Added', content: 'New AI detection models identify on-screen text and monitor content within video frames, broadening redaction coverage for sensitive media.' },
-            { label: 'Undo/Redo Introduced', content: 'Full undo and redo support across the redaction workflow gives reviewers confidence to experiment and correct mistakes without losing progress.' },
-            { label: 'Audit Log Export Improved', content: 'Expanded audit log export options with richer metadata, better filtering, and compliance-friendly formats for evidence handling.' }
-        ]
-    },
-    'v6.6.0': {
-        title: 'Version 6.6.0 Release',
-        date: 'September 19, 2025',
-        icon: 'tag',
-        heading: '',
-        highlights: []
-    },
-    'v6.5.2': {
-        title: 'Version 6.5.2 Release',
-        date: 'August 25, 2025',
-        icon: 'tag',
-        heading: '',
-        highlights: []
-    },
-    'v7.0.0': {
-        title: 'Version 7.0.0 Major Release',
-        date: 'December 2025',
-        icon: 'star',
-        heading: 'Key Highlights',
-        highlights: [
-            { label: 'New UI', content: 'Redesigned interface with a modern layout, clearer workflows, and improved accessibility for first-time and daily users alike.' },
-            { label: 'Server-Mode Processing', content: 'Introduced dedicated server-mode processing for centralized deployments, enabling enterprise-grade throughput and multi-user workflows.' },
-            { label: 'REST API v2', content: 'Launched a completely revamped REST API with expanded endpoints, improved authentication, and better integration support for evidence systems.' },
-            { label: 'Docker Support Launched', content: 'Official Docker images released for the first time, simplifying deployment across Linux, air-gapped, and containerized environments.' }
-        ]
-    }
+var RELEASE_NOTES_SOURCE_PATH = '/data/docs-redactor-com-release-notes.md';
+var releaseNotesState = {
+    releases: [],
+    isLoaded: false,
+    error: null,
+    loadingPromise: null
 };
+
+function createReleaseId(version) {
+    return 'v' + String(version || '').replace(/^v/i, '').trim();
+}
+function cleanReleaseNotesHeadingText(text) {
+    return String(text || '')
+        .replace(/\s*\[\u00b6\]\([^)]+\)\s*/g, '')
+        .replace(/\\([#[\]_*])/g, '$1')
+        .trim();
+}
+
+function parseReleaseNotesMarkdown(markdown) {
+    var releases = [];
+    var current = null;
+    String(markdown || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').forEach(function(line) {
+        var releaseMatch = line.match(/^##\s+([0-9]+(?:\.[0-9]+)+)\s*(.*)$/);
+        if (releaseMatch) {
+            var date = cleanReleaseNotesHeadingText(releaseMatch[2]).replace(/^[\s\-\u2013\u2014]+/, '').trim();
+            current = {
+                version: releaseMatch[1].trim().replace(/^v/i, ''),
+                date: date || 'Date not listed',
+                bodyLines: []
+            };
+            current.id = createReleaseId(current.version);
+            releases.push(current);
+            return;
+        }
+        if (current) {
+            current.bodyLines.push(line);
+        }
+    });
+
+    return releases.map(function(release) {
+        while (release.bodyLines.length && !release.bodyLines[0].trim()) {
+            release.bodyLines.shift();
+        }
+        while (release.bodyLines.length && !release.bodyLines[release.bodyLines.length - 1].trim()) {
+            release.bodyLines.pop();
+        }
+        release.body = release.bodyLines.join('\n');
+        return release;
+    }).filter(function(release) {
+        return release.version && release.body;
+    });
+}
+
+function convertReleaseInlineMarkdown(text) {
+    var html = escapeHtml(text)
+        .replace(/\\\[/g, '[')
+        .replace(/\\\]/g, ']')
+        .replace(/\\_/g, '_')
+        .replace(/\\-/g, '-');
+
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)(?:\s+&quot;[^&]+&quot;)?\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    return html;
+}
+
+function renderReleaseMarkdown(markdown) {
+    var output = [];
+    var paragraphLines = [];
+    var listType = null;
+    var inCodeBlock = false;
+    var codeLines = [];
+
+    function flushParagraph() {
+        if (!paragraphLines.length) { return; }
+        output.push('<p>' + convertReleaseInlineMarkdown(paragraphLines.join(' ')) + '</p>');
+        paragraphLines = [];
+    }
+
+    function closeList() {
+        if (!listType) { return; }
+        output.push('</' + listType + '>');
+        listType = null;
+    }
+
+    function openList(type) {
+        if (listType === type) { return; }
+        closeList();
+        output.push('<' + type + '>');
+        listType = type;
+    }
+    function flushCodeBlock() {
+        if (!inCodeBlock) { return; }
+        output.push('<pre class="release-note-code"><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>');
+        codeLines = [];
+        inCodeBlock = false;
+    }
+
+    String(markdown || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n').forEach(function(line) {
+        var trimmed = line.trim();
+        var headingMatch;
+        var imageMatch;
+        var unorderedMatch;
+        var orderedMatch;
+        if (/^```/.test(trimmed)) {
+            flushParagraph();
+            closeList();
+            if (inCodeBlock) {
+                flushCodeBlock();
+            } else {
+                inCodeBlock = true;
+                codeLines = [];
+            }
+            return;
+        }
+
+        if (inCodeBlock) {
+            codeLines.push(line);
+            return;
+        }
+
+        if (!trimmed) {
+            flushParagraph();
+            closeList();
+            return;
+        }
+
+        imageMatch = trimmed.match(/^!\[([^\]]*)\]\((https?:\/\/[^)]+)\)$/);
+        if (imageMatch) {
+            flushParagraph();
+            closeList();
+            output.push('<figure class="release-note-figure"><img class="release-note-image" src="' + escapeHtml(imageMatch[2]) + '" alt="' + escapeHtml(imageMatch[1] || '') + '" loading="lazy"></figure>');
+            return;
+        }
+
+        headingMatch = trimmed.match(/^#{3,6}\s+(.+)$/);
+        if (headingMatch) {
+            flushParagraph();
+            closeList();
+            output.push('<h5>' + convertReleaseInlineMarkdown(cleanReleaseNotesHeadingText(headingMatch[1])) + '</h5>');
+            return;
+        }
+
+        headingMatch = trimmed.match(/^\*\*([^*]+)\*\*:?\s*$/);
+        if (headingMatch) {
+            flushParagraph();
+            closeList();
+            output.push('<h5>' + convertReleaseInlineMarkdown(headingMatch[1]) + '</h5>');
+            return;
+        }
+
+        unorderedMatch = line.match(/^\s*-\s+(.+)$/);
+        if (unorderedMatch) {
+            flushParagraph();
+            openList('ul');
+            output.push('<li>' + convertReleaseInlineMarkdown(unorderedMatch[1]) + '</li>');
+            return;
+        }
+
+        orderedMatch = line.match(/^\s*\d+\.\s+(.+)$/);
+        if (orderedMatch) {
+            flushParagraph();
+            openList('ol');
+            output.push('<li>' + convertReleaseInlineMarkdown(orderedMatch[1]) + '</li>');
+            return;
+        }
+
+        paragraphLines.push(trimmed);
+    });
+
+    flushParagraph();
+    closeList();
+    flushCodeBlock();
+    return output.join('');
+}
+
+function getReleaseById(id) {
+    for (var i = 0; i < releaseNotesState.releases.length; i += 1) {
+        if (releaseNotesState.releases[i].id === id) {
+            return releaseNotesState.releases[i];
+        }
+    }
+    return null;
+}
+
+function populateVersionSelector() {
+    var selector = document.getElementById('versionSelector');
+    if (!selector) { return; }
+    var selectedValue = selector.value;
+    selector.innerHTML = '';
+    releaseNotesState.releases.forEach(function(release, index) {
+        var option = document.createElement('option');
+        option.value = release.id;
+        option.textContent = release.id + ' — ' + release.date;
+        if ((selectedValue && release.id === selectedValue) || (!selectedValue && index === 0)) {
+            option.selected = true;
+        }
+        selector.appendChild(option);
+    });
+}
+
+function loadReleaseNotes() {
+    if (releaseNotesState.isLoaded) {
+        return Promise.resolve(releaseNotesState.releases);
+    }
+    if (releaseNotesState.loadingPromise) {
+        return releaseNotesState.loadingPromise;
+    }
+    if (typeof fetch !== 'function') {
+        releaseNotesState.error = 'Release notes could not be loaded because fetch is unavailable.';
+        return Promise.reject(new Error(releaseNotesState.error));
+    }
+
+    releaseNotesState.loadingPromise = fetch(RELEASE_NOTES_SOURCE_PATH, { cache: 'no-store' })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Release notes request failed with status ' + response.status + '.');
+            }
+            return response.text();
+        })
+        .then(function(markdown) {
+            releaseNotesState.releases = parseReleaseNotesMarkdown(markdown);
+            releaseNotesState.isLoaded = true;
+            releaseNotesState.error = null;
+            populateVersionSelector();
+            return releaseNotesState.releases;
+        })
+        .catch(function(error) {
+            releaseNotesState.error = error && error.message ? error.message : 'Release notes could not be loaded.';
+            throw error;
+        });
+
+    return releaseNotesState.loadingPromise;
+}
 function escapeHtml(text) {
     var div = document.createElement('div');
     div.textContent = text == null ? '' : text;
@@ -348,16 +513,33 @@ function updateVersionDetails() {
     var selector = document.getElementById('versionSelector');
     var container = document.getElementById('versionDetails');
     if (!selector || !container) { return; }
-    var data = versionData[selector.value];
-    if (!data) { container.innerHTML = ''; return; }
-    var html = '<span class="version-meta">' + escapeHtml(selector.value) + ' · ' + escapeHtml(data.date) + '</span>';
-    html += '<h4><i data-lucide="' + escapeHtml(data.icon) + '"></i> ' + escapeHtml(data.title) + '</h4>';
-    if (data.heading) {
-        html += '<p style="margin: 4px 0 12px 0; font-weight: 600; color: #1e3a5f;">' + escapeHtml(data.heading) + '</p>';
+    if (releaseNotesState.error && !releaseNotesState.isLoaded) {
+        container.innerHTML = '<p class="release-source-note">Release notes could not be loaded from ' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + ': ' + escapeHtml(releaseNotesState.error) + '</p>';
+        return;
     }
-    data.highlights.forEach(function(item) {
-        html += '<p><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.content) + '</p>';
-    });
+    if (!releaseNotesState.isLoaded) {
+        container.innerHTML = '<p class="release-source-note">Loading release notes from ' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + '…</p>';
+        loadReleaseNotes()
+            .then(function() { updateVersionDetails(); })
+            .catch(function() { updateVersionDetails(); });
+        return;
+    }
+
+    if (releaseNotesState.error) {
+        container.innerHTML = '<p class="release-source-note">Release notes could not be loaded from ' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + ': ' + escapeHtml(releaseNotesState.error) + '</p>';
+        return;
+    }
+
+    var release = getReleaseById(selector.value) || releaseNotesState.releases[0];
+    if (!release) {
+        container.innerHTML = '<p class="release-source-note">No release notes are available in the saved source file.</p>';
+        return;
+    }
+
+    var html = '<span class="version-meta">' + escapeHtml(release.id) + ' · ' + escapeHtml(release.date) + '</span>';
+    html += '<h4><i data-lucide="file-text"></i> Redactor ' + escapeHtml(release.version) + ' Release Notes</h4>';
+    html += '<p class="release-source-note">Source: attached dev.sighthound.com release-notes markdown saved at <code>' + escapeHtml(RELEASE_NOTES_SOURCE_PATH) + '</code>.</p>';
+    html += '<div class="release-note-body">' + renderReleaseMarkdown(release.body) + '</div>';
     container.innerHTML = html;
     if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
@@ -613,27 +795,32 @@ function handleObjectCategoriesKey(event, labelEl) {
 function updateComparison() {
     var solutionA = document.getElementById('compareA').value;
     var solutionB = document.getElementById('compareB').value;
+    var unverifiedTooltip = 'Source unverified — not confirmed via Capterra or G2.';
+    var unverifiedInfo = ' <span class="unverified-source-tooltip" tabindex="0" title="' + unverifiedTooltip + '" aria-label="' + unverifiedTooltip + '">ⓘ</span>';
+    var unverifiedPrefix = '<span class="icon-partial">⚠️</span> ';
     var comparisonData = {
-        sighthound: { name: 'Sighthound Redactor', features: { face: 'AI-powered face, head, and vehicle tracking', audio: 'Full audio redaction support', video: 'Strong video evidence workflow and batch processing', document: 'ID, document, and screen detection', deployment: 'Desktop, server, cloud, and offline' } },
-        veritone: { name: 'Veritone Redact', features: { face: 'Strong AI face redaction', audio: 'Full audio redaction and transcription', video: 'Cloud-first evidence workflow', document: 'Some ID support, weaker document emphasis', deployment: 'Cloud-only deployment' } },
-        caseguard: { name: 'CaseGuard Studio', features: { face: 'Strong face redaction', audio: 'Full audio redaction', video: 'Broad desktop workflow support', document: 'Strong document redaction', deployment: 'Desktop and on-premise' } },
-        fastredaction: { name: 'FastRedaction', features: { face: 'Automatic face blurring', audio: 'Limited audio support', video: 'Simple cloud video workflow', document: 'No major document redaction emphasis', deployment: 'Cloud-only' } },
-        motiondsp: { name: 'MotionDSP Spotlight', features: { face: 'Advanced tracked face redaction', audio: 'Full multi-channel audio support', video: 'Forensics-focused video processing', document: 'Minimal document support', deployment: 'Windows desktop' } },
-        clipr: { name: 'CLIPr', features: { face: 'AI-driven visual analysis', audio: 'Partial audio workflow support', video: 'Modern video operations workflow', document: 'Limited document emphasis', deployment: 'Hybrid cloud and on-premise story' } },
-        assemblyai: { name: 'AssemblyAI', features: { face: 'No visual face support', audio: 'Strong audio intelligence and transcription', video: 'Video handled primarily through audio extraction workflows', document: 'No document redaction focus', deployment: 'Cloud API' } },
-        lantero: { name: 'Lantero Redact', features: { face: 'AI face redaction', audio: 'Partial support', video: 'Privacy-focused video redaction', document: 'Limited public detail on document workflows', deployment: 'Cloud SaaS' } },
-        pimloc: { name: 'Pimloc Secure Redact', features: { face: 'AI face redaction', audio: 'Partial audio support', video: 'Privacy-focused redaction', document: 'Basic document support', deployment: 'Cloud and on-premise' } },
-        vidizmo: { name: 'VIDIZMO Redactor.ai', features: { face: 'AI face detection', audio: 'Media management focused', video: 'Media asset redaction', document: 'Limited document focus', deployment: 'Cloud SaaS' } },
-        facit: { name: 'Facit Data Systems', features: { face: 'AI redaction support', audio: 'Data redaction focus', video: 'Hybrid redaction workflow', document: 'Strong data element redaction', deployment: 'Cloud and on-premise' } },
-        suspect: { name: 'Suspect Technologies', features: { face: 'Redaction capabilities', audio: 'Technical focus', video: 'Specialized tools', document: 'Limited public detail', deployment: 'On-premise/Cloud' } },
-        redactable: { name: 'Redactable', features: { face: 'Basic redaction', audio: 'Limited support', video: 'Document and media redaction', document: 'Document-centric', deployment: 'Cloud SaaS' } },
-        extract: { name: 'Extract Systems', features: { face: 'Limited visual focus', audio: 'Data extraction emphasis', video: 'Limited video capabilities', document: 'Data extraction and redaction', deployment: 'On-premise' } },
-        idox: { name: 'iDox.ai', features: { face: 'Limited visual focus', audio: 'Document intelligence focus', video: 'Limited video support', document: 'Strong document AI capabilities', deployment: 'Cloud' } },
-        everlaw: { name: 'Everlaw', features: { face: 'Secondary feature', audio: 'eDiscovery-focused', video: 'Legal tech ecosystem', document: 'Legal document management', deployment: 'Cloud SaaS' } },
-        transperfect: { name: 'TransPerfect', features: { face: 'Global services focus', audio: 'Enterprise compliance', video: 'Language and legal services', document: 'Multi-format support', deployment: 'Enterprise SaaS' } }
+        sighthound: { name: 'Sighthound Redactor', features: { face: 'Head Detection expands detection to entire heads, including the back of the head, hair, and ears', audio: 'Redactor supports standalone audio redaction, allowing users to mute, bleep, or remove speech and sensitive information in audio files', video: 'H.265 video files can be imported into Redactor; rendering will still happen in the H.264 format', document: 'Documents in general, IDs, and screens are detectable and selectable via the API', deployment: 'Desktop, server, API, environment variable, and data-drop worker workflows are referenced in the release notes', dataProcessing: '<span class="icon-check">&#9989;</span> On-Premise / Cloud / Hybrid / Air-Gapped' } },
+        veritone: { name: 'Veritone Redact', features: { face: 'Strong AI face redaction', audio: 'Full audio redaction and transcription', video: 'Cloud-first evidence workflow', document: 'Some ID support, weaker document emphasis', deployment: 'Cloud-only deployment', dataProcessing: '☁️ Cloud Only (AWS GovCloud)' } },
+        caseguard: { name: 'CaseGuard Studio', features: { face: 'Strong face redaction', audio: 'Full audio redaction', video: 'Broad desktop workflow support', document: 'Strong document redaction', deployment: 'Desktop and on-premise', dataProcessing: '🖥️ On-Premise Only' } },
+        fastredaction: { name: 'FastRedaction', features: { face: 'Automatic face blurring', audio: 'Limited audio support', video: 'Simple cloud video workflow', document: 'No major document redaction emphasis', deployment: 'Cloud-only', dataProcessing: '☁️ Cloud Only (AWS)' } },
+        motiondsp: { name: 'MotionDSP Spotlight', features: { face: 'Advanced tracked face redaction', audio: 'Full multi-channel audio support', video: 'Forensics-focused video processing', document: 'Minimal document support', deployment: 'Windows desktop', dataProcessing: '🖥️ On-Premise (Windows Desktop)' } },
+        clipr: { name: 'CLIPr', features: { face: 'AI-driven visual analysis', audio: 'Partial audio workflow support', video: 'Modern video operations workflow', document: 'Limited document emphasis', deployment: 'Hybrid cloud and on-premise story', dataProcessing: '☁️ / 🖥️ Cloud / Partial Hybrid' } },
+        assemblyai: { name: 'AssemblyAI', features: { face: 'No visual face support', audio: 'Strong audio intelligence and transcription', video: 'Video handled primarily through audio extraction workflows', document: 'No document redaction focus', deployment: 'Cloud API', dataProcessing: '☁️ Cloud API Only' } },
+        lantero: { name: 'Lantero Redact', features: { face: 'AI face redaction', audio: 'Partial support', video: 'Privacy-focused video redaction', document: 'Limited public detail on document workflows', deployment: 'Cloud SaaS', dataProcessing: '☁️ Cloud SaaS' } },
+        pimloc: { name: 'Pimloc Secure Redact', features: { face: 'AI face redaction', audio: 'Partial audio support', video: 'Privacy-focused redaction', document: 'Basic document support', deployment: 'Cloud and on-premise', dataProcessing: '☁️ / 🖥️ Cloud / On-Premise (Limited)' } },
+        vidizmo: { name: 'VIDIZMO Redactor.ai', features: { face: 'AI face detection', audio: 'Media management focused', video: 'Media asset redaction', document: 'Limited document focus', deployment: 'Cloud SaaS', dataProcessing: '☁️ Cloud Only' } },
+        pixelforensics: { name: 'Pixel Forensics', features: { face: 'Limited visual analytics', audio: 'Not publicly available', video: 'Media triage and video profiling', document: 'Not publicly available', deployment: 'Cloud / On-Premise (Custom)', dataProcessing: 'Cloud / On-Premise (Custom)' } },
+        facit: { name: 'Facit Data Systems', features: { face: 'AI redaction support', audio: 'Data redaction focus', video: 'Hybrid redaction workflow', document: 'Strong data element redaction', deployment: 'Cloud and on-premise', dataProcessing: unverifiedPrefix + 'Cloud / On-Premise' + unverifiedInfo } },
+        suspect: { name: 'Suspect Technologies', features: { face: 'Redaction capabilities', audio: 'Technical focus', video: 'Specialized tools', document: 'Limited public detail', deployment: 'On-premise/Cloud', dataProcessing: unverifiedPrefix + 'On-Premise / Cloud' + unverifiedInfo } },
+        redactable: { name: 'Redactable', features: { face: 'Basic redaction', audio: 'Limited support', video: 'Document and media redaction', document: 'Document-centric', deployment: 'Cloud SaaS', dataProcessing: '☁️ Cloud SaaS' } },
+        extract: { name: 'Extract Systems', features: { face: 'Limited visual focus', audio: 'Data extraction emphasis', video: 'Limited video capabilities', document: 'Data extraction and redaction', deployment: 'On-premise', dataProcessing: '🖥️ On-Premise' } },
+        idox: { name: 'iDox.ai', features: { face: 'Limited visual focus', audio: 'Document intelligence focus', video: 'Limited video support', document: 'Strong document AI capabilities', deployment: 'Cloud', dataProcessing: '☁️ Cloud' } },
+        everlaw: { name: 'Everlaw', features: { face: 'Secondary feature', audio: 'eDiscovery-focused', video: 'Legal tech ecosystem', document: 'Legal document management', deployment: 'Cloud SaaS', dataProcessing: '☁️ Cloud SaaS' } },
+        transperfect: { name: 'TransPerfect', features: { face: 'Global services focus', audio: 'Enterprise compliance', video: 'Language and legal services', document: 'Multi-format support', deployment: 'Enterprise SaaS', dataProcessing: '☁️ Enterprise SaaS' } }
     };
-    var featureOrder = comparisonMode === 'all' ? ['face', 'audio', 'video', 'document', 'deployment'] : [comparisonMode];
-    var labels = { face: 'Face', audio: 'Audio', video: 'Video', document: 'Document', deployment: 'Deployment' };
+    var featureMap = { face: 'face', audio: 'audio', video: 'video', document: 'document', deployment: 'deployment', 'data-processing': 'dataProcessing' };
+    var featureOrder = comparisonMode === 'all' ? ['face', 'audio', 'video', 'document', 'deployment', 'dataProcessing'] : [featureMap[comparisonMode] || comparisonMode];
+    var labels = { face: 'Face', audio: 'Audio', video: 'Video', document: 'Document', deployment: 'Deployment', dataProcessing: 'Data Processing' };
     var html = '<div class="comparison-grid">';
     [comparisonData[solutionA], comparisonData[solutionB]].forEach(function(item) {
         html += '<div class="comparison-card"><h4>' + item.name + '</h4>';
@@ -645,226 +832,266 @@ function updateComparison() {
 }
 var discoveryCorePhases = [
     {
-        key: 'current-state',
         title: 'Phase 1: Current State & Pain Point Identification',
         goal: 'Goal: Identify the "Bleeding Neck"',
         questions: [
-            'Can you walk me through your current workflow when a massive FOIA request or discovery mandate lands on your desk?',
-            'How many hours per week is your team spending manually redacting bodycam, CCTV, or document files?',
-            'What happens to your turnaround times when a complex video involves multiple faces, license plates, and sensitive audio simultaneously?',
-            'What recent trigger events, such as a missed redaction, public scrutiny, or a sudden spike in evidence requests, are shaping your urgency?'
+            'What types of redaction requests are creating the most operational pressure for your team right now?',
+            'How does your current process break down when volume, complexity, or deadline pressure increases?',
+            'Where do errors, rework, or escalation risks most often appear before content is approved for release?',
+            'What impact does the current redaction backlog have on response times, staff capacity, or stakeholder confidence?'
         ]
     },
     {
-        key: 'technical-environment',
         title: 'Phase 2: Technical Environment & Deployment',
         goal: 'Goal: Identify the "Gatekeeper Setup"',
         questions: [
-            "What are your IT team's requirements regarding air-gapped networks, on-premise servers, or secure cloud environments?",
-            'What level of throughput do you need for standalone desktop review versus server-grade batch processing?',
-            'How important is direct integration with your existing Evidence Management System (EMS), VMS, case-management platform, or internal portal through REST API?'
+            'What technical constraints govern where sensitive media can be uploaded, processed, stored, or retained?',
+            'Which systems does redaction need to touch today, such as evidence management, case management, records portals, DMS, EHR, LMS, or secure storage?',
+            'How do IT, security, and compliance stakeholders evaluate vendors before approving redaction software for production use?'
         ]
     },
     {
-        key: 'commercial-impact',
         title: 'Phase 3: Financial & Commercial Impact',
         goal: 'Goal: Build the "CFO Justification"',
         questions: [
-            'How difficult is it to forecast your annual redaction budget when processing volume changes month to month?',
-            'What happens to costs and access when multiple users need simultaneous redaction capability?',
-            'How do you quantify the personnel cost and opportunity cost of your current manual redaction cycles?'
+            'How are redaction costs budgeted today, and where do budget surprises appear during high-volume periods?',
+            'What internal labor, outside vendor, overtime, or opportunity costs are tied to the current redaction process?',
+            'How does leadership evaluate the business case for faster turnaround, lower risk, and more predictable redaction capacity?'
         ]
     }
 ];
-var discoveryPricingModelQuestions = {
-    'flat-annual-subscription': {
-        label: 'Flat Annual Subscription',
-        questions: [
-            'How does your team currently justify a fixed annual subscription when usage varies by department or season?',
-            'What internal budget owners need to see to approve predictable annual spend over variable per-file or per-minute costs?',
-            'What criteria would you use to evaluate whether bundled processing addresses budget friction during high-volume months?'
-        ]
-    },
-    'usage-based': {
-        label: 'Pay-Per-Minute / Pay-Per-File (Usage-Based)',
-        questions: [
-            'How do you forecast budget when FOIA, litigation, or audit volume can spike without notice?',
-            'What controls do you use to prevent teams from delaying redaction work because each minute or file adds cost?',
-            'How do you compare unit-cost pricing against staff time, contractor costs, and legal deadline risk?'
-        ]
-    },
-    'per-seat-user-license': {
-        label: 'Per-Seat / Per-User License',
-        questions: [
-            'How many reviewers, legal stakeholders, and technical administrators need concurrent access during peak case cycles?',
-            'What happens when per-seat licensing prevents adjacent departments from participating in the workflow?',
-            'How do you decide whether occasional reviewers need paid seats or a separate approval path?'
-        ]
-    },
-    'enterprise-custom-quote': {
-        label: 'Enterprise Custom Quote',
-        questions: [
-            'What procurement milestones, security reviews, and executive approvals must be completed before a custom quote can move forward?',
-            'Which pricing variables are most important to define early: users, deployment footprint, throughput, integrations, support, or data residency?',
-            'How do you compare custom quotes when vendors bundle redaction into broader platforms or services?'
-        ]
-    },
-    'freemium-free-trial': {
-        label: 'Freemium / Free Trial Model',
-        questions: [
-            'What must a free trial prove before your team is willing to start a procurement process?',
-            'Which real-world files, compliance checks, and workflow handoffs need to be tested during the evaluation window?',
-            'How do you prevent trial results from overstating value if the free tier excludes the scale, security, or support conditions you need?'
-        ]
-    }
+var discoverySectorLabels = {
+    'public-sector': 'Public Sector',
+    'private-sector': 'Private Sector',
+    'non-profit-ngo': 'Non-Profit / NGO'
 };
 var discoveryIndustryQuestionSets = {
     'law-enforcement-public-safety': {
         label: 'Law Enforcement & Public Safety',
+        compliance: 'CJIS',
         questions: [
-            'How many bodycam, dashcam, or CCTV footage hours does your department process monthly for FOIA or court submissions?',
-            'What is your current SLA or legal deadline for delivering redacted footage to requestors, and how consistently are you meeting it?',
-            'How do you currently maintain chain-of-custody integrity when footage is sent to a third-party redaction vendor or cloud platform?',
-            'What liability or public scrutiny has your department faced due to accidental disclosure of unredacted footage or witness identity?',
-            'With CJIS compliance being non-negotiable, how does your current workflow ensure data never leaves your secured network?',
-            'What centralized Evidence Management System (EMS) do you use, and how well does your current redaction workflow integrate with it?'
+            'How does CJIS policy govern where bodycam, dashcam, CCTV, interview-room, or drone media can be processed and stored?',
+            'What happens when public-records requests arrive faster than evidence technicians can review every face, plate, minor, victim, or officer identifier?',
+            'How do supervisors verify chain of custody, reviewer accountability, and redaction decisions before evidence is released?',
+            'Where does your current process create risk if sensitive identities remain visible or audible in released media?',
+            'How do prosecutors, records teams, command staff, and IT stakeholders participate in redaction review and approval?',
+            'How do major incidents affect overtime, backlog, or public-response timelines when media volume spikes suddenly?'
         ]
     },
-    'government-municipal-agencies': {
+    'government-municipal': {
         label: 'Government & Municipal Agencies',
+        compliance: 'FOIA',
         questions: [
-            'How frequently does your agency receive public records requests, and how has that volume trended over the past 12 months?',
-            'Which departments within your agency generate the highest volume of redaction requests: legal, HR, compliance, public safety, or another group?',
-            'How would you characterize your current redaction workflows: manual, partially automated, or fully automated, and where are the bottlenecks?',
-            'How do you handle redaction for mixed-format FOIA requests involving both documents and video files simultaneously?',
-            'What software procurement cycle does your agency follow, and which compliance certifications are mandatory for approval?',
-            'What is the biggest operational risk if redaction turnaround times increase during a politically sensitive public records request?'
+            'How are FOIA deadlines, exemption rules, and public-records obligations shaping redaction triage across departments?',
+            'Which offices or departments create the highest volume of FOIA-related media, document, or audio redaction work today?',
+            'What happens when a request spans police, code enforcement, transportation, council meetings, and administrative records simultaneously?',
+            'How are FOIA exemption rationales, approvals, reviewer decisions, and release histories documented for audit or litigation review?',
+            'What constraints do procurement, IT, and legal teams place on cloud processing, data residency, or vendor security reviews?',
+            'Where do bottlenecks appear when elected officials, legal counsel, records teams, and department owners all need sign-off before disclosure?'
         ]
     },
-    'healthcare-medical-institutions': {
+    'healthcare-medical': {
         label: 'Healthcare & Medical Institutions',
+        compliance: 'HIPAA',
         questions: [
-            'How does your team currently redact PHI from patient videos, medical images, or recorded consultations before sharing with third parties?',
-            'What HIPAA-specific controls does your current vendor provide, and how have those controls been independently audited?',
-            'How do you manage redaction workflows across radiology, compliance, legal, and other departments without creating data silos?',
-            'What HIPAA breach incidents or near misses have involved improperly redacted patient records or video footage?',
-            'What is your current process for handling redaction requests tied to insurance claims or litigation discovery?',
-            'Where does your institution require redaction software to operate fully on-premise because of patient data sensitivity requirements?'
+            'Which forms of PHI appear most often in clinical footage, research recordings, security video, audio, images, or documents?',
+            'How are HIPAA privacy reviews handled when patient media must be shared with researchers, counsel, insurers, regulators, or outside partners?',
+            'What safeguards are required before patient media can be uploaded, processed, stored, retained, or transmitted outside your environment?',
+            'How do compliance teams verify that patient identifiers, voices, faces, screens, wristbands, labels, and documents are fully protected?',
+            'What impact does manual redaction have on research timelines, legal reviews, patient complaints, or incident investigations?',
+            'How do you preserve HIPAA-ready audit trails showing who reviewed, approved, and released redacted PHI?'
         ]
     },
     'legal-law-firms': {
         label: 'Legal & Law Firms',
+        compliance: 'Attorney-Client Privilege',
         questions: [
-            'What volume of discovery material, including video depositions, surveillance footage, and documents, does your firm process per month?',
-            'How are you currently meeting court-mandated redaction deadlines when discovery volumes spike unexpectedly?',
-            "What is your firm's protocol for maintaining privilege and confidentiality when redaction is outsourced to third-party vendors?",
-            'How do you handle redaction across multi-format evidence packages, including PDFs, MP4s, and audio recordings, within a single case file?',
-            'What sanctions, case complications, or disclosure concerns have arisen from inadvertent release of unredacted sensitive information?',
-            'What level of audit trail and reporting does your current redaction workflow provide for court defensibility?'
+            'How do discovery deadlines change when productions include video, audio, images, and documents requiring redaction?',
+            'What review steps protect attorney-client privilege before confidential, privileged, or personally identifiable information is produced?',
+            'How do attorneys, litigation support teams, and outside vendors coordinate redaction decisions across matters with large media volumes?',
+            'What risks arise when privilege review and redaction work move across paralegals, associates, partners, vendors, and eDiscovery platforms?',
+            'How do you document defensibility if an attorney-client privilege or confidentiality redaction is challenged during motion practice or trial?',
+            'Where do cost overruns occur when urgent productions require manual review after hours or across multiple reviewers?'
         ]
     },
     'financial-services-banking': {
         label: 'Financial Services & Banking',
+        compliance: 'SOX / GDPR / PCI-DSS',
         questions: [
-            'How does your compliance team currently redact sensitive PII or financial data from recorded calls, screen captures, or surveillance footage?',
-            'Which regulatory frameworks, including SOX, GDPR, or PCI-DSS, govern your redaction and data handling requirements?',
-            'How do you manage redaction workflows during regulatory audits or internal investigations that require fast turnaround?',
-            "What is your current vendor's data residency policy, and how does it align with your institution's cross-border data compliance requirements?",
-            'How does your team handle redaction at scale when legal, risk, HR, and other departments submit requests simultaneously?',
-            'If your current redaction process was audited today, how confident are you in its defensibility and documentation trail?'
+            'What regulated customer, employee, cardholder, or account data appears in surveillance footage, call recordings, loan documents, KYC files, or investigations?',
+            'How do SOX, GDPR, PCI-DSS, and internal retention requirements shape redaction review before records are shared or produced?',
+            'What controls are required before sensitive financial, account, card, employee, or customer information can be exported or shared with third parties?',
+            'How does your current process handle spikes from subpoenas, regulator inquiries, fraud investigations, disputes, or data subject access requests?',
+            'Where do audit, access-control, segregation-of-duties, and chain-of-custody requirements slow down redaction approvals?',
+            'How do you forecast redaction costs when usage changes with investigations, branch incidents, compliance reviews, or regulator activity?'
         ]
     },
     'education-universities': {
         label: 'Education & Universities',
+        compliance: 'FERPA',
         questions: [
-            'How does your institution currently handle redaction of student records, surveillance footage, or incident videos for FERPA compliance?',
-            'What is your process for responding to public records requests involving campus security footage or disciplinary hearings?',
-            'How do you manage redaction requests across multiple campuses or departments with varying technical capabilities?',
-            'What FERPA violations or compliance challenges have involved improperly handled student data or media?',
-            'What IT security requirements must any software vendor meet before being approved for use on your campus network?',
-            "How would changes in redaction turnaround time affect your compliance team's capacity to handle increasing public records volumes?"
+            'What student identifiers appear most often in campus safety video, disciplinary records, athletics footage, classroom recordings, or documents?',
+            'How does FERPA compliance shape the way your team reviews and releases student-related media?',
+            'What happens when records requests involve minors, witnesses, staff members, visitors, and multiple campus departments?',
+            'How do legal, registrar, campus safety, and communications teams coordinate approvals before redacted records are disclosed?',
+            'What safeguards are required before student video, audio, or documents can leave school-controlled systems?',
+            'Where do delays occur when public records, parent requests, investigations, or Title IX matters require rapid redaction?'
         ]
     }
 };
-function getDiscoverySections(industry, pricingModel) {
-    var pricingData = discoveryPricingModelQuestions[pricingModel] || discoveryPricingModelQuestions['flat-annual-subscription'];
-    var industryData = discoveryIndustryQuestionSets[industry] || discoveryIndustryQuestionSets['law-enforcement-public-safety'];
-    var sections = discoveryCorePhases.map(function(phase) {
-        var questions = phase.questions.slice();
-        var goal = phase.goal;
-        if (phase.key === 'commercial-impact') {
-            questions = questions.concat(pricingData.questions);
-            goal += ' · Pricing model lens: ' + pricingData.label;
-        }
-        return {
-            title: phase.title,
-            goal: goal,
-            questions: questions
-        };
+var discoveryPricingLabels = {
+    'flat-annual-subscription': 'Flat Annual Subscription',
+    'usage-based': 'Pay-Per-Minute / Pay-Per-File (Usage-Based)',
+    'per-seat-license': 'Per-Seat / Per-User License',
+    'enterprise-custom-quote': 'Enterprise Custom Quote',
+    'freemium-free-trial': 'Freemium / Free Trial Model'
+};
+var discoveryPricingModelQuestions = {
+    'flat-annual-subscription': [
+        'How does your team evaluate whether a flat annual subscription matches seasonal or unpredictable redaction volume?',
+        'What usage threshold would make a fixed annual model more predictable than per-minute or per-file pricing?',
+        'How do budget owners compare annual license costs against internal labor, overtime, and outside vendor spend?',
+        'What procurement concerns appear when value is tied to high-volume or unlimited processing rather than unit consumption?',
+        'What reporting would finance need to understand annual TCO, avoided variable fees, and scalability across teams?'
+    ],
+    'usage-based': [
+        'How accurately can you forecast monthly minutes, files, pages, or jobs before the work actually arrives?',
+        'What happens to budget approvals when an urgent incident, audit, lawsuit, or records request pushes usage above plan?',
+        'How do teams decide which files to process when every minute, file, or page has an incremental cost?',
+        'Where do overage fees, minimum commitments, top-ups, or bill reconciliation create TCO uncertainty?',
+        'How does finance validate usage-based invoices against actual processing volume, requester activity, and department budgets?'
+    ],
+    'per-seat-license': [
+        'How many reviewers, approvers, supervisors, attorneys, or compliance stakeholders need access during normal periods versus surge events?',
+        'Where does per-seat licensing slow collaboration when occasional approvers need access only for review or sign-off?',
+        'How do shared accounts, queue handoffs, and audit requirements affect governance under a per-user model?',
+        'What happens to TCO as new departments, offices, matters, or review teams need redaction access?',
+        'How do you justify seats for IT, legal, compliance, or executive reviewers who may not redact files every day?'
+    ],
+    'enterprise-custom-quote': [
+        'Which scope variables must be clear before a custom quote is credible, such as users, volume, deployment, integrations, support, and security requirements?',
+        'How do budget owners compare a custom enterprise quote against internal labor, outside vendors, risk exposure, and delayed response costs?',
+        'What procurement, legal, security, and technical reviews typically extend your enterprise buying cycle?',
+        'Where does scope creep appear after implementation, and how does that affect long-term TCO expectations?',
+        'What success metrics does the executive sponsor need before approving a custom enterprise purchase?'
+    ],
+    'freemium-free-trial': [
+        'What evaluation criteria determine whether a free trial proves production viability rather than only basic feature fit?',
+        'Which production risks are hidden by trial limits on users, minutes, files, support, storage, or compliance controls?',
+        'How do stakeholders model TCO once trial limits, paid tiers, support needs, deployment requirements, and usage growth are included?',
+        'What internal resources are needed to convert a proof of concept into an approved deployment?',
+        'How do you prevent trial results from underrepresenting compliance, audit, integration, and scale requirements?'
+    ]
+};
+function getDiscoveryCoreQuestionCount() {
+    var count = 0;
+    discoveryCorePhases.forEach(function(phase) {
+        count += phase.questions.length;
     });
-    sections.push({
-        title: 'Industry-Specific Questions: ' + industryData.label,
-        goal: 'Goal: Surface industry-specific compliance, workflow, and procurement risk',
-        questions: industryData.questions
-    });
-    return {
-        industryLabel: industryData.label,
-        pricingLabel: pricingData.label,
-        sections: sections
-    };
+    return count;
 }
-function renderDiscoverySection(section) {
-    var html = '<div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 4px solid #1e3a5f; padding: 18px 22px; margin-bottom: 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);">';
-    html += '<h3 style="margin: 0 0 6px 0; color: #1e3a5f; font-size: 1.08em;"><strong>' + escapeHtml(section.title) + '</strong></h3>';
-    html += '<p style="margin: 0 0 12px 0; color: #6b7280; font-size: 0.9em;">' + escapeHtml(section.goal) + '</p>';
-    html += '<ul style="margin: 0 0 0 20px; padding: 0; color: #1f2937; line-height: 1.65;">';
-    section.questions.forEach(function(question) {
-        html += '<li style="margin-bottom: 10px;">' + escapeHtml(question) + '</li>';
+function getDiscoveryTotalQuestionCount(industry, pricingModel) {
+    var industryConfig = discoveryIndustryQuestionSets[industry];
+    var pricingQuestions = discoveryPricingModelQuestions[pricingModel] || [];
+    return getDiscoveryCoreQuestionCount() + (industryConfig ? industryConfig.questions.length : 0) + pricingQuestions.length;
+}
+function renderDiscoveryQuestionList(questions) {
+    var html = '<ul style="margin: 12px 0 0 22px; color: #1f2937; line-height: 1.65;">';
+    questions.forEach(function(question) {
+        html += '<li style="margin-bottom: 10px; padding-left: 4px;">' + escapeHtml(question) + '</li>';
     });
     html += '</ul>';
+    return html;
+}
+function renderDiscoveryPhaseCard(phase) {
+    var html = '<div style="background: #ffffff; border: 1px solid #e5e7eb; border-left: 4px solid #1e3a5f; padding: 18px 22px; margin-bottom: 16px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);">';
+    html += '<h3 style="color: #1e3a5f; font-size: 1.05em; margin: 0 0 6px 0;"><strong>' + escapeHtml(phase.title) + '</strong></h3>';
+    html += '<p style="color: #4b5563; font-size: 0.95em; margin: 0;"><em>' + escapeHtml(phase.goal) + '</em></p>';
+    html += renderDiscoveryQuestionList(phase.questions);
+    html += '</div>';
+    return html;
+}
+function renderDiscoverySelectionList(items) {
+    var html = '<ul style="margin: 12px 0 0 22px; color: #1f2937; line-height: 1.7;">';
+    items.forEach(function(item) {
+        html += '<li style="margin-bottom: 6px;"><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.value) + '</li>';
+    });
+    html += '</ul>';
+    return html;
+}
+function renderDiscoverySectionCard(title, subtitle, questions) {
+    var html = '<div style="background: #f9fafb; border: 1px solid #dbe4ef; border-left: 4px solid #2c5282; padding: 18px 22px; margin-bottom: 16px; border-radius: 10px;">';
+    html += '<h3 style="color: #1e3a5f; font-size: 1.05em; margin: 0 0 6px 0;"><strong>' + escapeHtml(title) + '</strong></h3>';
+    if (subtitle) {
+        html += '<p style="color: #4b5563; font-size: 0.95em; margin: 0;">' + escapeHtml(subtitle) + '</p>';
+    }
+    html += renderDiscoveryQuestionList(questions);
     html += '</div>';
     return html;
 }
 function updateDiscoveryQuestions() {
+    var sectorSelect = document.getElementById('discoverySectorFilter');
     var industrySelect = document.getElementById('discoveryIndustryFilter');
     var pricingSelect = document.getElementById('discoveryPricingFilter');
     var container = document.getElementById('discoveryQuestionsContainer');
     var contextLabel = document.getElementById('discoveryContextLabel');
-    if (!industrySelect || !pricingSelect || !container) { return; }
+    if (!sectorSelect || !industrySelect || !pricingSelect || !container) { return; }
+    var sector = sectorSelect.value;
     var industry = industrySelect.value;
     var pricingModel = pricingSelect.value;
-    if (!discoveryIndustryQuestionSets[industry]) {
-        industry = 'law-enforcement-public-safety';
-        industrySelect.value = industry;
+    var hasAllSelections = !!(
+        discoverySectorLabels[sector] &&
+        discoveryIndustryQuestionSets[industry] &&
+        discoveryPricingLabels[pricingModel]
+    );
+    if (!hasAllSelections) {
+        if (contextLabel) {
+            contextLabel.innerHTML = '<strong>Selection required:</strong> Choose Sector Type, Industry, and Pricing Model to generate Discovery Questions.';
+        }
+        container.innerHTML = '';
+        return;
     }
-    if (!discoveryPricingModelQuestions[pricingModel]) {
-        pricingModel = 'flat-annual-subscription';
-        pricingSelect.value = pricingModel;
-    }
-    var result = getDiscoverySections(industry, pricingModel);
-    var totalQuestions = result.sections.reduce(function(count, section) {
-        return count + section.questions.length;
-    }, 0);
+    var industryConfig = discoveryIndustryQuestionSets[industry];
+    var sectorLabel = discoverySectorLabels[sector];
+    var pricingLabel = discoveryPricingLabels[pricingModel];
+    var pricingQuestions = discoveryPricingModelQuestions[pricingModel] || [];
+    var totalQuestions = getDiscoveryTotalQuestionCount(industry, pricingModel);
     if (contextLabel) {
-        contextLabel.textContent = 'Selected industry: ' + result.industryLabel + ' \u00B7 Pricing model: ' + result.pricingLabel + ' \u00B7 ' + totalQuestions + ' questions generated';
+        contextLabel.innerHTML = '<strong>Generated:</strong> ' + totalQuestions + ' questions for ' + escapeHtml(industryConfig.label) + ' using ' + escapeHtml(industryConfig.compliance) + ' context and ' + escapeHtml(pricingLabel) + ' pricing analysis.';
     }
-    var html = result.sections.map(renderDiscoverySection).join('');
-    container.innerHTML = html;
-}
-function initDiscoveryQuestions() {
-    var industrySelect = document.getElementById('discoveryIndustryFilter');
-    var pricingSelect = document.getElementById('discoveryPricingFilter');
-    [industrySelect, pricingSelect].forEach(function(select) {
-        if (!select || select.getAttribute('data-discovery-listener-attached') === 'true') { return; }
-        select.addEventListener('change', updateDiscoveryQuestions);
-        select.setAttribute('data-discovery-listener-attached', 'true');
+    var html = '<div style="background: #ffffff; border: 1px solid #dbe4ef; border-left: 4px solid #1e3a5f; padding: 18px 22px; margin-bottom: 18px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);">';
+    html += '<h3 style="color: #1a3a52; font-size: 1.1em; margin: 0 0 6px 0;"><strong>STEP 1 — Confirm Selections</strong></h3>';
+    html += renderDiscoverySelectionList([
+        { label: 'Sector', value: sectorLabel },
+        { label: 'Industry', value: industryConfig.label },
+        { label: 'Compliance Framework', value: industryConfig.compliance },
+        { label: 'Pricing Model', value: pricingLabel },
+        { label: 'Total Questions to Generate', value: String(totalQuestions) }
+    ]);
+    html += '</div>';
+    html += '<div style="margin-bottom: 18px;">';
+    html += '<h3 style="color: #1a3a52; font-size: 1.1em; margin: 0 0 12px 0;"><strong>STEP 2 — Core Discovery Questions</strong></h3>';
+    discoveryCorePhases.forEach(function(phase) {
+        html += renderDiscoveryPhaseCard(phase);
     });
-    updateDiscoveryQuestions();
+    html += '</div>';
+    html += renderDiscoverySectionCard('STEP 3 — Industry-Specific Questions: ' + industryConfig.label, 'Compliance Framework: ' + industryConfig.compliance + '. Generated only for the selected industry.', industryConfig.questions);
+    html += renderDiscoverySectionCard('STEP 4 — Pricing Model Questions: ' + pricingLabel, 'Focused on budget forecasting, TCO, and scalability pain points. Generated only for the selected pricing model.', pricingQuestions);
+    html += '<div style="background: #edf2f7; border: 1px solid #cbd5e0; border-left: 4px solid #2c5282; padding: 18px 22px; margin-bottom: 16px; border-radius: 10px;">';
+    html += '<h3 style="color: #1e3a5f; font-size: 1.05em; margin: 0 0 6px 0;"><strong>Completion Confirmation</strong></h3>';
+    html += renderDiscoverySelectionList([
+        { label: 'Industry Selected', value: industryConfig.label },
+        { label: 'Pricing Model Selected', value: pricingLabel },
+        { label: 'Total Questions Generated', value: String(totalQuestions) },
+        { label: 'Compliance Framework Applied', value: industryConfig.compliance }
+    ]);
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════════════
 // PRICING CALCULATOR LOGIC
-// Update TIERS or PRICING_COMPETITORS to adjust recommendations.
+// Update TIERS or the Pricing Analysis summary templates to adjust recommendations.
 // ═══════════════════════════════════════════════════════
 var TIERS = {
     free: {
@@ -900,398 +1127,6 @@ var TIERS = {
         features:   ['Unlimited users', 'REST API access', 'Air-gapped support', 'OEM integration', 'Server + API install', 'Private Slack + priority support', 'Annual subscription']
     }
 };
-
-var PRICING_COMPETITORS = {
-    lawenforcement: [
-        { name: 'CaseGuard',                pricingModel: 'Per-user subscription',        scalesWith: 'Number of users',                bestFor: 'FOIA redaction, public agencies',       advantage: 'Flat annual pricing, no per-user scaling cost' },
-        { name: 'Motorola CommandCentral',  pricingModel: 'Platform bundle pricing',       scalesWith: 'Platform seats',                 bestFor: 'Agencies already on Motorola ecosystem', advantage: 'Standalone deployment — no platform lock-in' }
-    ],
-    government: [
-        { name: 'Veritone Redact',          pricingModel: 'Usage-based (per minute)',     scalesWith: 'Video volume processed',         bestFor: 'Agencies processing high video volumes', advantage: 'Zero per-minute charges — flat annual cost' },
-        { name: 'Axon Evidence Redaction',  pricingModel: 'Bundled within Axon platform', scalesWith: 'Axon platform seats',            bestFor: 'Agencies using Axon body cameras',      advantage: 'Works with any footage source, no platform dependency' }
-    ],
-    healthcare: [
-        { name: 'Redactable',               pricingModel: 'Per-document / SaaS subscription', scalesWith: 'Document volume',             bestFor: 'Document redaction (PDFs, text)',       advantage: 'Full video + image + audio redaction in one tool' },
-        { name: 'VIDIZMO',                  pricingModel: 'Per-user SaaS subscription',   scalesWith: 'Users + video storage',          bestFor: 'Video management with basic redaction', advantage: 'AI-first redaction — not a bolt-on feature' }
-    ],
-    legal: [
-        { name: 'Opus2',                    pricingModel: 'Per-user / matter-based',      scalesWith: 'Legal matters + users',          bestFor: 'eDiscovery and trial management',       advantage: 'Purpose-built AI video redaction vs. general legal platform' },
-        { name: 'Adobe Premiere (manual)',  pricingModel: 'Creative Cloud subscription',  scalesWith: 'Manual labor hours',             bestFor: 'Teams with existing Adobe workflows',   advantage: 'Automated AI detection — hours vs. days for redaction' }
-    ],
-    other: [
-        { name: 'CaseGuard',                pricingModel: 'Per-user subscription',        scalesWith: 'Number of users',                bestFor: 'General FOIA and records redaction',    advantage: 'Flat annual pricing, no per-user scaling cost' },
-        { name: 'Veritone Redact',          pricingModel: 'Usage-based (per minute)',     scalesWith: 'Video volume processed',         bestFor: 'High-volume cloud-based workflows',     advantage: 'Zero per-minute charges — flat annual cost' }
-    ]
-};
-
-var PRICING_ANALYSIS_COMPETITORS = [
-    {
-        id: 'sighthound',
-        company: 'Sighthound Redactor',
-        hasExplicitPricing: true,
-        pricingModel: 'annualPlans',
-        explicitPricing: '$2,500/year Pro; $3,500/year Enterprise',
-        plans: [
-            { name: 'Pro', amount: 2500, includedUsers: 1, includedUsage: 'unlimited video length' },
-            { name: 'Enterprise', amount: 3500, includedUsers: 5, includedUsage: 'unlimited processing' }
-        ],
-        scalability: 'Flat annual cost through 5 users with unlimited processing.',
-        valueScore: 5,
-        valueDrivers: [
-            'Unlimited processing keeps marginal video volume cost at $0 after the license.',
-            'Enterprise covers 1-5 users without per-seat escalation.',
-            'Supports desktop, server, cloud, and offline/air-gapped deployment paths.'
-        ],
-        tradeOffs: [
-            'Not the lowest entry price when a competitor base tier is enough.',
-            'Annual licensing can be less attractive for temporary or very low-volume use.',
-            'Teams beyond 5 users, developer needs, or API integration require custom pricing.'
-        ],
-        deploymentCapabilities: ['cloud', 'desktop', 'server', 'onPremise', 'offline']
-    },
-    {
-        id: 'veritone',
-        company: 'Veritone Redact',
-        hasExplicitPricing: true,
-        pricingModel: 'annualRange',
-        explicitPricing: '$2,400-$250K+/year',
-        capterraLink: 'https://www.capterra.com/p/184450/Veritone-Redact/',
-        plan: { amount: 2400, amountMax: 250000 },
-        scalability: 'Lowest listed entry price is attractive, but the explicit range scales up to $250K+/year.',
-        valueScore: 4,
-        valueDrivers: [
-            'Strong fit for enterprise cloud deployments.',
-            'Tiered annual model can start below Sighthound Pro and Enterprise.',
-            'Useful when cloud-first evidence workflows are acceptable.'
-        ],
-        tradeOffs: [
-            'Cloud-only deployment is not suitable for offline or air-gapped requirements.',
-            'The listed range is broad, so the entry price may not represent enterprise-scale use.',
-            'Usage, seat, support, and overage details are not explicit in this dataset.'
-        ],
-        deploymentCapabilities: ['cloud']
-    },
-    {
-        id: 'caseguard',
-        company: 'CaseGuard Studio',
-        hasExplicitPricing: true,
-        pricingModel: 'monthlyPerSeatRange',
-        explicitPricing: '$279-$379/month per license',
-        capterraLink: 'https://www.capterra.com/p/10030197/CaseGuard/',
-        g2Link: 'https://www.g2.com/products/caseguard-studio/pricing',
-        plan: { amount: 279, amountMax: 379 },
-        scalability: 'Annual cost increases with every additional user seat.',
-        valueScore: 4,
-        valueDrivers: [
-            'Broad desktop workflow fit for teams that prefer seat-based licensing.',
-            'Processing is listed as included in the pricing analysis TCO example.',
-            'Useful when a desktop/on-premise workflow is preferred over cloud-only tools.'
-        ],
-        tradeOffs: [
-            'Per-seat pricing scales quickly as users are added.',
-            'At 3+ users, the explicit annualized price exceeds Sighthound Enterprise.',
-            'Usage limits and support details are not explicit in this dataset.'
-        ],
-        deploymentCapabilities: ['desktop', 'onPremise']
-    },
-    {
-        id: 'fastredaction',
-        company: 'FastRedaction',
-        hasExplicitPricing: true,
-        pricingModel: 'usagePerMinute',
-        explicitPricing: '$19/minute + $1 base fee',
-        plan: { amount: 19, baseFee: 1, baseFeeUnit: 'job' },
-        scalability: 'Can be cheapest at very low usage, but cost rises directly with processing minutes and jobs.',
-        valueScore: 3,
-        valueDrivers: [
-            'No annual subscription is listed, which can fit infrequent redaction needs.',
-            'Usage-based billing aligns cost to actual processing minutes.',
-            'Best suited to occasional light users in the pricing analysis.'
-        ],
-        tradeOffs: [
-            'Costs increase linearly with every processed minute and base-fee job.',
-            'Cloud-only workflow is not suitable for offline or air-gapped requirements.',
-            'Limited audio/document workflow details are listed in the current dataset.'
-        ],
-        deploymentCapabilities: ['cloud']
-    },
-    {
-        id: 'idox',
-        company: 'iDox.ai',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Custom pricing',
-        capterraLink: 'https://www.capterra.com/p/10002118/iDox-ai-redact/',
-        g2Link: 'https://www.g2.com/products/idox-ai/pricing'
-    },
-    {
-        id: 'redactable',
-        company: 'Redactable',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Custom pricing',
-        capterraLink: 'https://www.capterra.com/p/264580/Redactable/',
-        g2Link: 'https://www.g2.com/products/redactable/pricing'
-    },
-    {
-        id: 'secure-redact',
-        company: 'Secure Redact',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Custom pricing',
-        capterraLink: 'https://www.capterra.com/p/10041695/Secure-Redaction/',
-        g2Link: 'https://www.g2.com/products/secure-redact/pricing'
-    },
-    {
-        id: 'naltero',
-        company: 'Naltero',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Custom pricing',
-        g2Link: 'https://www.g2.com/products/naltero/pricing'
-    },
-    {
-        id: 'assemblyai',
-        company: 'AssemblyAI',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Usage-based API pricing',
-        capterraLink: 'https://www.capterra.com/p/214210/Assembly/'
-    },
-    {
-        id: 'clipral',
-        company: 'Clipral',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Custom pricing',
-        capterraLink: 'https://www.capterra.com/p/10020412/Clipral/'
-    },
-    {
-        id: 'everlaw',
-        company: 'Everlaw',
-        hasExplicitPricing: false,
-        pricingModel: 'customOnly',
-        explicitPricing: 'Custom enterprise pricing',
-        capterraLink: 'https://www.capterra.com/p/137171/Everlaw/'
-    }
-];
-
-var pricingAnalysisSelected = {};
-PRICING_ANALYSIS_COMPETITORS.forEach(function(competitor) {
-    pricingAnalysisSelected[competitor.id] = true;
-});
-
-function pricingCurrency(amount) {
-    return '$' + Math.round(amount).toLocaleString('en-US');
-}
-
-function pricingAnnualRange(result) {
-    if (!result || result.minAnnual == null) { return 'Not comparable'; }
-    if (result.maxAnnual && result.maxAnnual !== result.minAnnual) {
-        return pricingCurrency(result.minAnnual) + '-' + pricingCurrency(result.maxAnnual) + '/year';
-    }
-    return pricingCurrency(result.minAnnual) + '/year';
-}
-
-function getPricingScenario() {
-    var modeEl = document.getElementById('pricingDecisionMode');
-    var usersEl = document.getElementById('pricingScenarioUsers');
-    var minutesEl = document.getElementById('pricingScenarioMinutes');
-    var jobsEl = document.getElementById('pricingScenarioJobs');
-    var deploymentEl = document.getElementById('pricingScenarioDeployment');
-    return {
-        mode: modeEl ? modeEl.value : 'bestPrice',
-        users: usersEl ? parseInt(usersEl.value, 10) : 3,
-        monthlyMinutes: minutesEl ? parseInt(minutesEl.value, 10) : 100,
-        monthlyJobs: jobsEl ? parseInt(jobsEl.value, 10) : 10,
-        deploymentNeed: deploymentEl ? deploymentEl.value : 'any'
-    };
-}
-
-function hasPricingDeploymentFit(competitor, deploymentNeed) {
-    if (deploymentNeed === 'any') { return true; }
-    return competitor.deploymentCapabilities.indexOf(deploymentNeed) !== -1;
-}
-
-function normalizePricingAnalysisCompetitor(competitor, scenario) {
-    if (competitor.hasExplicitPricing === false) {
-        return Object.assign({}, competitor, {
-            isComparable: false,
-            isViable: false,
-            exclusionReason: 'No explicit price listed.'
-        });
-    }
-    var normalized = null;
-    if (competitor.pricingModel === 'annualPlans') {
-        var matchingPlans = competitor.plans.filter(function(plan) {
-            return plan.includedUsers >= scenario.users;
-        }).sort(function(a, b) {
-            return a.amount - b.amount;
-        });
-        if (!matchingPlans.length) {
-            return Object.assign({}, competitor, {
-                isComparable: false,
-                isViable: false,
-                exclusionReason: 'No explicit listed plan covers ' + scenario.users + ' users.'
-            });
-        }
-        var selectedPlan = matchingPlans[0];
-        normalized = {
-            minAnnual: selectedPlan.amount,
-            maxAnnual: selectedPlan.amount,
-            note: selectedPlan.name + ': ' + pricingCurrency(selectedPlan.amount) + '/year for up to ' + selectedPlan.includedUsers + ' user' + (selectedPlan.includedUsers === 1 ? '' : 's') + '; ' + selectedPlan.includedUsage + '.'
-        };
-    }
-    if (competitor.pricingModel === 'annualRange') {
-        normalized = {
-            minAnnual: competitor.plan.amount,
-            maxAnnual: competitor.plan.amountMax,
-            note: 'Uses explicit listed annual entry price floor of ' + pricingCurrency(competitor.plan.amount) + '/year; upper listed range is ' + pricingCurrency(competitor.plan.amountMax) + '+/year.'
-        };
-    }
-    if (competitor.pricingModel === 'monthlyPerSeatRange') {
-        normalized = {
-            minAnnual: competitor.plan.amount * scenario.users * 12,
-            maxAnnual: competitor.plan.amountMax * scenario.users * 12,
-            note: pricingCurrency(competitor.plan.amount) + '-' + pricingCurrency(competitor.plan.amountMax) + '/month/license x ' + scenario.users + ' user' + (scenario.users === 1 ? '' : 's') + ' x 12 months.'
-        };
-    }
-    if (competitor.pricingModel === 'usagePerMinute') {
-        var monthlyCost = (competitor.plan.amount * scenario.monthlyMinutes) + (competitor.plan.baseFee * scenario.monthlyJobs);
-        normalized = {
-            minAnnual: monthlyCost * 12,
-            maxAnnual: monthlyCost * 12,
-            note: pricingCurrency(competitor.plan.amount) + '/minute x ' + scenario.monthlyMinutes.toLocaleString('en-US') + ' minutes/month + ' + pricingCurrency(competitor.plan.baseFee) + '/' + competitor.plan.baseFeeUnit + ' x ' + scenario.monthlyJobs.toLocaleString('en-US') + ' jobs/month, annualized.'
-        };
-    }
-    if (!normalized) {
-        return Object.assign({}, competitor, {
-            isComparable: false,
-            isViable: false,
-            exclusionReason: 'Unsupported explicit pricing model.'
-        });
-    }
-    var deploymentFit = hasPricingDeploymentFit(competitor, scenario.deploymentNeed);
-    return Object.assign({}, competitor, normalized, {
-        isComparable: true,
-        isViable: deploymentFit,
-        exclusionReason: deploymentFit ? '' : 'Does not match the selected deployment requirement.'
-    });
-}
-
-function choosePricingAnalysisRecommendation(results, mode) {
-    var viable = results.filter(function(result) { return result.isComparable && result.isViable; });
-    if (!viable.length) { return null; }
-    var byPrice = viable.slice().sort(function(a, b) {
-        return (a.minAnnual - b.minAnnual) || (b.valueScore - a.valueScore) || a.company.localeCompare(b.company);
-    });
-    var byValue = viable.slice().sort(function(a, b) {
-        return (b.valueScore - a.valueScore) || (a.minAnnual - b.minAnnual) || a.company.localeCompare(b.company);
-    });
-    var winner = mode === 'bestPrice' ? byPrice[0] : byValue[0];
-    return {
-        winner: winner,
-        cheapest: byPrice[0],
-        nextLowest: byPrice.filter(function(result) { return result.id !== winner.id; })[0] || null
-    };
-}
-
-function pricingAnalysisReason(recommendation, mode) {
-    var winner = recommendation.winner;
-    var cheapest = recommendation.cheapest;
-    var nextLowest = recommendation.nextLowest;
-    if (mode === 'bestPrice') {
-        return winner.company + ' has the lowest normalized explicit annual cost at ' + pricingAnnualRange(winner) + (nextLowest ? '. The next-lowest viable option is ' + nextLowest.company + ' at ' + pricingAnnualRange(nextLowest) + '.' : '.');
-    }
-    if (winner.id === cheapest.id) {
-        return winner.company + ' is also the lowest normalized explicit annual cost at ' + pricingAnnualRange(winner) + ' and has the strongest value fit among selected viable options.';
-    }
-    return winner.company + ' is not the lowest-price option; ' + cheapest.company + ' is lower at ' + pricingAnnualRange(cheapest) + '. In Best Value mode, ' + winner.company + ' wins on value score and scalability at ' + pricingAnnualRange(winner) + '.';
-}
-
-function pricingAnalysisTradeOffs(recommendation) {
-    var winner = recommendation.winner;
-    var cheapest = recommendation.cheapest;
-    var nextLowest = recommendation.nextLowest;
-    var tradeOffs = winner.tradeOffs.slice();
-    if (winner.id !== cheapest.id) {
-        tradeOffs.unshift(winner.company + ' costs ' + pricingCurrency(winner.minAnnual - cheapest.minAnnual) + ' more than ' + cheapest.company + "'s lowest normalized explicit price under these filters.");
-    } else if (nextLowest) {
-        tradeOffs.unshift(winner.company + ' is the lowest-price option under these filters; the next-lowest viable option is ' + nextLowest.company + ' at ' + pricingAnnualRange(nextLowest) + '.');
-    }
-    return tradeOffs.slice(0, 3);
-}
-
-function togglePricingCompetitor(competitorId) {
-    var selectedIds = Object.keys(pricingAnalysisSelected).filter(function(id) { return pricingAnalysisSelected[id]; });
-    if (pricingAnalysisSelected[competitorId] && selectedIds.length === 1) { return; }
-    pricingAnalysisSelected[competitorId] = !pricingAnalysisSelected[competitorId];
-    updatePricingRecommendation();
-}
-
-function renderPricingCompetitorToggles() {
-    var container = document.getElementById('pricingCompetitorToggles');
-    if (!container) { return; }
-    container.innerHTML = PRICING_ANALYSIS_COMPETITORS.map(function(competitor) {
-        var active = pricingAnalysisSelected[competitor.id];
-        return '<button type="button" class="pricing-toggle' + (active ? ' active' : '') + '" aria-pressed="' + (active ? 'true' : 'false') + '" onclick="togglePricingCompetitor(\'' + competitor.id + '\')">' +
-            '<span>' + escapeHtml(competitor.company) + '</span>' +
-            '<small>' + escapeHtml(competitor.explicitPricing) + '</small>' +
-            '</button>';
-    }).join('');
-}
-
-function pricingListingLinksHtml(item) {
-    var links = [];
-    if (item.capterraLink) {
-        links.push('<p><strong>Capterra Direct Link:</strong> <a href="' + escapeHtml(item.capterraLink) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.capterraLink) + '</a></p>');
-    }
-    if (item.g2Link) {
-        links.push('<p><strong>G2 Direct Link:</strong> <a href="' + escapeHtml(item.g2Link) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(item.g2Link) + '</a></p>');
-    }
-    return links.length ? '<div class="pricing-listing-links">' + links.join('') + '</div>' : '';
-}
-
-function updatePricingRecommendation() {
-    var output = document.getElementById('pricingRecommendationOutput');
-    var normalizedContainer = document.getElementById('pricingNormalizedInputs');
-    if (!output || !normalizedContainer) { return; }
-    var scenario = getPricingScenario();
-    var selectedCompetitors = PRICING_ANALYSIS_COMPETITORS.filter(function(competitor) {
-        return pricingAnalysisSelected[competitor.id];
-    });
-    var results = selectedCompetitors.map(function(competitor) {
-        return normalizePricingAnalysisCompetitor(competitor, scenario);
-    });
-    var recommendation = choosePricingAnalysisRecommendation(results, scenario.mode);
-    renderPricingCompetitorToggles();
-    if (!recommendation) {
-        output.innerHTML = '<p>No viable recommendation is available for the selected filters. Add an explicitly priced competitor or loosen the deployment requirement.</p>';
-    } else {
-        output.innerHTML =
-            '<h4>Recommended Solution: ' + escapeHtml(recommendation.winner.company) + '</h4>' +
-            '<p><strong>Why (Pricing-Based):</strong> ' + escapeHtml(pricingAnalysisReason(recommendation, scenario.mode)) + '</p>' +
-            '<p><strong>Why (Value-Based):</strong></p>' +
-            '<ul>' + recommendation.winner.valueDrivers.slice(0, 3).map(function(driver) { return '<li>' + escapeHtml(driver) + '</li>'; }).join('') + '</ul>' +
-            '<p><strong>Trade-offs:</strong></p>' +
-            '<ul>' + pricingAnalysisTradeOffs(recommendation).map(function(item) { return '<li>' + escapeHtml(item) + '</li>'; }).join('') + '</ul>';
-    }
-    normalizedContainer.innerHTML = results.map(function(result) {
-        var isWinner = recommendation && recommendation.winner.id === result.id;
-        var comparableDetails = result.isComparable
-            ? '<p><strong>Scalability:</strong> ' + escapeHtml(result.scalability) + '</p>' +
-                '<p><strong>Value score:</strong> ' + escapeHtml(String(result.valueScore)) + '/5</p>'
-            : '';
-        return '<div class="pricing-normalized-card' + (isWinner ? ' winner' : '') + (!result.isViable ? ' excluded' : '') + '">' +
-            '<div class="pricing-normalized-header"><h5>' + escapeHtml(result.company) + '</h5><span>' + escapeHtml(result.isViable ? pricingAnnualRange(result) : 'Excluded') + '</span></div>' +
-            '<p><strong>Listed pricing:</strong> ' + escapeHtml(result.explicitPricing) + '</p>' +
-            '<p><strong>Normalization:</strong> ' + escapeHtml(result.note || result.exclusionReason) + '</p>' +
-            comparableDetails +
-            (!result.isViable ? '<p class="pricing-exclusion-note"><strong>Reason:</strong> ' + escapeHtml(result.exclusionReason) + '</p>' : '') +
-            pricingListingLinksHtml(result) +
-            '</div>';
-    }).join('');
-}
 
 function getRecommendedTier(users, deployment, api) {
     if (api === 'yes-automation' || api === 'yes-oem' || deployment === 'airgapped' || users === '11+') {
@@ -1357,21 +1192,940 @@ function getPricingExplanation(users, deployment, api, industry, tier) {
     return explanations[tier] || '';
 }
 
-function calculatePricing() {
-    var users      = document.getElementById('userCount').value;
-    var deployment = document.getElementById('deploymentType').value;
-    var api        = document.getElementById('apiNeeded').value;
-    var industry   = document.getElementById('pcIndustry').value;
+function getPricingSelections() {
+    var usersEl      = document.getElementById('userCount');
+    var deploymentEl = document.getElementById('deploymentType');
+    var apiEl        = document.getElementById('apiNeeded');
+    var industryEl   = document.getElementById('pcIndustry');
+    var minutesEl    = document.getElementById('monthlyMinutes');
+    var jobsEl       = document.getElementById('monthlyJobs');
 
-    if (!users || !deployment || !api || !industry) {
-        alert('Please fill in all four fields before calculating.');
+    return {
+        users:          usersEl ? usersEl.value : '',
+        deployment:     deploymentEl ? deploymentEl.value : '',
+        api:            apiEl ? apiEl.value : '',
+        industry:       industryEl ? industryEl.value : '',
+        monthlyMinutes: minutesEl ? minutesEl.value : '',
+        monthlyJobs:    jobsEl ? jobsEl.value : ''
+    };
+}
+
+function isPricingSelectionComplete(selections) {
+    return !!(
+        selections.users &&
+        selections.deployment &&
+        selections.api &&
+        selections.industry &&
+        selections.monthlyMinutes &&
+        selections.monthlyJobs
+    );
+}
+
+function isKnownComparisonPrice(price) {
+    var text = cleanPricingValue(price);
+    if (!text) { return false; }
+
+    var unavailablePatterns = [
+        /\bnot\s+(publicly\s+)?listed\b/i,
+        /\bnot\s+available\b/i,
+        /\bunavailable\b/i,
+        /\bunknown\b/i,
+        /\bestimat(?:e|ed)\b/i,
+        /\btbd\b/i,
+        /\bn\/a\b/i,
+        /\bno\s+pricing\s+available\b/i,
+        /\bcontact\s+(for\s+pricing|us|sales|vendor)\b/i,
+        /\btalk\s+to\s+sales\b/i,
+        /\bcustom\s+(quote|pricing|price)\b/i,
+        /^custom$/i
+    ];
+
+    return !unavailablePatterns.some(function(pattern) {
+        return pattern.test(text);
+    });
+}
+
+function normalizeComparisonName(name) {
+    return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function getPricingPanelField(panel, label) {
+    if (!panel) { return ''; }
+    var target = cleanPricingLabel(label);
+    var paragraphs = panel.querySelectorAll('p');
+    for (var i = 0; i < paragraphs.length; i += 1) {
+        var strong = paragraphs[i].querySelector('strong');
+        if (!strong || cleanPricingLabel(strong.textContent) !== target) { continue; }
+        return cleanPricingValue(paragraphs[i].textContent.replace(strong.textContent, ''));
+    }
+    return '';
+}
+
+function getPricingTemplateDataByName() {
+    var byName = {};
+    Array.prototype.forEach.call(document.querySelectorAll('template[data-pricing-template]'), function(template) {
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = template.innerHTML;
+        var panel = wrapper.querySelector('.pricing-competitor-panel');
+        if (!panel) { return; }
+
+        var name = getPricingPanelName(panel);
+        byName[normalizeComparisonName(name)] = {
+            planTier: getPricingPanelField(panel, 'Plan Name / Tier'),
+            price: getPricingPanelField(panel, 'Price'),
+            billingModel: getPricingPanelField(panel, 'Billing Model'),
+            freeTrial: getPricingPanelField(panel, 'Free Trial / Free Plan'),
+            notes: getPricingPanelField(panel, 'Notes'),
+            sourceText: panel.textContent || ''
+        };
+    });
+    return byName;
+}
+
+function getCompetitorProfileDataByName() {
+    var byName = {};
+    Array.prototype.forEach.call(document.querySelectorAll('#competitors .competitor-profile'), function(profile) {
+        var nameNode = profile.querySelector('h3');
+        if (!nameNode) { return; }
+        byName[normalizeComparisonName(nameNode.textContent)] = {
+            sourceText: profile.textContent || ''
+        };
+    });
+    return byName;
+}
+
+function getComparisonPricingCategory(tierKey) {
+    if (tierKey === 'custom') { return 'custom'; }
+    if (tierKey === 'enterprise') { return 'enterprise'; }
+    return 'single';
+}
+
+function matchesAnyPricingPattern(text, patterns) {
+    return patterns.some(function(pattern) {
+        return pattern.test(text);
+    });
+}
+
+function getDeploymentText(comp) {
+    return (comp.capabilityText || comp.searchText || comp.profileText || '').toLowerCase();
+}
+
+function getAffirmedCapabilityText(text) {
+    return String(text || '')
+        .replace(/\bno\s+server\s*(?:\/|or|and)\s*cloud(?:\s+deployment)?\b/gi, ' ')
+        .replace(/\bno\s+(?:server\s*\/\s*)?cloud(?:\s+deployment)?\b/gi, ' ')
+        .replace(/\b(?:no|without|lacks?|lack(?:ing)?)\s+(?:an?\s+)?(?:server|cloud|api|oem|integration|automation|desktop|windows|on[-\s]?prem(?:ise)?|offline|air[-\s]?gapped)(?:\s+(?:deployment|support|access|capability|capabilities|workflow|option|pricing))?\b/gi, ' ')
+        .replace(/\b(?:not|isn'?t|aren'?t)\s+(?:a\s+|an\s+)?(?:complete\s+)?(?:server|cloud|api|desktop|windows|on[-\s]?prem(?:ise)?|offline|air[-\s]?gapped)(?:\s+(?:deployment|tool|suite|workflow|option))?\b/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function matchesAffirmedPricingPattern(text, patterns) {
+    return matchesAnyPricingPattern(getAffirmedCapabilityText(text), patterns);
+}
+
+function competitorMatchesDeployment(comp, deployment) {
+    var text = getDeploymentText(comp);
+    if (!deployment || !text) { return true; }
+
+    if (deployment === 'desktop') {
+        return matchesAffirmedPricingPattern(text, [
+            /\bdesktop\b/i,
+            /\bwindows\b/i,
+            /\bper\s+seat\b/i,
+            /\bper\s+license\b/i
+        ]);
+    }
+
+    if (deployment === 'server') {
+        return matchesAffirmedPricingPattern(text, [
+            /\bserver\b/i,
+            /\bon[-\s]?prem(?:ise)?\b/i,
+            /\bhybrid\b/i,
+            /\bwindows\s+desktop\/on[-\s]?premise\b/i
+        ]);
+    }
+
+    if (deployment === 'cloud') {
+        return matchesAffirmedPricingPattern(text, [
+            /\bcloud\b/i,
+            /\bsaas\b/i,
+            /\bapi\b/i,
+            /\baws\b/i,
+            /\bazure\b/i,
+            /\bgovcloud\b/i,
+            /\bhybrid\b/i
+        ]);
+    }
+
+    if (deployment === 'airgapped') {
+        return matchesAffirmedPricingPattern(text, [
+            /\bair[-\s]?gapped\b/i,
+            /\boffline\b/i,
+            /\bon[-\s]?prem(?:ise)?\b/i,
+            /\bhybrid\b/i,
+            /\bdesktop\b/i,
+            /\bwindows\b/i
+        ]);
+    }
+
+    return true;
+}
+
+function competitorMatchesApi(comp, apiNeed) {
+    if (!apiNeed || apiNeed === 'no') { return true; }
+    var text = getAffirmedCapabilityText(getDeploymentText(comp));
+    return /\bapi\b|\boem\b|\bdeveloper\b|\bintegration\b|\bautomation\b|\bworkflow\s+automation\b/i.test(text);
+}
+
+function getPricingTierScore(comp, tierKey) {
+    var category = getComparisonPricingCategory(tierKey);
+    var text = getAffirmedCapabilityText(getDeploymentText(comp));
+    var score = 0;
+
+    if (category === 'custom') {
+        if (/\bcustom\b/i.test(text)) { score += 35; }
+        if (/\bapi\b|\boem\b|\benterprise\b|\bteam\b|\bdeveloper\b/i.test(text)) { score += 24; }
+        return score;
+    }
+
+    if (category === 'enterprise') {
+        if (/\benterprise\b/i.test(text)) { score += 35; }
+        if (/\bteam\b|\bdept\b|\bdepartment\b|\badvanced\b|\bultimate\b/i.test(text)) { score += 24; }
+        if (/\bper\s+seat\b|\bper\s+license\b/i.test(text)) { score += 10; }
+        return score;
+    }
+
+    if (/\b1\s*user\b|\bsingle\b|\bstarter\b|\bvalue\s+pack\b|\bspotlight\b/i.test(text)) { score += 30; }
+    if (/\bpro\b|\bpay\s+as\s+you\s+go\b|\bmonthly\b|\bper\s+usage\b/i.test(text)) { score += 22; }
+    if (/\bper\s+seat\b|\bper\s+license\b/i.test(text)) { score += 10; }
+    return score;
+}
+
+function getDeploymentScore(comp, deployment) {
+    var text = getAffirmedCapabilityText(getDeploymentText(comp));
+    if (!deployment || !text) { return 0; }
+
+    if (deployment === 'desktop') {
+        return (/\bdesktop\b|\bwindows\b/i.test(text) ? 30 : 0) + (/\bper\s+seat\b|\bper\s+license\b/i.test(text) ? 8 : 0);
+    }
+
+    if (deployment === 'server') {
+        return (/\bserver\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b/i.test(text) ? 30 : 0) + (/\bdesktop\/on[-\s]?premise\b/i.test(text) ? 8 : 0);
+    }
+
+    if (deployment === 'cloud') {
+        return (/\bcloud\b|\bsaas\b|\bapi\b|\baws\b|\bazure\b|\bgovcloud\b/i.test(text) ? 30 : 0) + (/\bhybrid\b/i.test(text) ? 8 : 0);
+    }
+
+    if (deployment === 'airgapped') {
+        return (/\bair[-\s]?gapped\b|\boffline\b|\bon[-\s]?prem(?:ise)?\b|\bhybrid\b/i.test(text) ? 30 : 0) + (/\bdesktop\b|\bwindows\b/i.test(text) ? 8 : 0);
+    }
+
+    return 0;
+}
+
+function getProductRelevanceScore(comp) {
+    var text = getDeploymentText(comp);
+    var score = 0;
+    if (/\bvideo\b/i.test(text)) { score += 14; }
+    if (/\bmedia\b|\bmulti[-\s]?format\b|\bredaction\s+suite\b/i.test(text)) { score += 8; }
+    if (/\blaw\s+enforcement\b|\bpublic\s+safety\b|\bforensic\b|\bevidence\b/i.test(text)) { score += 8; }
+    if (/\baudio-only\b|\baudio\s+only\b|\bdocument-centric\b|\bdocument\s+intelligence\b/i.test(text)) { score -= 12; }
+    return score;
+}
+
+function getRelevantPricingCompetitorsFromAnalysis(selections, tierKey) {
+    if (typeof getPricingSummaryItems !== 'function') { return []; }
+
+    var templateData = getPricingTemplateDataByName();
+    var profileData = getCompetitorProfileDataByName();
+
+    return getPricingSummaryItems()
+        .map(function(item, index) {
+            var startingPrice = ((item.fields['Starting Price'] || {}).text || '').trim();
+            var billingModel = ((item.fields['Billing Model'] || {}).text || '').trim();
+            var freeTrial = ((item.fields['Free Trial'] || {}).text || '').trim();
+            var key = normalizeComparisonName(item.name);
+            var template = templateData[key] || {};
+            var profile = profileData[key] || {};
+            var capabilityText = [
+                item.name,
+                startingPrice,
+                billingModel,
+                freeTrial,
+                template.planTier,
+                template.price,
+                template.billingModel,
+                template.freeTrial,
+                template.notes,
+                template.sourceText
+            ].join(' ').toLowerCase();
+            var searchText = [
+                capabilityText,
+                profile.sourceText
+            ].join(' ').toLowerCase();
+
+            return {
+                name: item.name,
+                startingPrice: startingPrice,
+                billingModel: billingModel,
+                freeTrial: freeTrial,
+                templatePrice: template.price || startingPrice,
+                templateNotes: template.notes || '',
+                capabilityText: capabilityText,
+                searchText: searchText,
+                profileText: profile.sourceText || '',
+                score: 0,
+                originalIndex: index
+            };
+        })
+        .filter(function(comp) {
+            return isKnownComparisonPrice(comp.startingPrice) &&
+                competitorMatchesDeployment(comp, selections.deployment) &&
+                competitorMatchesApi(comp, selections.api);
+        })
+        .map(function(comp) {
+            comp.score = getPricingTierScore(comp, tierKey) +
+                getDeploymentScore(comp, selections.deployment) +
+                getProductRelevanceScore(comp);
+            return comp;
+        })
+        .sort(function(a, b) {
+            if (b.score !== a.score) { return b.score - a.score; }
+            return a.originalIndex - b.originalIndex;
+        });
+}
+
+function getMinimumSelectedUsers(users) {
+    var userMap = { '1': 1, '2-5': 2, '6-10': 6, '11+': 11 };
+    return userMap[users] || 1;
+}
+
+function getSelectedVolume(selections) {
+    var monthlyMinutes = parseInt(selections.monthlyMinutes, 10);
+    var monthlyJobs = parseInt(selections.monthlyJobs, 10);
+    return {
+        monthlyMinutes: isFinite(monthlyMinutes) ? monthlyMinutes : 0,
+        monthlyJobs: isFinite(monthlyJobs) ? monthlyJobs : 0,
+        annualMinutes: isFinite(monthlyMinutes) ? monthlyMinutes * 12 : 0,
+        annualJobs: isFinite(monthlyJobs) ? monthlyJobs * 12 : 0
+    };
+}
+
+function formatCurrency(amount) {
+    if (!isFinite(amount)) { return 'Not listed'; }
+    return '$' + Math.round(amount).toLocaleString('en-US');
+}
+
+function formatAnnualCost(amount, isStartingPrice) {
+    if (!isFinite(amount)) { return 'Not listed'; }
+    return (isStartingPrice ? 'From ' : '') + formatCurrency(amount) + ' / year';
+}
+
+function buildPricingCandidate(options) {
+    return {
+        name: options.name,
+        annualCost: options.annualCost,
+        annualCostLabel: options.annualCostLabel || formatAnnualCost(options.annualCost, options.isStartingPrice),
+        pricingBasis: options.pricingBasis,
+        sourcePrice: options.sourcePrice || '',
+        billingModel: options.billingModel || '',
+        valueSignals: options.valueSignals || [],
+        tradeoffs: options.tradeoffs || [],
+        fitLevel: options.fitLevel || 'Comparable',
+        isRecommendationEligible: options.isRecommendationEligible !== false,
+        featureScore: options.featureScore || 50,
+        scalabilityScore: options.scalabilityScore || 50,
+        priceModel: options.priceModel || 'listed',
+        isStartingPrice: !!options.isStartingPrice
+    };
+}
+
+function getSighthoundPricingCandidate(selections, tierKey) {
+    if (tierKey === 'pro') {
+        return buildPricingCandidate({
+            name: 'Sighthound Redactor',
+            annualCost: 2500,
+            pricingBasis: 'Pro plan listed at $2,500/year; normalized as one annual desktop license with no per-video or per-minute fees.',
+            sourcePrice: '$2,500/year',
+            billingModel: 'Annual subscription',
+            valueSignals: [
+                'Full visual redaction workflow with video, audio, IDs, documents, screens, vehicles, and license plates.',
+                'Fixed annual cost is predictable once usage grows beyond low-volume pay-as-you-go alternatives.',
+                'Desktop deployment keeps single-user workflows local.'
+            ],
+            tradeoffs: [
+                'Higher upfront cost than usage-priced tools at very low volume.',
+                'Pro is single-user desktop; API, server, and air-gapped deployments require higher tiers.'
+            ],
+            fitLevel: 'Full fit',
+            featureScore: 90,
+            scalabilityScore: 86,
+            priceModel: 'fixed'
+        });
+    }
+
+    if (tierKey === 'enterprise') {
+        return buildPricingCandidate({
+            name: 'Sighthound Redactor',
+            annualCost: 3500,
+            isStartingPrice: true,
+            pricingBasis: 'Enterprise is listed as starting at $3,500/year; normalized to the public starting annual price with no per-video or per-minute fees.',
+            sourcePrice: 'Enterprise starting at $3,500/year',
+            billingModel: 'Annual subscription',
+            valueSignals: [
+                'Multi-user server-oriented workflow with fixed annual pricing.',
+                'Broad redaction coverage across video, audio, IDs, documents, screens, vehicles, and license plates.',
+                'Useful for teams that value deployment control and predictable processing economics.'
+            ],
+            tradeoffs: [
+                'The $3,500 figure is a public starting price, not a guaranteed quote for every deployment size.',
+                'API, OEM, large-team, and air-gapped requirements can move Sighthound into custom pricing.'
+            ],
+            fitLevel: 'Full fit',
+            featureScore: 93,
+            scalabilityScore: 92,
+            priceModel: 'fixed'
+        });
+    }
+
+    return null;
+}
+
+function normalizeCompetitorPricing(comp, selections) {
+    var key = normalizeComparisonName(comp.name);
+    var minUsers = getMinimumSelectedUsers(selections.users);
+    var volume = getSelectedVolume(selections);
+    var annualHours = volume.annualMinutes / 60;
+
+    if (key.indexOf('caseguard') !== -1) {
+        var caseGuardMonthly = (selections.industry === 'legal' || selections.industry === 'healthcare') ? 379 : 299;
+        var caseGuardPlan = caseGuardMonthly === 379 ? 'Ultimate Redaction Suite' : 'Media Redaction Suite';
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: caseGuardMonthly * 12 * minUsers,
+            pricingBasis: caseGuardPlan + ' at $' + caseGuardMonthly + '/month paid annually, multiplied by the minimum selected user count (' + minUsers + ').',
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Multi-format redaction suite with public per-seat annual pricing.',
+                'Desktop/on-premise fit for teams that can operate Windows-based workflows.',
+                'Free trial is publicly listed.'
+            ],
+            tradeoffs: [
+                'Per-seat pricing scales directly with user count.',
+                'Profile notes Windows-only deployment and no API.'
+            ],
+            fitLevel: 'Full fit',
+            featureScore: selections.api === 'no' ? 82 : 58,
+            scalabilityScore: minUsers <= 2 ? 64 : 46,
+            priceModel: 'per-seat'
+        });
+    }
+
+    if (key.indexOf('fastredaction') !== -1) {
+        var fastCost = ((19 * volume.monthlyJobs) + (1 * volume.monthlyMinutes)) * 12;
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: fastCost,
+            pricingBasis: 'Pay As You Go listed as $19 + $1 per minute of uploaded video; normalized as ($19 x monthly jobs + $1 x monthly minutes) x 12.',
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Lowest-friction usage-based model for low-volume cloud redaction.',
+                'Public pricing directly scales with uploaded minutes and jobs.',
+                'No annual subscription is required for pay-as-you-go use.'
+            ],
+            tradeoffs: [
+                'Usage charges rise as monthly jobs or minutes increase.',
+                'Cloud-only workflow and no document redaction in the listed profile.'
+            ],
+            fitLevel: 'Limited fit',
+            featureScore: 68,
+            scalabilityScore: volume.monthlyMinutes <= 100 && volume.monthlyJobs <= 10 ? 78 : (volume.monthlyMinutes <= 500 ? 54 : 28),
+            priceModel: 'usage'
+        });
+    }
+
+    if (key.indexOf('motiondsp') !== -1) {
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: 1870 * minUsers,
+            pricingBasis: 'Spotlight is listed at $1,870/year per license; normalized by the minimum selected user count (' + minUsers + ').',
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Specialist forensic video workflow with public annual license pricing.',
+                'Strong fit for desktop video-focused teams.',
+                'Lower single-license annual cost than Sighthound Pro.'
+            ],
+            tradeoffs: [
+                'Windows desktop only in the listed profile.',
+                'No server/cloud deployment, API, or document redaction in the listed profile.'
+            ],
+            fitLevel: 'Full fit',
+            featureScore: selections.api === 'no' ? 76 : 48,
+            scalabilityScore: minUsers <= 2 ? 62 : 42,
+            priceModel: 'per-license'
+        });
+    }
+
+    if (key.indexOf('clipr') !== -1) {
+        var cliprCost = 997.5;
+        var cliprBasis = 'Annual plan listed at $997.50/year.';
+        if (minUsers === 1 && volume.annualMinutes <= 300) {
+            cliprCost = 0;
+            cliprBasis = 'Free tier listed at $0 and noted as limited to 1 user and 5 annual hours; selected annual minutes are within that limit.';
+        } else if (minUsers > 1 && minUsers <= 10) {
+            cliprCost = 9500;
+            cliprBasis = 'Team / Dept plan listed at $9,500/year for team use.';
+        } else if (minUsers > 10) {
+            cliprCost = 34000;
+            cliprBasis = 'Enterprise plan listed at $34,000/year for larger deployments.';
+        }
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: cliprCost,
+            pricingBasis: cliprBasis,
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Explicit annual and team prices are listed.',
+                'Can be cost-effective for very low-volume single-user video workflows.',
+                'Hybrid cloud/on-premise positioning may fit some deployment filters.'
+            ],
+            tradeoffs: [
+                'Pricing notes describe CLIPr as video intelligence/indexing rather than a dedicated redaction tool.',
+                'Free tier is limited to 1 user and 5 annual hours.'
+            ],
+            fitLevel: 'Limited fit',
+            featureScore: 54,
+            scalabilityScore: cliprCost === 0 ? 36 : (minUsers > 1 ? 58 : 64),
+            priceModel: cliprCost === 0 ? 'limited-free' : 'annual'
+        });
+    }
+
+    if (key.indexOf('assemblyai') !== -1) {
+        var assemblyCost = (0.15 + 0.05) * annualHours;
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: assemblyCost,
+            pricingBasis: 'Universal-2 is listed at $0.15/hour plus PII Audio Redaction add-on at $0.05/hour; normalized against selected processing hours.',
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Very low explicit usage price for audio-only redaction workflows.',
+                'Developer-first cloud API is listed.',
+                'Useful when the requirement is only speech-to-text plus PII audio redaction.'
+            ],
+            tradeoffs: [
+                'Audio-only; not a complete video, image, or document redaction suite.',
+                'Not viable if visual redaction is required.'
+            ],
+            fitLevel: 'Not full-fit',
+            isRecommendationEligible: false,
+            featureScore: 30,
+            scalabilityScore: 72,
+            priceModel: 'usage'
+        });
+    }
+
+    if (key.indexOf('pimloc') !== -1 || key.indexOf('secureredact') !== -1) {
+        var pimlocCost;
+        var pimlocBasis;
+        if (volume.monthlyMinutes <= 10) {
+            pimlocCost = 0;
+            pimlocBasis = 'Basic plan listed at GBP 0 and notes include up to 10 minutes/month; selected volume fits that public limit.';
+        } else {
+            var proCost = (189 * 12) + (Math.max(0, volume.monthlyMinutes - 30) * 6.5 * 12);
+            var advancedCost = (299 * 12) + (Math.max(0, volume.monthlyMinutes - 60) * 6 * 12);
+            if (advancedCost < proCost) {
+                pimlocCost = advancedCost;
+                pimlocBasis = 'Advanced plan listed at $299/month billed annually with 60 minutes/month and $6/minute top-ups; normalized against selected minutes.';
+            } else {
+                pimlocCost = proCost;
+                pimlocBasis = 'Pro plan listed at $189/month billed annually with 30 minutes/month and $6.50/minute top-ups; normalized against selected minutes.';
+            }
+        }
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: pimlocCost,
+            pricingBasis: pimlocBasis,
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Video/image redaction platform with explicit monthly annual-billing prices.',
+                'Low-cost entry point for low-volume workflows.',
+                'Usage allowances and top-up rates make volume economics explainable.'
+            ],
+            tradeoffs: [
+                'Minute allowances and top-ups can increase total cost at higher volumes.',
+                'Enterprise plan is custom quote and excluded from numeric scoring.'
+            ],
+            fitLevel: 'Full fit',
+            featureScore: 74,
+            scalabilityScore: volume.monthlyMinutes <= 100 ? 70 : (volume.monthlyMinutes <= 500 ? 52 : 30),
+            priceModel: pimlocCost === 0 ? 'limited-free' : 'usage-with-base'
+        });
+    }
+
+    if (key.indexOf('redactable') !== -1) {
+        var redactableCost = selections.industry === 'legal' ? 948 : 228;
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: redactableCost,
+            pricingBasis: selections.industry === 'legal' ? 'Pro Plus annual option listed at $79/month annually; normalized to $948/year.' : 'Starter listed at $19/month; normalized to $228/year.',
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Very low explicit document-redaction subscription pricing.',
+                'Cloud SaaS model may suit document-centric legal workflows.',
+                'Freemium entry is publicly listed.'
+            ],
+            tradeoffs: [
+                'Document-centric; not a complete video/audio/image redaction alternative.',
+                'Enterprise pricing is contact-only and excluded from numeric scoring.'
+            ],
+            fitLevel: 'Not full-fit',
+            isRecommendationEligible: false,
+            featureScore: 32,
+            scalabilityScore: 48,
+            priceModel: 'document-only'
+        });
+    }
+
+    if (key.indexOf('idox') !== -1) {
+        var idoxCost = selections.industry === 'legal' ? 390 : 120;
+        return buildPricingCandidate({
+            name: comp.name,
+            annualCost: idoxCost,
+            pricingBasis: selections.industry === 'legal' ? 'Starter listed at $390/year; normalized to annual cost.' : 'Value Pack listed at $10/month; normalized to $120/year.',
+            sourcePrice: comp.templatePrice,
+            billingModel: comp.billingModel,
+            valueSignals: [
+                'Low explicit document AI/redaction pricing.',
+                'Annual and monthly prices are both listed.',
+                'Can be cost-effective for document-only needs.'
+            ],
+            tradeoffs: [
+                'Document-centric; not a complete video/audio/image redaction alternative.',
+                'Enterprise minimums and custom terms are outside public numeric scoring.'
+            ],
+            fitLevel: 'Not full-fit',
+            isRecommendationEligible: false,
+            featureScore: 30,
+            scalabilityScore: 46,
+            priceModel: 'document-only'
+        });
+    }
+
+    return null;
+}
+
+function clampScore(value) {
+    if (!isFinite(value)) { return 0; }
+    return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function scoreLabel(score) {
+    if (score >= 85) { return 'Strong'; }
+    if (score >= 70) { return 'Good'; }
+    if (score >= 55) { return 'Limited'; }
+    return 'Weak';
+}
+
+function scorePricingCandidates(candidates) {
+    var pricedCandidates = candidates.filter(function(candidate) {
+        return isFinite(candidate.annualCost);
+    });
+    if (!pricedCandidates.length) { return []; }
+
+    var minCost = pricedCandidates.reduce(function(min, candidate) {
+        return Math.min(min, candidate.annualCost);
+    }, pricedCandidates[0].annualCost);
+    var maxCost = pricedCandidates.reduce(function(max, candidate) {
+        return Math.max(max, candidate.annualCost);
+    }, pricedCandidates[0].annualCost);
+
+    return pricedCandidates.map(function(candidate) {
+        var priceScore = maxCost === minCost ? 100 : 100 - (((candidate.annualCost - minCost) / (maxCost - minCost)) * 70);
+        candidate.priceEfficiencyScore = clampScore(priceScore);
+        candidate.valueForMoneyScore = clampScore(
+            (candidate.featureScore * 0.42) +
+            (candidate.priceEfficiencyScore * 0.33) +
+            (candidate.scalabilityScore * 0.25)
+        );
+        if (!candidate.isRecommendationEligible) {
+            candidate.valueForMoneyScore = Math.min(candidate.valueForMoneyScore, 55);
+        }
+        return candidate;
+    });
+}
+
+function inferPricingIntent(selections, tierKey) {
+    var minUsers = getMinimumSelectedUsers(selections.users);
+    var volume = getSelectedVolume(selections);
+    if (tierKey === 'pro' && minUsers === 1 && selections.api === 'no' && volume.monthlyMinutes <= 100 && volume.monthlyJobs <= 10) {
+        return 'price-sensitive';
+    }
+    if (volume.monthlyMinutes <= 100 && volume.monthlyJobs <= 10 && selections.api === 'no') {
+        return 'price-sensitive';
+    }
+    return 'value-sensitive';
+}
+
+function choosePricingRecommendation(scoredCandidates, selections, tierKey, excludedNotes) {
+    var eligible = scoredCandidates.filter(function(candidate) {
+        return candidate.isRecommendationEligible;
+    });
+    var decision = {
+        winner: null,
+        cheapest: null,
+        bestValue: null,
+        intent: inferPricingIntent(selections, tierKey),
+        excludedNotes: excludedNotes || []
+    };
+
+    if (!eligible.length) { return decision; }
+
+    decision.cheapest = eligible.reduce(function(best, candidate) {
+        if (!best || candidate.annualCost < best.annualCost) { return candidate; }
+        if (candidate.annualCost === best.annualCost && candidate.valueForMoneyScore > best.valueForMoneyScore) { return candidate; }
+        return best;
+    }, null);
+
+    decision.bestValue = eligible.reduce(function(best, candidate) {
+        if (!best || candidate.valueForMoneyScore > best.valueForMoneyScore) { return candidate; }
+        if (candidate.valueForMoneyScore === best.valueForMoneyScore && candidate.annualCost < best.annualCost) { return candidate; }
+        return best;
+    }, null);
+
+    if (decision.intent === 'price-sensitive') {
+        decision.winner = decision.cheapest;
+        return decision;
+    }
+
+    decision.winner = decision.bestValue;
+    if (decision.cheapest && decision.bestValue && decision.cheapest.name !== decision.bestValue.name) {
+        var cheapestCost = Math.max(decision.cheapest.annualCost, 1);
+        var costMultiple = decision.bestValue.annualCost / cheapestCost;
+        var valueLead = decision.bestValue.valueForMoneyScore - decision.cheapest.valueForMoneyScore;
+        if (costMultiple > 1.5 && valueLead < 10) {
+            decision.winner = decision.cheapest;
+        }
+    }
+
+    return decision;
+}
+
+function getPricingReason(decision) {
+    if (!decision.winner) {
+        return 'No explicit-priced full-fit option matched the selected filters. Custom-quote and non-public pricing entries were excluded from numeric recommendation.';
+    }
+
+    if (decision.cheapest && decision.winner.name === decision.cheapest.name) {
+        return decision.winner.name + ' has the lowest normalized annual cost among viable explicit-priced options at ' + decision.winner.annualCostLabel + '.';
+    }
+
+    return decision.winner.name + ' is not the cheapest option, but it has the strongest value-for-money score (' + decision.winner.valueForMoneyScore + '/100) after weighting fit, scalability, and normalized cost. Lowest viable cost is ' + decision.cheapest.name + ' at ' + decision.cheapest.annualCostLabel + '.';
+}
+
+function getTradeoffText(candidate) {
+    if (!candidate) { return 'Custom-quote and non-public pricing entries were excluded from scoring.'; }
+    return candidate.tradeoffs.join(' ');
+}
+function getNoExplicitPricedValueSignals(decision) {
+    var signals = [
+        'No matched option with public numeric pricing is comparable enough to score for this deployment, API, and volume profile.',
+        'Custom-quote and not-listed entries were excluded instead of estimated, preserving pricing data integrity.',
+        'Use vendor quotes to compare API, OEM, air-gapped, security, and support capabilities before making a final selection.'
+    ];
+
+    if (decision && decision.excludedNotes && decision.excludedNotes.length) {
+        signals[1] = 'Known custom-priced requirements were excluded from numeric scoring: ' + decision.excludedNotes.join(' ');
+    }
+
+    return signals;
+}
+
+function renderPricingRecommendationCard(decision, scoredCandidates) {
+    var card = document.getElementById('pricingRecommendationCard');
+    if (!card) { return; }
+
+    if (!scoredCandidates.length) {
+        var emptyBulletHtml = getNoExplicitPricedValueSignals(decision).map(function(signal) {
+            return '<li>' + escapeHtml(signal) + '</li>';
+        }).join('');
+        var emptyExcludedHtml = decision.excludedNotes.length ?
+            '<p class="recommendation-note">Excluded from numeric scoring: ' + escapeHtml(decision.excludedNotes.join(' ')) + '</p>' : '';
+        card.innerHTML =
+            '<div class="recommendation-kicker">' + (decision.intent === 'price-sensitive' ? 'Price-sensitive recommendation' : 'Value-sensitive recommendation') + '</div>' +
+            '<h4>Recommended Solution: No explicit-priced option</h4>' +
+            '<p><strong>Why (Pricing-Based):</strong> No public numeric price matched the selected filters after excluding custom quote and not-listed entries.</p>' +
+            '<div><strong>Why (Value-Based):</strong><ul>' + emptyBulletHtml + '</ul></div>' +
+            '<p><strong>Trade-offs:</strong> Use vendor quotes for custom/API/air-gapped requirements before making a final decision; the calculator will not rank vendors without validated pricing.</p>' +
+            emptyExcludedHtml;
+        return;
+    }
+
+    var winner = decision.winner;
+    var valueSignals = winner ? winner.valueSignals.slice(0, 3) : getNoExplicitPricedValueSignals(decision);
+    var bulletHtml = valueSignals.map(function(signal) {
+        return '<li>' + escapeHtml(signal) + '</li>';
+    }).join('');
+
+    var metricsHtml = '';
+    if (decision.cheapest || decision.bestValue) {
+        metricsHtml = '<div class="recommendation-metrics">';
+        if (decision.cheapest) {
+            metricsHtml += '<div><span>Lowest cost viable option</span><strong>' + escapeHtml(decision.cheapest.name) + '</strong><small>' + escapeHtml(decision.cheapest.annualCostLabel) + '</small></div>';
+        }
+        if (decision.bestValue) {
+            metricsHtml += '<div><span>Best value-for-money option</span><strong>' + escapeHtml(decision.bestValue.name) + '</strong><small>' + decision.bestValue.valueForMoneyScore + '/100 - ' + scoreLabel(decision.bestValue.valueForMoneyScore) + '</small></div>';
+        }
+        metricsHtml += '</div>';
+    }
+
+    var excludedHtml = decision.excludedNotes.length ?
+        '<p class="recommendation-note">Excluded from numeric scoring: ' + escapeHtml(decision.excludedNotes.join(' ')) + '</p>' : '';
+
+    card.innerHTML =
+        '<div class="recommendation-kicker">' + (decision.intent === 'price-sensitive' ? 'Price-sensitive recommendation' : 'Value-sensitive recommendation') + '</div>' +
+        '<h4>Recommended Solution: ' + escapeHtml(winner ? winner.name : 'No explicit-priced full-fit option') + '</h4>' +
+        '<p><strong>Why (Pricing-Based):</strong> ' + escapeHtml(getPricingReason(decision)) + '</p>' +
+        '<div><strong>Why (Value-Based):</strong><ul>' + bulletHtml + '</ul></div>' +
+        '<p><strong>Trade-offs:</strong> ' + escapeHtml(getTradeoffText(winner)) + '</p>' +
+        metricsHtml +
+        excludedHtml;
+}
+
+function setComparisonEmptyMessage(isVisible) {
+    var table = document.getElementById('compTable');
+    var wrap = table ? table.closest('.comparison-wrap') : null;
+    if (!wrap) { return; }
+
+    var message = document.getElementById('compTableEmptyMessage');
+    if (!message) {
+        message = document.createElement('p');
+        message.id = 'compTableEmptyMessage';
+        message.className = 'comparison-empty-message';
+        wrap.appendChild(message);
+    }
+
+    message.textContent = isVisible ? 'No explicit-priced comparable competitors match these filters. Custom quote and not-listed pricing entries were excluded.' : '';
+    message.hidden = !isVisible;
+}
+
+function clearPricingResult() {
+    var outputSection = document.getElementById('output-section');
+    if (outputSection) {
+        outputSection.classList.remove('visible');
+        outputSection.style.display = 'none';
+    }
+
+    var divider = document.getElementById('outputDivider');
+    if (divider) { divider.style.display = 'none'; }
+
+    var resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) { resetBtn.classList.remove('visible'); }
+
+    ['tierBadge', 'tierName', 'tierPrice', 'tierExplanation', 'tierFeatures'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.textContent = '';
+            el.innerHTML = '';
+        }
+    });
+
+    var tbody = document.getElementById('compTableBody');
+    if (tbody) { tbody.innerHTML = ''; }
+    var card = document.getElementById('pricingRecommendationCard');
+    if (card) { card.innerHTML = ''; }
+    setComparisonEmptyMessage(false);
+}
+
+function renderComparisonRows(scoredCandidates, winner) {
+    var tbody = document.getElementById('compTableBody');
+    if (!tbody) { return; }
+    tbody.innerHTML = '';
+    if (!scoredCandidates.length) {
+        var emptyRow = document.createElement('tr');
+        emptyRow.className = 'empty-comparison-row';
+        emptyRow.innerHTML =
+            '<td data-label="Tool"><span class="tool-name">No explicit-priced option</span><span class="fit-badge">No scored match</span></td>' +
+            '<td data-label="Normalized Annual Cost"><span class="comparison-price">Not listed</span><span class="score-detail">Price efficiency: N/A</span></td>' +
+            '<td data-label="Pricing Basis">No matching competitor with public numeric pricing satisfied the selected deployment, API, and volume filters.</td>' +
+            '<td data-label="Value Signals">No value-for-money score can be calculated without validated public pricing and comparable fit.</td>' +
+            '<td data-label="Trade-offs">Request vendor quotes for custom, OEM, API, or air-gapped requirements before making a final pricing decision.</td>';
+        tbody.appendChild(emptyRow);
+        return;
+    }
+
+    scoredCandidates
+        .slice()
+        .sort(function(a, b) {
+            if (winner && a.name === winner.name) { return -1; }
+            if (winner && b.name === winner.name) { return 1; }
+            if (a.isRecommendationEligible !== b.isRecommendationEligible) {
+                return a.isRecommendationEligible ? -1 : 1;
+            }
+            if (a.annualCost !== b.annualCost) { return a.annualCost - b.annualCost; }
+            return b.valueForMoneyScore - a.valueForMoneyScore;
+        })
+        .forEach(function(candidate) {
+            var tr = document.createElement('tr');
+            if (winner && candidate.name === winner.name) { tr.className = 'recommended-row'; }
+            if (!candidate.isRecommendationEligible) { tr.className = (tr.className ? tr.className + ' ' : '') + 'nonviable-row'; }
+
+            var toolBadge = winner && candidate.name === winner.name ? '<span class="value-badge">Recommended</span>' : '';
+            var fitBadge = '<span class="fit-badge">' + escapeHtml(candidate.fitLevel) + '</span>';
+            tr.innerHTML =
+                '<td data-label="Tool"><span class="tool-name">' + escapeHtml(candidate.name) + '</span>' + toolBadge + fitBadge + '</td>' +
+                '<td data-label="Normalized Annual Cost"><span class="comparison-price">' + escapeHtml(candidate.annualCostLabel) + '</span><span class="score-detail">Price efficiency: ' + candidate.priceEfficiencyScore + '/100</span></td>' +
+                '<td data-label="Pricing Basis">' + escapeHtml(candidate.pricingBasis) + '</td>' +
+                '<td data-label="Value Signals"><span class="score-detail">Value-for-money: ' + candidate.valueForMoneyScore + '/100 - ' + scoreLabel(candidate.valueForMoneyScore) + '</span>' + escapeHtml(candidate.valueSignals.slice(0, 2).join(' ')) + '</td>' +
+                '<td data-label="Trade-offs">' + escapeHtml(candidate.tradeoffs.join(' ')) + '</td>';
+            tbody.appendChild(tr);
+        });
+}
+
+function renderPricingResult(selections, options) {
+    options = options || {};
+
+    var users      = selections.users;
+    var deployment = selections.deployment;
+    var api        = selections.api;
+    var industry   = selections.industry;
+
+    if (!isPricingSelectionComplete(selections)) {
+        clearPricingResult();
         return;
     }
 
     var tierKey     = getRecommendedTier(users, deployment, api);
     var tier        = TIERS[tierKey];
     var explain     = getPricingExplanation(users, deployment, api, industry, tierKey);
-    var competitors = PRICING_COMPETITORS[industry] || PRICING_COMPETITORS.other;
+    var competitors = getRelevantPricingCompetitorsFromAnalysis(selections, tierKey);
+    var rawCandidates = [];
+    var excludedNotes = [];
+    var sighthoundCandidate = getSighthoundPricingCandidate(selections, tierKey);
+
+    if (sighthoundCandidate) {
+        rawCandidates.push(sighthoundCandidate);
+    } else if (tierKey === 'custom') {
+        excludedNotes.push('Sighthound Custom pricing is not publicly numeric for API, OEM, large-team, or air-gapped deployments.');
+    }
+
+    competitors.forEach(function(comp) {
+        var normalized = normalizeCompetitorPricing(comp, selections);
+        if (normalized && isFinite(normalized.annualCost)) {
+            rawCandidates.push(normalized);
+        }
+    });
+
+    var scoredCandidates = scorePricingCandidates(rawCandidates);
+    var decision = choosePricingRecommendation(scoredCandidates, selections, tierKey, excludedNotes);
 
     var badge = document.getElementById('tierBadge');
     badge.textContent = tier.tagline;
@@ -1388,29 +2142,9 @@ function calculatePricing() {
         .map(function(f) { return '<span class="feature-pill">' + escapeHtml(f) + '</span>'; })
         .join('');
 
-    var tbody = document.getElementById('compTableBody');
-    tbody.innerHTML = '';
-
-    var shRow = document.createElement('tr');
-    shRow.className = 'sighthound-row';
-    shRow.innerHTML =
-        '<td data-label="Tool"><span class="tool-name">Sighthound Redactor</span></td>' +
-        '<td data-label="Pricing Model">Flat annual subscription</td>' +
-        '<td data-label="Scales With">Users + deployment type</td>' +
-        '<td data-label="Best For">' + escapeHtml(tier.tagline) + '</td>' +
-        '<td data-label="Sighthound Advantage"><span class="adv-pill">✓ Recommended</span></td>';
-    tbody.appendChild(shRow);
-
-    competitors.forEach(function(comp) {
-        var tr = document.createElement('tr');
-        tr.innerHTML =
-            '<td data-label="Tool"><span class="tool-name">' + escapeHtml(comp.name) + '</span></td>' +
-            '<td data-label="Pricing Model">' + escapeHtml(comp.pricingModel) + '</td>' +
-            '<td data-label="Scales With">' + escapeHtml(comp.scalesWith) + '</td>' +
-            '<td data-label="Best For">' + escapeHtml(comp.bestFor) + '</td>' +
-            '<td data-label="Sighthound Advantage">' + escapeHtml(comp.advantage) + '</td>';
-        tbody.appendChild(tr);
-    });
+    renderPricingRecommendationCard(decision, scoredCandidates);
+    renderComparisonRows(scoredCandidates, decision.winner);
+    setComparisonEmptyMessage(scoredCandidates.length === 0);
 
     document.getElementById('outputDivider').style.display = 'block';
     var outputSection = document.getElementById('output-section');
@@ -1419,35 +2153,893 @@ function calculatePricing() {
 
     var resetBtn = document.getElementById('resetBtn');
     resetBtn.classList.add('visible');
+    if (options.scroll !== false) {
+        outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 
-    outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function calculatePricing() {
+    var selections = getPricingSelections();
+
+    if (!isPricingSelectionComplete(selections)) {
+        alert('Please fill in all six fields before calculating.');
+        return;
+    }
+
+    renderPricingResult(selections, { scroll: true });
+}
+
+function handlePricingSelectionChange() {
+    var selections = getPricingSelections();
+    renderPricingResult(selections, { scroll: false });
+}
+
+function initPricingCalculator() {
+    ['userCount', 'deploymentType', 'apiNeeded', 'pcIndustry', 'monthlyMinutes', 'monthlyJobs'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el || el.getAttribute('data-pricing-listener-attached') === 'true') { return; }
+        el.addEventListener('change', handlePricingSelectionChange);
+        el.setAttribute('data-pricing-listener-attached', 'true');
+    });
+
+    handlePricingSelectionChange();
 }
 
 function resetPricingCalc() {
-    ['userCount', 'deploymentType', 'apiNeeded', 'pcIndustry'].forEach(function(id) {
+    ['userCount', 'deploymentType', 'apiNeeded', 'pcIndustry', 'monthlyMinutes', 'monthlyJobs'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) { el.value = ''; }
     });
-
-    var outputSection = document.getElementById('output-section');
-    if (outputSection) {
-        outputSection.classList.remove('visible');
-        outputSection.style.display = 'none';
-    }
-
-    var divider = document.getElementById('outputDivider');
-    if (divider) { divider.style.display = 'none'; }
-
-    var resetBtn = document.getElementById('resetBtn');
-    if (resetBtn) { resetBtn.classList.remove('visible'); }
-
-    var tbody = document.getElementById('compTableBody');
-    if (tbody) { tbody.innerHTML = ''; }
+    clearPricingResult();
 
     var section = document.getElementById('pricing-calculator');
     if (section) { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 
+function enforcePricingAnalysisLinkTargets(root) {
+    var scope = root || document.getElementById('pricing');
+    if (!scope) { return; }
+
+    Array.prototype.forEach.call(scope.querySelectorAll('a'), function(link) {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+    });
+}
+
+function renderPricingTemplateSelection(selectId, outputId, templateAttribute, placeholderText) {
+    var select = document.getElementById(selectId);
+    var output = document.getElementById(outputId);
+    if (!select || !output) { return; }
+
+    var selectedValue = select.value;
+    if (!selectedValue) {
+        output.innerHTML = '<p class="pricing-dropdown-placeholder">' + escapeHtml(placeholderText) + '</p>';
+        return;
+    }
+
+    var template = document.querySelector('template[' + templateAttribute + '="' + selectedValue + '"]');
+    if (!template) {
+        output.innerHTML = '<p class="pricing-dropdown-placeholder">No pricing details are available for the selected item.</p>';
+        return;
+    }
+
+    output.innerHTML = template.innerHTML;
+    enforcePricingAnalysisLinkTargets(output);
+
+    if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch (e) {}
+    }
+}
+
+function setPricingCompareMessage(message, isWarning) {
+    var messageEl = document.getElementById('pricingCompareMessage');
+    if (!messageEl) { return; }
+    messageEl.textContent = message;
+    messageEl.classList.toggle('warning', !!isWarning);
+}
+
+function clearPricingComparisonResult() {
+    var output = document.getElementById('pricingComparisonResult');
+    if (output) { output.innerHTML = ''; }
+    var details = document.getElementById('pricingCompetitorDetails');
+    if (details) { details.style.display = ''; }
+}
+
+function getTemplateWrapper(templateAttribute, selectedValue) {
+    var template = document.querySelector('template[' + templateAttribute + '="' + selectedValue + '"]');
+    if (!template) { return null; }
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = template.innerHTML;
+    return wrapper;
+}
+
+function cleanPricingLabel(label) {
+    return (label || '')
+        .replace(/^[-–—\s]+/, '')
+        .replace(/:\s*$/, '')
+        .trim();
+}
+
+function cleanPricingValue(value) {
+    return (value || '')
+        .replace(/^[:\s–—-]+/, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function getPricingPanelName(panel) {
+    if (!panel) { return ''; }
+    var paragraphs = panel.querySelectorAll('p');
+    for (var i = 0; i < paragraphs.length; i += 1) {
+        var strong = paragraphs[i].querySelector('strong');
+        if (strong && cleanPricingLabel(strong.textContent) === 'Competitor Name') {
+            return cleanPricingValue(paragraphs[i].textContent.replace(strong.textContent, ''));
+        }
+    }
+    var heading = panel.querySelector('h4');
+    if (!heading) { return 'Selected Competitor'; }
+    return heading.textContent.replace(/^\s*\d+\.\s*/, '').trim();
+}
+
+function collectPricingComparisonFields(panel) {
+    var fields = {};
+    if (!panel) { return fields; }
+    var section = 'General';
+    Array.prototype.forEach.call(panel.children, function(child) {
+        var tagName = child.tagName ? child.tagName.toLowerCase() : '';
+        if (tagName === 'h5') {
+            section = child.textContent.trim();
+            return;
+        }
+        if (tagName !== 'p') { return; }
+        var strong = child.querySelector('strong');
+        if (!strong) { return; }
+        var label = cleanPricingLabel(strong.textContent);
+        if (label === 'Competitor Name') { return; }
+        var value = cleanPricingValue(child.textContent.replace(strong.textContent, ''));
+        fields[section + ' — ' + label] = {
+            value: value.toLowerCase(),
+            element: child
+        };
+    });
+    return fields;
+}
+
+function highlightPricingDifferences(leftPanel, rightPanel) {
+    var leftFields = collectPricingComparisonFields(leftPanel);
+    var rightFields = collectPricingComparisonFields(rightPanel);
+    var keys = {};
+    Object.keys(leftFields).forEach(function(key) { keys[key] = true; });
+    Object.keys(rightFields).forEach(function(key) { keys[key] = true; });
+
+    Object.keys(keys).forEach(function(key) {
+        if (!leftFields[key] || !rightFields[key]) { return; }
+        if (leftFields[key].value !== rightFields[key].value) {
+            leftFields[key].element.classList.add('pricing-difference');
+            rightFields[key].element.classList.add('pricing-difference');
+        }
+    });
+}
+
+function buildPricingComparisonPanel(selectedValue) {
+    var wrapper = getTemplateWrapper('data-pricing-template', selectedValue);
+    if (!wrapper) { return null; }
+    var panel = wrapper.querySelector('.pricing-dropdown-panel');
+    if (!panel) { return null; }
+    var name = getPricingPanelName(panel);
+    var originalHeading = panel.querySelector('h4');
+    if (originalHeading) { originalHeading.remove(); }
+    return {
+        name: name,
+        panel: panel
+    };
+}
+
+function comparePricingCompetitors() {
+    var firstSelect = document.getElementById('pricingCompetitorSelect');
+    var secondSelect = document.getElementById('pricingCompetitorCompareSelect');
+    var output = document.getElementById('pricingComparisonResult');
+    if (!firstSelect || !secondSelect || !output) { return; }
+
+    var firstValue = firstSelect.value;
+    var secondValue = secondSelect.value;
+    output.innerHTML = '';
+
+    if (!firstValue && !secondValue) {
+        setPricingCompareMessage('Select two competitors to compare.', true);
+        return;
+    }
+    if (firstValue && !secondValue) {
+        setPricingCompareMessage('Please select a second competitor to compare.', true);
+        return;
+    }
+    if (!firstValue && secondValue) {
+        setPricingCompareMessage('Please select a first competitor to compare.', true);
+        return;
+    }
+    if (firstValue === secondValue) {
+        setPricingCompareMessage('Please select two different competitors to compare.', true);
+        return;
+    }
+
+    var firstPanel = buildPricingComparisonPanel(firstValue);
+    var secondPanel = buildPricingComparisonPanel(secondValue);
+    if (!firstPanel || !secondPanel) {
+        setPricingCompareMessage('No pricing details are available for one of the selected competitors.', true);
+        return;
+    }
+
+    highlightPricingDifferences(firstPanel.panel, secondPanel.panel);
+
+    output.innerHTML =
+        '<div class="pricing-comparison-grid">' +
+            '<div class="pricing-comparison-column">' +
+                '<h4 class="pricing-compare-heading">' + escapeHtml(firstPanel.name) + '</h4>' +
+                firstPanel.panel.outerHTML +
+            '</div>' +
+            '<div class="pricing-comparison-column">' +
+                '<h4 class="pricing-compare-heading">' + escapeHtml(secondPanel.name) + '</h4>' +
+                secondPanel.panel.outerHTML +
+            '</div>' +
+        '</div>';
+
+    var details = document.getElementById('pricingCompetitorDetails');
+    if (details) { details.style.display = 'none'; }
+    setPricingCompareMessage('Comparison shown. Highlighted fields indicate differences between the selected competitors.', false);
+    enforcePricingAnalysisLinkTargets(output);
+
+    if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch (e) {}
+    }
+}
+
+var PRICING_SUMMARY_VIEW_STORAGE_KEY = 'redactorPricingSummaryView.v1';
+
+function updatePricingSummaryBodyHeight(force) {
+    var viewer = document.getElementById('pricingSummaryViewer');
+    var body = document.getElementById('pricingSummaryViewerBody');
+    if (!viewer || !body || body.hidden) { return; }
+    if (!force && viewer.classList.contains('collapsed')) { return; }
+    body.style.setProperty('--pricing-summary-body-height', body.scrollHeight + 'px');
+}
+
+function getPricingSummaryItems() {
+    return Array.prototype.map.call(document.querySelectorAll('template[data-summary-template]'), function(template) {
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = template.innerHTML;
+        var panel = wrapper.querySelector('.pricing-summary-panel');
+        var nameNode = panel ? panel.querySelector('h4') : null;
+        var fields = {};
+
+        if (panel) {
+            Array.prototype.forEach.call(panel.querySelectorAll('dl > div'), function(item) {
+                var term = item.querySelector('dt');
+                var detail = item.querySelector('dd');
+                if (!term || !detail) { return; }
+                fields[term.textContent.trim()] = {
+                    text: detail.textContent.trim(),
+                    html: detail.innerHTML
+                };
+            });
+        }
+
+        return {
+            id: template.getAttribute('data-summary-template'),
+            name: nameNode ? nameNode.textContent.trim() : 'Summary Item',
+            fields: fields
+        };
+    });
+}
+
+function renderPricingSummaryViews() {
+    var cardView = document.getElementById('pricingSummaryCardView');
+    var tableBody = document.getElementById('pricingSummaryTableBody');
+    if (!cardView || !tableBody) { return; }
+
+    var items = getPricingSummaryItems();
+    cardView.innerHTML = items.map(function(item) {
+        return (
+            '<article class="pricing-summary-card">' +
+                '<h5>' + escapeHtml(item.name) + '</h5>' +
+                '<dl>' +
+                    '<div><dt>Starting Price</dt><dd>' + escapeHtml((item.fields['Starting Price'] || {}).text || 'Not listed') + '</dd></div>' +
+                    '<div><dt>Billing Model</dt><dd>' + escapeHtml((item.fields['Billing Model'] || {}).text || 'Not listed') + '</dd></div>' +
+                    '<div><dt>Free Trial</dt><dd>' + escapeHtml((item.fields['Free Trial'] || {}).text || 'Not listed') + '</dd></div>' +
+                    '<div><dt>Best Source</dt><dd>' + ((item.fields['Best Source'] || {}).html || 'Not listed') + '</dd></div>' +
+                '</dl>' +
+            '</article>'
+        );
+    }).join('');
+
+    tableBody.innerHTML = items.map(function(item) {
+        return (
+            '<tr>' +
+                '<td data-label="Competitor">' + escapeHtml(item.name) + '</td>' +
+                '<td data-label="Starting Price">' + escapeHtml((item.fields['Starting Price'] || {}).text || 'Not listed') + '</td>' +
+                '<td data-label="Billing Model">' + escapeHtml((item.fields['Billing Model'] || {}).text || 'Not listed') + '</td>' +
+                '<td data-label="Free Trial">' + escapeHtml((item.fields['Free Trial'] || {}).text || 'Not listed') + '</td>' +
+                '<td data-label="Best Source">' + ((item.fields['Best Source'] || {}).html || 'Not listed') + '</td>' +
+            '</tr>'
+        );
+    }).join('');
+
+    enforcePricingAnalysisLinkTargets(cardView);
+    enforcePricingAnalysisLinkTargets(tableBody);
+    updatePricingSummaryBodyHeight();
+}
+
+function setPricingSummaryView(view) {
+    var nextView = view === 'table' ? 'table' : 'card';
+    var cardView = document.getElementById('pricingSummaryCardView');
+    var tableView = document.getElementById('pricingSummaryTableView');
+    var cardTab = document.getElementById('pricingSummaryCardTab');
+    var tableTab = document.getElementById('pricingSummaryTableTab');
+    if (!cardView || !tableView || !cardTab || !tableTab) { return; }
+
+    var isCard = nextView === 'card';
+    cardView.hidden = !isCard;
+    tableView.hidden = isCard;
+    cardView.setAttribute('aria-hidden', isCard ? 'false' : 'true');
+    tableView.setAttribute('aria-hidden', isCard ? 'true' : 'false');
+    cardTab.classList.toggle('active', isCard);
+    tableTab.classList.toggle('active', !isCard);
+    cardTab.setAttribute('aria-selected', isCard ? 'true' : 'false');
+    tableTab.setAttribute('aria-selected', isCard ? 'false' : 'true');
+    cardTab.setAttribute('aria-pressed', isCard ? 'true' : 'false');
+    tableTab.setAttribute('aria-pressed', isCard ? 'false' : 'true');
+
+    try {
+        window.sessionStorage.setItem(PRICING_SUMMARY_VIEW_STORAGE_KEY, nextView);
+    } catch (e) {}
+
+    updatePricingSummaryBodyHeight();
+}
+
+function togglePricingSummarySection() {
+    var viewer = document.getElementById('pricingSummaryViewer');
+    var toggle = document.getElementById('pricingSummaryCollapseToggle');
+    var label = document.getElementById('pricingSummaryCollapseLabel');
+    var body = document.getElementById('pricingSummaryViewerBody');
+    var icon = toggle ? toggle.querySelector('.pricing-summary-collapse-icon') : null;
+    if (!viewer || !toggle || !body) { return; }
+    var shouldCollapse = !viewer.classList.contains('collapsed');
+    if (shouldCollapse) {
+        updatePricingSummaryBodyHeight(true);
+        viewer.classList.add('collapsed');
+        toggle.setAttribute('aria-expanded', 'false');
+        body.setAttribute('aria-hidden', 'true');
+        body.setAttribute('inert', '');
+        if (label) { label.textContent = 'Expand'; }
+        if (icon) { icon.textContent = '⌃'; }
+        window.setTimeout(function() {
+            if (viewer.classList.contains('collapsed')) {
+                body.hidden = true;
+            }
+        }, 360);
+        return;
+    }
+
+    body.hidden = false;
+    body.removeAttribute('inert');
+    body.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    if (label) { label.textContent = 'Collapse'; }
+    if (icon) { icon.textContent = '⌄'; }
+    updatePricingSummaryBodyHeight(true);
+    window.requestAnimationFrame(function() {
+        viewer.classList.remove('collapsed');
+        updatePricingSummaryBodyHeight(true);
+    });
+}
+
+function handlePricingSummaryViewKey(event) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') { return; }
+    event.preventDefault();
+    var nextView = event.key === 'ArrowRight' ? 'table' : 'card';
+    setPricingSummaryView(nextView);
+    var target = document.getElementById(nextView === 'card' ? 'pricingSummaryCardTab' : 'pricingSummaryTableTab');
+    if (target) { target.focus(); }
+}
+
+function initPricingSummaryViewer() {
+    var viewer = document.getElementById('pricingSummaryViewer');
+    if (!viewer) { return; }
+
+    renderPricingSummaryViews();
+    viewer.classList.remove('collapsed');
+    var toggle = document.getElementById('pricingSummaryCollapseToggle');
+    var label = document.getElementById('pricingSummaryCollapseLabel');
+    var body = document.getElementById('pricingSummaryViewerBody');
+    var icon = toggle ? toggle.querySelector('.pricing-summary-collapse-icon') : null;
+    if (toggle) { toggle.setAttribute('aria-expanded', 'true'); }
+    if (label) { label.textContent = 'Collapse'; }
+    if (icon) { icon.textContent = '⌄'; }
+    if (body) {
+        body.hidden = false;
+        body.removeAttribute('inert');
+        body.setAttribute('aria-hidden', 'false');
+    }
+
+    ['pricingSummaryCardTab', 'pricingSummaryTableTab'].forEach(function(id) {
+        var tab = document.getElementById(id);
+        if (!tab || tab.getAttribute('data-summary-keydown-attached') === 'true') { return; }
+        tab.addEventListener('keydown', handlePricingSummaryViewKey);
+        tab.setAttribute('data-summary-keydown-attached', 'true');
+    });
+
+    var savedView = 'card';
+    try {
+        savedView = window.sessionStorage.getItem(PRICING_SUMMARY_VIEW_STORAGE_KEY) || 'card';
+    } catch (e) {}
+    setPricingSummaryView(savedView);
+    updatePricingSummaryBodyHeight(true);
+}
+
+function handlePricingCompetitorChange() {
+    renderPricingTemplateSelection(
+        'pricingCompetitorSelect',
+        'pricingCompetitorDetails',
+        'data-pricing-template',
+        'Select a competitor to view pricing details.'
+    );
+    clearPricingComparisonResult();
+
+    var firstSelect = document.getElementById('pricingCompetitorSelect');
+    var secondSelect = document.getElementById('pricingCompetitorCompareSelect');
+    var firstValue = firstSelect ? firstSelect.value : '';
+    var secondValue = secondSelect ? secondSelect.value : '';
+
+    if (firstValue && !secondValue) {
+        setPricingCompareMessage('Please select a second competitor to compare.', false);
+    } else if (!firstValue && secondValue) {
+        setPricingCompareMessage('Please select a first competitor to compare.', false);
+    } else if (firstValue && secondValue && firstValue === secondValue) {
+        setPricingCompareMessage('Please select two different competitors to compare.', true);
+    } else if (firstValue && secondValue) {
+        setPricingCompareMessage('Select Compare to view the two competitors side by side.', false);
+    } else {
+        setPricingCompareMessage('Select two competitors, then choose Compare to view pricing details side by side.', false);
+    }
+}
+
+function handlePricingSummaryChange() {
+    renderPricingTemplateSelection(
+        'pricingSummarySelect',
+        'pricingSummaryDetails',
+        'data-summary-template',
+        'Select a summary item to view pricing summary details.'
+    );
+}
+
+function initPricingAnalysisDropdowns() {
+    [
+        { id: 'pricingCompetitorSelect', handler: handlePricingCompetitorChange },
+        { id: 'pricingCompetitorCompareSelect', handler: handlePricingCompetitorChange },
+        { id: 'pricingSummarySelect', handler: handlePricingSummaryChange }
+    ].forEach(function(config) {
+        var el = document.getElementById(config.id);
+        if (!el || el.getAttribute('data-pricing-dropdown-listener-attached') === 'true') { return; }
+        el.addEventListener('change', config.handler);
+        el.setAttribute('data-pricing-dropdown-listener-attached', 'true');
+    });
+
+    enforcePricingAnalysisLinkTargets();
+    handlePricingCompetitorChange();
+    handlePricingSummaryChange();
+    initPricingSummaryViewer();
+}
+var FOIA_CONTRACT_EMPTY_MESSAGE = 'No verified public contract data found. Recommend manual FOIA search via USASpending.gov or relevant procurement portals.';
+var foiaContractView = 'card';
+var foiaContractState = {
+    source: 'usaspending',
+    sourceLabel: 'USASpending.gov',
+    records: [],
+    retrievalNote: '',
+    generatedAt: '',
+    error: '',
+    loading: false,
+    hasLoaded: false,
+    requestToken: 0
+};
+var FOIA_CONTRACT_TITLE_SHORTENED_VENDORS = {
+    'MINDPOINT GROUP LLC': true,
+    'THE BOEING COMPANY': true,
+    'HONEYWELL INTERNATIONAL INC': true
+};
+
+function getFoiaContractControls() {
+    return {
+        panel: document.getElementById('foiaContractPanel'),
+        body: document.getElementById('foiaContractPanelBody'),
+        toggle: document.getElementById('foiaContractCollapseToggle'),
+        collapseLabel: document.getElementById('foiaContractCollapseLabel'),
+        source: document.getElementById('foiaContractSourceSelect'),
+        search: document.getElementById('foiaContractSearch'),
+        category: document.getElementById('foiaContractCategoryFilter'),
+        summary: document.getElementById('foiaContractSummary'),
+        note: document.getElementById('foiaContractRetrievalNote'),
+        results: document.getElementById('foiaContractResults'),
+        count: document.getElementById('foiaContractCount'),
+        cardToggle: document.getElementById('foiaContractCardToggle'),
+        tableToggle: document.getElementById('foiaContractTableToggle')
+    };
+}
+
+function getFoiaContractInputValue(element) {
+    return element ? String(element.value || '').trim() : '';
+}
+
+function getFoiaSelectedSourceLabel(select) {
+    if (!select || !select.options || select.selectedIndex < 0) {
+        return 'Selected source';
+    }
+    return select.options[select.selectedIndex].textContent.trim();
+}
+
+function normalizeFoiaIndustrySegment(value) {
+    return value === '⚖️ Legal & Compliance Teams' ? '⚖️ Legal & Compliance' : String(value || '');
+}
+
+function normalizeFoiaVerificationStatus(value) {
+    return value === '✅ Verified' ? '✅ Verified' : '⚠️ Partial';
+}
+
+function getFoiaVerificationClass(value) {
+    return normalizeFoiaVerificationStatus(value) === '✅ Verified' ? 'verified' : 'partial';
+}
+
+function normalizeFoiaVendorName(value) {
+    return String(value || '').replace(/[.,]/g, '').replace(/\s+/g, ' ').trim().toUpperCase();
+}
+
+function shouldShortenFoiaContractTitle(record) {
+    return !!FOIA_CONTRACT_TITLE_SHORTENED_VENDORS[normalizeFoiaVendorName(record && record.vendorOrganizationName)];
+}
+
+function getFoiaSearchText(record) {
+    return [
+        record.vendorOrganizationName,
+        record.contractTitle,
+        normalizeFoiaIndustrySegment(record.industrySegment),
+        record.contractType,
+        record.awardAmountDisplay,
+        record.agencyDepartment,
+        record.contractStatus,
+        record.contractPeriod,
+        record.source,
+        record.sourceUrl,
+        record.description,
+        record.awardId,
+        normalizeFoiaVerificationStatus(record.verificationStatus)
+    ].join(' ').toLowerCase();
+}
+
+function getFoiaFilteredContracts() {
+    var controls = getFoiaContractControls();
+    var query = getFoiaContractInputValue(controls.search).toLowerCase();
+    var category = getFoiaContractInputValue(controls.category) || 'all';
+    return foiaContractState.records.filter(function(record) {
+        var industry = normalizeFoiaIndustrySegment(record.industrySegment);
+        var categoryMatch = category === 'all' || industry === category;
+        var queryMatch = !query || getFoiaSearchText(record).indexOf(query) !== -1;
+        return categoryMatch && queryMatch;
+    });
+}
+
+function truncateContractTitle(text, maxLines) {
+    if (!text) return text;
+    maxLines = maxLines || 3;
+    var lines = String(text).split(/\n/).slice(0, maxLines);
+    var truncated = lines.join('\n');
+    if (String(text).split(/\n/).length > maxLines) {
+        truncated += '...';
+    }
+    return truncated;
+}
+function renderFoiaContractTitle(record, emptyValue) {
+    var rawTitle = record && record.contractTitle ? record.contractTitle : '';
+    var displayTitle = rawTitle ? truncateContractTitle(rawTitle, 3) : (emptyValue || '—');
+    if (!shouldShortenFoiaContractTitle(record)) {
+        return escapeHtml(displayTitle);
+    }
+    return '<span class="foia-contract-title-short" title="' + escapeHtml(rawTitle || displayTitle) + '">' + escapeHtml(displayTitle) + '</span>';
+}
+
+function renderFoiaField(label, value, isHtml) {
+    var displayValue = value;
+    if (!isHtml && label === 'Contract Title' && value) {
+        displayValue = truncateContractTitle(value, 3);
+    }
+    return '<div><dt>' + escapeHtml(label) + '</dt><dd>' + (isHtml ? displayValue : escapeHtml(displayValue || 'Not publicly listed')) + '</dd></div>';
+}
+
+function renderFoiaSourceLink(record, label) {
+    if (!record.sourceUrl) {
+        return escapeHtml(label || record.source || 'Not publicly listed');
+    }
+    return '<a href="' + escapeHtml(record.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(label || record.source || 'Open source') + '</a>';
+}
+
+function renderFoiaContractCard(record) {
+    var industry = normalizeFoiaIndustrySegment(record.industrySegment);
+    var verification = normalizeFoiaVerificationStatus(record.verificationStatus);
+    var verificationClass = getFoiaVerificationClass(record.verificationStatus);
+    var html = '<article class="resource-card foia-contract-card">';
+    html += '<div class="resource-card-top">';
+    html += '<span class="resource-pill foia-industry-pill">' + escapeHtml(industry || 'Industry not listed') + '</span>';
+    html += '<span class="foia-contract-status">' + escapeHtml(record.contractStatus || 'Status not listed') + '</span>';
+    html += '</div>';
+    html += '<h4>' + escapeHtml(record.vendorOrganizationName || 'Vendor / Organization not listed') + '</h4>';
+    html += '<dl class="foia-contract-field-list">';
+    html += renderFoiaField('Vendor / Organization Name', record.vendorOrganizationName);
+    html += renderFoiaField('Contract Title', renderFoiaContractTitle(record, 'Not publicly listed'), true);
+    html += renderFoiaField('Industry Tag', industry);
+    html += renderFoiaField('Award Amount', record.awardAmountDisplay);
+    html += renderFoiaField('Agency', record.agencyDepartment);
+    html += renderFoiaField('Contract Status', record.contractStatus);
+    html += renderFoiaField('Contract Period', record.contractPeriod);
+    html += renderFoiaField('Source', record.source);
+    html += renderFoiaField('Source Link', renderFoiaSourceLink(record, 'Open public record'), true);
+    html += renderFoiaField('Verification Badge', '<span class="foia-verification ' + verificationClass + '">' + escapeHtml(verification) + '</span>', true);
+    html += '</dl>';
+    html += '</article>';
+    return html;
+}
+
+function renderFoiaContractCards(records) {
+    return '<div class="resource-cards-grid foia-contract-card-grid">' + records.map(renderFoiaContractCard).join('') + '</div>';
+}
+
+function renderFoiaContractTable(records) {
+    var html = '<div class="resource-table-wrapper foia-contract-table-wrapper"><table class="resource-table foia-contract-table"><thead><tr>';
+    [
+        'Vendor / Organization',
+        'Contract Title',
+        'Industry',
+        'Contract Type',
+        'Award Amount',
+        'Agency',
+        'Status',
+        'Contract Period',
+        'Source',
+        'Verification'
+    ].forEach(function(label) {
+        html += '<th scope="col">' + escapeHtml(label) + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    records.forEach(function(record) {
+        var industry = normalizeFoiaIndustrySegment(record.industrySegment);
+        var verification = normalizeFoiaVerificationStatus(record.verificationStatus);
+        var verificationClass = getFoiaVerificationClass(record.verificationStatus);
+        html += '<tr>';
+        html += '<td data-label="Vendor / Organization">' + escapeHtml(record.vendorOrganizationName || '—') + '</td>';
+        html += '<td data-label="Contract Title">' + renderFoiaContractTitle(record, '—') + '</td>';
+        html += '<td data-label="Industry">' + escapeHtml(industry || '—') + '</td>';
+        html += '<td data-label="Contract Type">' + escapeHtml(record.contractType || '—') + '</td>';
+        html += '<td data-label="Award Amount">' + escapeHtml(record.awardAmountDisplay || '—') + '</td>';
+        html += '<td data-label="Agency">' + escapeHtml(record.agencyDepartment || '—') + '</td>';
+        html += '<td data-label="Status">' + escapeHtml(record.contractStatus || '—') + '</td>';
+        html += '<td data-label="Contract Period">' + escapeHtml(record.contractPeriod || '—') + '</td>';
+        html += '<td data-label="Source">' + renderFoiaSourceLink(record, record.source || 'Open source') + '</td>';
+        html += '<td data-label="Verification"><span class="foia-verification ' + verificationClass + '">' + escapeHtml(verification) + '</span></td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+}
+
+function updateFoiaContractBodyHeight(force) {
+    var controls = getFoiaContractControls();
+    if (!controls.panel || !controls.body || controls.body.hidden) { return; }
+    if (!force && controls.panel.classList.contains('collapsed')) { return; }
+    controls.body.style.setProperty('--foia-contract-body-height', controls.body.scrollHeight + 'px');
+}
+
+function renderFoiaContractData() {
+    var controls = getFoiaContractControls();
+    if (!controls.results) { return; }
+
+    if (!foiaContractState.hasLoaded && !foiaContractState.loading) {
+        if (controls.count) { controls.count.textContent = '0'; }
+        if (controls.summary) { controls.summary.textContent = 'Expand this section to load verified public contract data.'; }
+        if (controls.note) { controls.note.textContent = ''; }
+        controls.results.innerHTML = '<div class="foia-contract-empty">Expand this section to load verified public contract data.</div>';
+        return;
+    }
+
+    var filtered = getFoiaFilteredContracts();
+    var total = foiaContractState.records.length;
+    var sourceLabel = foiaContractState.sourceLabel || getFoiaSelectedSourceLabel(controls.source);
+    if (controls.count) { controls.count.textContent = String(filtered.length); }
+    if (controls.note) { controls.note.textContent = foiaContractState.retrievalNote || ''; }
+
+    if (foiaContractState.loading) {
+        if (controls.summary) {
+            controls.summary.textContent = 'Retrieving verified public contract data from ' + sourceLabel + '.';
+        }
+        controls.results.innerHTML = '<div class="foia-contract-loading">Loading verified public contract data...</div>';
+        updateFoiaContractBodyHeight(true);
+        return;
+    }
+
+    if (foiaContractState.error) {
+        if (controls.summary) {
+            controls.summary.textContent = 'Unable to retrieve verified public contract data from ' + sourceLabel + '.';
+        }
+        controls.results.innerHTML = '<div class="foia-contract-empty"><strong>' + escapeHtml(FOIA_CONTRACT_EMPTY_MESSAGE) + '</strong><p>' + escapeHtml(foiaContractState.error) + '</p></div>';
+        updateFoiaContractBodyHeight(true);
+        return;
+    }
+
+    if (!total || !filtered.length) {
+        if (controls.summary) {
+            controls.summary.textContent = total ? 'No records match the selected filters for ' + sourceLabel + '.' : 'No verified public contract data found for ' + sourceLabel + '.';
+        }
+        controls.results.innerHTML = '<div class="foia-contract-empty">' + escapeHtml(FOIA_CONTRACT_EMPTY_MESSAGE) + '</div>';
+        updateFoiaContractBodyHeight(true);
+        return;
+    }
+
+    if (controls.summary) {
+        controls.summary.textContent = 'Showing ' + filtered.length + ' of ' + total + ' verified public contract records from ' + sourceLabel + '.';
+    }
+    controls.results.innerHTML = foiaContractView === 'table' ? renderFoiaContractTable(filtered) : renderFoiaContractCards(filtered);
+    enforcePricingAnalysisLinkTargets(controls.results);
+    refreshFoiaContractViewButtons();
+    updateFoiaContractBodyHeight(true);
+    if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch (e) {}
+    }
+}
+
+function loadFoiaContractData() {
+    var controls = getFoiaContractControls();
+    if (!controls.source || !controls.results) { return; }
+    var source = controls.source.value || 'usaspending';
+    var token = foiaContractState.requestToken + 1;
+    foiaContractState.requestToken = token;
+    foiaContractState.source = source;
+    foiaContractState.sourceLabel = getFoiaSelectedSourceLabel(controls.source);
+    foiaContractState.records = [];
+    foiaContractState.error = '';
+    foiaContractState.loading = true;
+    foiaContractState.hasLoaded = true;
+    foiaContractState.retrievalNote = '';
+    renderFoiaContractData();
+
+    if (typeof fetch !== 'function') {
+        foiaContractState.loading = false;
+        foiaContractState.error = 'This browser cannot retrieve the public contract feed.';
+        renderFoiaContractData();
+        return;
+    }
+
+    fetch('/api/public-sector-contracts?source=' + encodeURIComponent(source), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+    })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Public contract feed returned status ' + response.status + '.');
+            }
+            return response.json();
+        })
+        .then(function(payload) {
+            if (token !== foiaContractState.requestToken) { return; }
+            foiaContractState.loading = false;
+            foiaContractState.sourceLabel = payload.sourceLabel || foiaContractState.sourceLabel;
+            foiaContractState.retrievalNote = payload.retrievalNote || '';
+            foiaContractState.generatedAt = payload.generatedAt || '';
+            foiaContractState.records = Array.isArray(payload.records) ? payload.records : [];
+            foiaContractState.error = payload.error || '';
+            renderFoiaContractData();
+        })
+        .catch(function(error) {
+            if (token !== foiaContractState.requestToken) { return; }
+            foiaContractState.loading = false;
+            foiaContractState.records = [];
+            foiaContractState.error = error && error.message ? error.message : 'Unable to retrieve verified public contract data.';
+            renderFoiaContractData();
+        });
+}
+
+function handleFoiaContractSourceChange() {
+    loadFoiaContractData();
+}
+
+function refreshFoiaContractViewButtons() {
+    var controls = getFoiaContractControls();
+    var isCard = foiaContractView !== 'table';
+    if (controls.cardToggle) {
+        controls.cardToggle.classList.toggle('active', isCard);
+        controls.cardToggle.setAttribute('aria-pressed', isCard ? 'true' : 'false');
+    }
+    if (controls.tableToggle) {
+        controls.tableToggle.classList.toggle('active', !isCard);
+        controls.tableToggle.setAttribute('aria-pressed', isCard ? 'false' : 'true');
+    }
+}
+
+function setFoiaContractView(view) {
+    foiaContractView = view === 'table' ? 'table' : 'card';
+    refreshFoiaContractViewButtons();
+    renderFoiaContractData();
+}
+
+function resetFoiaContractFilters() {
+    var controls = getFoiaContractControls();
+    if (controls.search) { controls.search.value = ''; }
+    if (controls.category) { controls.category.value = 'all'; }
+    foiaContractView = 'card';
+    refreshFoiaContractViewButtons();
+    if (controls.source && controls.source.value !== 'usaspending') {
+        controls.source.value = 'usaspending';
+        loadFoiaContractData();
+        return;
+    }
+    if (!foiaContractState.hasLoaded) {
+        loadFoiaContractData();
+        return;
+    }
+    renderFoiaContractData();
+}
+
+function toggleFoiaContractSection() {
+    var controls = getFoiaContractControls();
+    if (!controls.panel || !controls.body || !controls.toggle) { return; }
+    var shouldCollapse = !controls.panel.classList.contains('collapsed');
+    var icon = controls.toggle.querySelector('.pricing-summary-collapse-icon');
+    if (shouldCollapse) {
+        updateFoiaContractBodyHeight(true);
+        controls.panel.classList.add('collapsed');
+        controls.toggle.setAttribute('aria-expanded', 'false');
+        controls.body.setAttribute('aria-hidden', 'true');
+        controls.body.setAttribute('inert', '');
+        if (controls.collapseLabel) { controls.collapseLabel.textContent = 'Expand'; }
+        if (icon) { icon.textContent = '⌃'; }
+        window.setTimeout(function() {
+            if (controls.panel.classList.contains('collapsed')) {
+                controls.body.hidden = true;
+            }
+        }, 360);
+        return;
+    }
+
+    controls.body.hidden = false;
+    controls.body.removeAttribute('inert');
+    controls.body.setAttribute('aria-hidden', 'false');
+    controls.toggle.setAttribute('aria-expanded', 'true');
+    if (controls.collapseLabel) { controls.collapseLabel.textContent = 'Collapse'; }
+    if (icon) { icon.textContent = '⌄'; }
+    updateFoiaContractBodyHeight(true);
+    window.requestAnimationFrame(function() {
+        controls.panel.classList.remove('collapsed');
+        updateFoiaContractBodyHeight(true);
+        if (!foiaContractState.hasLoaded && !foiaContractState.loading) {
+            loadFoiaContractData();
+        }
+    });
+}
+
+function initFoiaContractPricing() {
+    var controls = getFoiaContractControls();
+    if (!controls.panel || !controls.source) { return; }
+    if (controls.source.getAttribute('data-foia-contract-ready') === 'true') {
+        renderFoiaContractData();
+        return;
+    }
+    controls.source.setAttribute('data-foia-contract-ready', 'true');
+    controls.panel.classList.add('collapsed');
+    if (controls.body) {
+        controls.body.hidden = true;
+        controls.body.setAttribute('aria-hidden', 'true');
+        controls.body.setAttribute('inert', '');
+    }
+    if (controls.toggle) { controls.toggle.setAttribute('aria-expanded', 'false'); }
+    if (controls.collapseLabel) { controls.collapseLabel.textContent = 'Expand'; }
+    refreshFoiaContractViewButtons();
+    renderFoiaContractData();
+}
 var MARKETING_RESOURCE_STORAGE_KEY = 'redactorMarketingResources.v1';
 var marketingResourceView = 'card';
 var marketingResources = [];
@@ -1512,8 +3104,7 @@ var marketingResourceCategories = [
     { value: 'datasheets', label: 'Datasheets / PDFs', icon: 'file-text' },
     { value: 'videos', label: 'YouTube Demo Videos', icon: 'play-circle' },
     { value: 'social', label: 'Social Media Links', icon: 'share-2' },
-    { value: 'webinar', label: 'Webinar', icon: 'presentation' },
-    { value: 'sales-assets', label: 'Sales Assets', icon: 'handshake' }
+    { value: 'webinar', label: 'Webinar', icon: 'presentation' }
 ];
 var marketingAssetLabels = {
     webpage: 'Website / Landing Page',
@@ -1566,7 +3157,7 @@ var BLOG_SEED_RESOURCES = [
     { id: "seed-blog-video-redaction-for-emergency-response-centers", title: "Why Video Redaction is Crucial for Modern Emergency Response Centers", url: "https://www.redactor.com/blog/video-redaction-for-emergency-response-centers", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Discover the importance of video redaction in emergency response centers. Learn how Sighthound Redactor's AI-powered software enhances privacy protection, compliance, and public trust. Try our free trial today!", description: "Discover the importance of video redaction in emergency response centers. Learn how Sighthound Redactor's AI-powered software enhances privacy protection, compliance, and public trust. Try our free trial today!", publishDate: "May 15, 2024", readTime: "8 min read", source: 'seed' },
     { id: "seed-blog-how-to-manage-pii-in-images-gdpr-privacy-laws-compliance", title: "How to Manage PII in Images for GDPR and Privacy Laws Compliance", url: "https://www.redactor.com/blog/how-to-manage-pii-in-images-gdpr-privacy-laws-compliance", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Learn how to manage Personally Identifiable Information in images and videos to comply with GDPR and privacy laws. Discover the importance of redaction software, AI-powered features, and automated tools to protect sensitive data and avoid hefty fines.", description: "Learn how to manage Personally Identifiable Information in images and videos to comply with GDPR and privacy laws. Discover the importance of redaction software, AI-powered features, and automated tools to protect sensitive data and avoid hefty fines.", publishDate: "May 1, 2024", readTime: "6 min read", source: 'seed' },
     { id: "seed-blog-on-premise-vs-cloud-base-redaction", title: "Understanding On-Premise vs. Cloud Base Redaction", url: "https://www.redactor.com/blog/on-premise-vs-cloud-base-redaction", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Explore the differences between on-premise and cloud-based redaction solutions. Learn about their advantages, drawbacks, and how to choose the right one for your organization's data security and compliance needs. Contact Sighthound for a personalized consultation and demo.", description: "Explore the differences between on-premise and cloud-based redaction solutions. Learn about their advantages, drawbacks, and how to choose the right one for your organization's data security and compliance needs. Contact Sighthound for a personalized consultation and demo.", publishDate: "April 17, 2024", readTime: "6 min read", source: 'seed' },
-    { id: "seed-blog-privacy-compliance-image-audio-redaction", title: "[On-Demand Webinar] Privacy Compliance Beyond Words: Image and Audio Redaction", url: "https://www.redactor.com/blog/privacy-compliance-image-audio-redaction", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Get insights from exclusive Redactor webinar exploring cutting-edge image and audio redaction techniques to ensure privacy compliance. Discover how Sighthound’s advanced tools can transform your data protection strategy and keep you ahead of regulatory curves.", description: "Get insights from exclusive Redactor webinar exploring cutting-edge image and audio redaction techniques to ensure privacy compliance. Discover how Sighthound’s advanced tools can transform your data protection strategy and keep you ahead of regulatory curves.", publishDate: "April 16, 2024", readTime: "2 min read", source: 'seed' },
+    { id: "seed-blog-privacy-compliance-image-audio-redaction", title: "[On-Demand Webinar] Privacy Compliance Beyond Words: Image and Audio Redaction", url: "https://www.redactor.com/blog/privacy-compliance-image-audio-redaction", category: 'webinar', assetType: 'webinar', funnel: 'TOFU', tag: 'Webinar', notes: "Get insights from exclusive Redactor webinar exploring cutting-edge image and audio redaction techniques to ensure privacy compliance. Discover how Sighthound’s advanced tools can transform your data protection strategy and keep you ahead of regulatory curves.", description: "Get insights from exclusive Redactor webinar exploring cutting-edge image and audio redaction techniques to ensure privacy compliance. Discover how Sighthound’s advanced tools can transform your data protection strategy and keep you ahead of regulatory curves.", publishDate: "April 16, 2024", readTime: "2 min read", source: 'seed', isWebinar: true },
     { id: "seed-blog-protecting-privacy-digital-age-tips", title: "Digital Privacy: Top Tools & Tips to Protect Yourself Online", url: "https://www.redactor.com/blog/protecting-privacy-digital-age-tips", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Worried about your digital footprint? Get practical privacy tips and explore AI-powered redaction tools to protect your personal information.", description: "Worried about your digital footprint? Get practical privacy tips and explore AI-powered redaction tools to protect your personal information.", publishDate: "March 20, 2024", readTime: "6 min read", source: 'seed' },
     { id: "seed-blog-journalism-redaction-protecting-identities-newsroom", title: "Redaction in Journalism: Protecting Identities in the Newsroom", url: "https://www.redactor.com/blog/journalism-redaction-protecting-identities-newsroom", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Explore the crucial role of redaction in journalism with our comprehensive guide. Learn how tools like Sighthound Redactor safeguard identities, comply with privacy laws and uphold the integrity of investigative reporting.", description: "Explore the crucial role of redaction in journalism with our comprehensive guide. Learn how tools like Sighthound Redactor safeguard identities, comply with privacy laws and uphold the integrity of investigative reporting.", publishDate: "March 6, 2024", readTime: "9 min read", source: 'seed' },
     { id: "seed-blog-gdpr-compliance-image-video-mistakes-to-avoid", title: "GDPR Fines: Top 5 Image and Video Compliance Mistakes to Avoid", url: "https://www.redactor.com/blog/gdpr-compliance-image-video-mistakes-to-avoid", category: 'blog', assetType: 'blog', funnel: 'TOFU', tag: 'Blog', notes: "Discover the top 5 GDPR compliance mistakes in handling image and video data and learn how to avoid hefty fines. Our expert guide delves into crucial areas like consent, data anonymization, security, and more. Stay GDPR-compliant with Sighthound Redactor.", description: "Discover the top 5 GDPR compliance mistakes in handling image and video data and learn how to avoid hefty fines. Our expert guide delves into crucial areas like consent, data anonymization, security, and more. Stay GDPR-compliant with Sighthound Redactor.", publishDate: "February 21, 2024", readTime: "6 min read", source: 'seed' },
@@ -1633,8 +3224,8 @@ var MARKETING_SEED_RESOURCES = [
     { id: 'seed-redactor-docs', title: 'Redactor Documentation', url: 'https://docs.redactor.com/', category: 'website', assetType: 'webpage', funnel: 'MOFU', tag: 'Docs', notes: 'Product documentation and system requirements.', source: 'seed' },
     { id: 'seed-redactor-faq', title: 'Redactor FAQ', url: 'https://www.redactor.com/faq', category: 'website', assetType: 'webpage', funnel: 'MOFU', tag: 'FAQ', notes: 'Frequently asked sales and support questions.', source: 'seed' },
     { id: 'seed-redactor-brochure', title: 'Redactor Brochure (Powered by Sighthound)', url: 'https://cdn.prod.website-files.com/61815a2f8dc169fcb7758fa8/6819111318fd95714ab6d51e_Faltech.ai%20Redactor%20Brochure%20%5BPowered%20by%20Sighthound%5D%20(1).pdf', category: 'datasheets', assetType: 'pdf', funnel: 'BOFU', tag: 'Datasheet', notes: 'Public Redactor brochure PDF linked from the homepage.', source: 'seed' },
-].concat(BLOG_SEED_RESOURCES, [
     { id: 'seed-webinar-whats-new-in-redactor-v7', title: 'What’s New in Redactor V7', url: 'https://www.redactor.com/blog/whats-new-in-redactor-v7', category: 'webinar', assetType: 'webinar', funnel: 'TOFU', tag: 'Webinar', notes: 'Product update resource for the Redactor V7 release, surfaced in the webinar category for sales and marketing access.', publishDate: 'January 21, 2026', readTime: '8 min read', source: 'seed', isWebinar: true },
+].concat(BLOG_SEED_RESOURCES, [
     { id: 'seed-case-surveillance-discovery', title: 'Case Study: Surveillance Discovery', url: 'https://www.redactor.com/post/case-study-surveillance-discovery', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Social proof', notes: 'Customer proof point for high-accuracy redaction.', source: 'seed' },
     { id: 'seed-case-bodycam', title: 'Bodycam Footage Redaction Case Study', url: 'https://www.redactor.com/blog/a-bodycam-footage-redaction-solution-customizable-for-a-range-of-uses', category: 'case-studies', assetType: 'case-study', funnel: 'BOFU', tag: 'Law enforcement', notes: 'Bodycam and evidence redaction customer story.', source: 'seed' },
     { id: 'seed-youtube-7lQzauchZiQ', title: "How to Keep One Person Visible While Redacting Others | Redactor Tutorial", url: "https://www.youtube.com/watch?v=7lQzauchZiQ", category: 'videos', assetType: 'video', funnel: 'MOFU', tag: 'YouTube', notes: 'Fetched from the Sighthound YouTube channel videos page.', source: 'seed', youtubeId: "7lQzauchZiQ", thumbnail: "https://i.ytimg.com/vi/7lQzauchZiQ/hqdefault.jpg", publishDate: "Apr 22, 2026", viewCount: "11 views", duration: "1:47" },
@@ -1672,10 +3263,7 @@ var MARKETING_SEED_RESOURCES = [
     { id: 'seed-linkedin-showcase', title: 'Sighthound Redactor LinkedIn Showcase', url: 'https://www.linkedin.com/showcase/sighthound-redactor/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Redactor-specific LinkedIn showcase page.', source: 'seed' },
     { id: 'seed-linkedin-company', title: 'Sighthound LinkedIn Company Page', url: 'https://www.linkedin.com/company/sighthound-inc-/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound company LinkedIn page.', source: 'seed' },
     { id: 'seed-facebook', title: 'Sighthound Facebook', url: 'https://www.facebook.com/sighthoundinc/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Facebook presence.', source: 'seed' },
-    { id: 'seed-instagram', title: 'Sighthound Instagram', url: 'https://www.instagram.com/sighthoundcv/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Instagram presence.', source: 'seed' },
-    { id: 'seed-schedule-demo', title: 'Schedule a Live Demo', url: 'https://www.redactor.com/schedule-demo', category: 'sales-assets', assetType: 'sales', funnel: 'BOFU', tag: 'Conversion', notes: 'Primary demo conversion page.', source: 'seed' },
-    { id: 'seed-contact-sales', title: 'Contact Sales', url: 'https://www.redactor.com/contact-us', category: 'sales-assets', assetType: 'sales', funnel: 'BOFU', tag: 'Conversion', notes: 'Sales contact page.', source: 'seed' },
-    { id: 'seed-partner-program', title: 'Partner Program Page', url: 'https://www.redactor.com/partners', category: 'sales-assets', assetType: 'sales', funnel: 'BOFU', tag: 'Sales / Channel Enablement', notes: 'Official partner program page for Sighthound Redactor. Covers three partnership tiers — Referral, Reseller, and OEM — with onboarding steps, sales support resources, and a partner enquiry form. Includes testimonials from The Heritage School, Consilio, and Transport Malta.', source: 'seed', icon: 'handshake', highlights: ['Partner Types: Referral, Reseller, OEM', 'Benefits: Revenue growth, new customer acquisition, customer retention, compliance enablement', 'Support offered: Pre-sales to post-sales, sales training, brochures, technical documentation', 'Contact CTA: "Become a Partner" form on the page'] }
+    { id: 'seed-instagram', title: 'Sighthound Instagram', url: 'https://www.instagram.com/sighthoundcv/', category: 'social', assetType: 'social', funnel: 'TOFU', tag: 'Social', notes: 'Sighthound Instagram presence.', source: 'seed' }
 ]);
 
 function getMarketingCategory(value) {
@@ -2031,8 +3619,9 @@ function inferMarketingAssetType(resource) {
 
 function sanitizeMarketingResource(resource) {
     if (!resource) { return null; }
+    if (resource.category === 'sales-assets') { return null; }
     var rawTitle = String(resource.title || '').trim();
-    var titleLimit = resource.category === 'blog' ? 180 : (resource.category === 'videos' || resource.youtubeId ? 160 : 80);
+    var titleLimit = resource.category === 'blog' || resource.category === 'webinar' ? 180 : (resource.category === 'videos' || resource.youtubeId ? 160 : 80);
     var title = rawTitle.slice(0, titleLimit);
     var url = String(resource.url || '').trim();
     if (!title || !url) { return null; }
@@ -2447,6 +4036,577 @@ function initMarketingResources() {
     handleMarketingResourceModeChange();
     renderMarketingResources();
 }
+
+var GLOBAL_SEARCH_MIN_LENGTH = 2;
+var globalSearchState = {
+    index: [],
+    results: [],
+    activeResultIndex: -1,
+    observer: null,
+    rebuildTimer: null,
+    elementIdCounter: 0,
+    highlightedElement: null,
+    highlightTimer: null,
+    query: ''
+};
+
+function normalizeGlobalSearchText(text) {
+    return String(text || '').replace(/\s+/g, ' ').trim();
+}
+
+function getGlobalSearchRoot() {
+    return document.getElementById('redactor-root') || document.querySelector('.container') || document.body;
+}
+
+function getGlobalSearchUi() {
+    return {
+        root: document.querySelector('.global-search'),
+        input: document.getElementById('globalToolSearchInput'),
+        clear: document.getElementById('globalSearchClear'),
+        count: document.getElementById('globalSearchCount'),
+        panel: document.getElementById('globalSearchResults')
+    };
+}
+
+function setGlobalSearchPanelVisible(isVisible) {
+    var ui = getGlobalSearchUi();
+    if (ui.panel) { ui.panel.hidden = !isVisible; }
+    if (ui.input) { ui.input.setAttribute('aria-expanded', isVisible ? 'true' : 'false'); }
+}
+
+function shouldIgnoreGlobalSearchElement(element) {
+    if (!element) { return true; }
+    if (element.closest('.global-search')) { return true; }
+    if (element.closest('script, style, noscript, svg')) { return true; }
+    return false;
+}
+
+function getGlobalSearchTextContainer(textNode) {
+    var parent = textNode && textNode.parentElement;
+    if (!parent || shouldIgnoreGlobalSearchElement(parent)) { return null; }
+    var selector = [
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'p', 'li', 'td', 'th', 'dt', 'dd',
+        'button', 'label', 'option', 'a', 'summary',
+        '.meta-info span',
+        '.comparison-feature',
+        '.strength-box',
+        '.weakness-box',
+        '.version-meta',
+        '.object-categories-label',
+        '.object-categories-details',
+        '.resource-pill',
+        '.feature-pill',
+        '.tier-badge',
+        '.tier-name',
+        '.tier-price',
+        '.pricing-recommendation-card',
+        '.resource-empty'
+    ].join(',');
+    var container = parent.closest(selector) || parent;
+    if (shouldIgnoreGlobalSearchElement(container)) { return null; }
+    return container;
+}
+
+function getGlobalSearchElementId(element) {
+    if (!element.__globalSearchElementId) {
+        globalSearchState.elementIdCounter += 1;
+        element.__globalSearchElementId = 'global-search-element-' + globalSearchState.elementIdCounter;
+    }
+    return element.__globalSearchElementId;
+}
+
+function getGlobalSearchSectionMeta(element) {
+    var section = element ? element.closest('.section') : null;
+    if (section) {
+        var sectionHeading = section.querySelector('h2');
+        var sections = document.querySelectorAll('.section');
+        return {
+            id: section.id || getGlobalSearchElementId(section),
+            label: normalizeGlobalSearchText(sectionHeading ? sectionHeading.textContent : section.id || 'Section'),
+            order: Array.prototype.indexOf.call(sections, section) + 1
+        };
+    }
+    if (element && element.closest('header')) {
+        return {
+            id: 'tool-header-navigation',
+            label: 'Tool Header & Navigation',
+            order: 0
+        };
+    }
+    return {
+        id: 'all-other-ui-text',
+        label: 'All Other UI Text',
+        order: 999
+    };
+}
+
+function isGlobalSearchNameLike(element) {
+    if (!element || !element.matches) { return false; }
+    return element.matches([
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'th', 'dt', 'option', 'button', 'label',
+        '.nav-tab',
+        '.tier-name',
+        '.tier-price',
+        '.pricing-summary-card h5',
+        '.resource-card h4'
+    ].join(','));
+}
+
+function buildGlobalSearchIndex() {
+    var root = getGlobalSearchRoot();
+    var entries = [];
+    var seen = {};
+    var domOrder = 0;
+    if (!root || typeof document.createTreeWalker !== 'function') {
+        globalSearchState.index = entries;
+        return entries;
+    }
+
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(node) {
+            var text = normalizeGlobalSearchText(node.nodeValue);
+            if (!text) { return NodeFilter.FILTER_REJECT; }
+            return shouldIgnoreGlobalSearchElement(node.parentElement) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        }
+    });
+    var node = walker.nextNode();
+    while (node) {
+        var element = getGlobalSearchTextContainer(node);
+        if (element) {
+            var text = normalizeGlobalSearchText(element.textContent);
+            if (text) {
+                var elementId = getGlobalSearchElementId(element);
+                var key = elementId + '|' + text;
+                if (!seen[key]) {
+                    var sectionMeta = getGlobalSearchSectionMeta(element);
+                    entries.push({
+                        element: element,
+                        text: text,
+                        lowerText: text.toLowerCase(),
+                        sectionId: sectionMeta.id,
+                        sectionLabel: sectionMeta.label,
+                        sectionOrder: sectionMeta.order,
+                        domOrder: domOrder,
+                        isNameLike: isGlobalSearchNameLike(element)
+                    });
+                    domOrder += 1;
+                    seen[key] = true;
+                }
+            }
+        }
+        node = walker.nextNode();
+    }
+    globalSearchState.index = entries;
+    return entries;
+}
+
+function getGlobalSearchRank(entry, query, matchIndex) {
+    if (entry.lowerText === query) { return 0; }
+    if (entry.isNameLike && entry.lowerText.indexOf(query) !== -1) { return 1; }
+    if (matchIndex === 0) { return 2; }
+    var previousChar = entry.lowerText.charAt(matchIndex - 1);
+    if (!previousChar || /[^a-z0-9]/.test(previousChar)) { return 2; }
+    return 3;
+}
+
+function searchGlobalIndex(query) {
+    var normalizedQuery = normalizeGlobalSearchText(query).toLowerCase();
+    var results = [];
+    globalSearchState.index.forEach(function(entry) {
+        var matchIndex = entry.lowerText.indexOf(normalizedQuery);
+        if (matchIndex === -1) { return; }
+        results.push({
+            entry: entry,
+            matchIndex: matchIndex,
+            rank: getGlobalSearchRank(entry, normalizedQuery, matchIndex)
+        });
+    });
+    results.sort(function(a, b) {
+        if (a.rank !== b.rank) { return a.rank - b.rank; }
+        if (a.entry.sectionOrder !== b.entry.sectionOrder) { return a.entry.sectionOrder - b.entry.sectionOrder; }
+        return a.entry.domOrder - b.entry.domOrder;
+    });
+    return results;
+}
+
+function getGlobalSearchSectionCount(results) {
+    var sections = {};
+    results.forEach(function(result) {
+        sections[result.entry.sectionId] = true;
+    });
+    return Object.keys(sections).length;
+}
+
+function getGlobalSearchResultTitle(entry) {
+    var element = entry.element;
+    var headingSelector = 'h1,h2,h3,h4,h5,h6';
+    if (element.matches && element.matches(headingSelector)) {
+        return normalizeGlobalSearchText(element.textContent);
+    }
+    var parent = element.closest('.competitor-profile, .pricing-summary-card, .pricing-dropdown-panel, .accordion-item, .card, .resource-card, tr, .tier-result');
+    var label = parent ? parent.querySelector('h3,h4,h5,td:first-child,dt,.tier-name') : null;
+    var title = label ? normalizeGlobalSearchText(label.textContent) : '';
+    if (!title || title.length > 90) { title = entry.sectionLabel; }
+    return title;
+}
+
+function getGlobalSearchSnippet(text, matchIndex, query) {
+    var radius = 40;
+    var start = Math.max(0, matchIndex - radius);
+    var end = Math.min(text.length, matchIndex + query.length + radius);
+    var snippet = text.slice(start, end);
+    var localMatchIndex = matchIndex - start;
+    var before = snippet.slice(0, localMatchIndex);
+    var match = snippet.slice(localMatchIndex, localMatchIndex + query.length);
+    var after = snippet.slice(localMatchIndex + query.length);
+    return (start > 0 ? '…' : '') +
+        escapeHtml(before) +
+        '<mark class="global-search-match">' + escapeHtml(match) + '</mark>' +
+        escapeHtml(after) +
+        (end < text.length ? '…' : '');
+}
+
+function renderGlobalSearchResults(query) {
+    var ui = getGlobalSearchUi();
+    if (!ui.panel || !ui.count) { return; }
+    var results = globalSearchState.results;
+    var sectionCount = getGlobalSearchSectionCount(results);
+    ui.count.textContent = results.length + ' results across ' + sectionCount + ' sections';
+
+    if (!results.length) {
+        ui.panel.innerHTML = '<div class="global-search-empty" role="status">No results found for "' + escapeHtml(query) + '". Try a different keyword or check Competitor Profiles.</div>';
+        setGlobalSearchPanelVisible(true);
+        globalSearchState.activeResultIndex = -1;
+        return;
+    }
+
+    var groups = [];
+    var groupMap = {};
+    results.forEach(function(result, resultIndex) {
+        var key = result.entry.sectionId;
+        if (!groupMap[key]) {
+            groupMap[key] = {
+                label: result.entry.sectionLabel,
+                order: result.entry.sectionOrder,
+                rows: []
+            };
+            groups.push(groupMap[key]);
+        }
+        groupMap[key].rows.push({
+            result: result,
+            resultIndex: resultIndex
+        });
+    });
+    groups.sort(function(a, b) { return a.order - b.order; });
+
+    ui.panel.innerHTML = groups.map(function(group) {
+        var rows = group.rows.map(function(row) {
+            var entry = row.result.entry;
+            return (
+                '<article class="global-search-result-row" data-result-index="' + row.resultIndex + '" role="listitem" aria-selected="false">' +
+                    '<div class="global-search-result-copy">' +
+                        '<div class="global-search-result-title">' + escapeHtml(getGlobalSearchResultTitle(entry)) + '</div>' +
+                        '<p class="global-search-result-snippet">' + getGlobalSearchSnippet(entry.text, row.result.matchIndex, query) + '</p>' +
+                    '</div>' +
+                    '<button type="button" class="global-search-jump" data-result-index="' + row.resultIndex + '">→ Jump to section</button>' +
+                '</article>'
+            );
+        }).join('');
+        return (
+            '<details class="global-search-group" open>' +
+                '<summary><span>' + escapeHtml(group.label) + '</span><span>' + group.rows.length + ' results</span></summary>' +
+                '<div class="global-search-group-results" role="list">' + rows + '</div>' +
+            '</details>'
+        );
+    }).join('');
+    setGlobalSearchPanelVisible(true);
+    setGlobalSearchActiveResult(0, false);
+}
+
+function resetGlobalSearchResults() {
+    var ui = getGlobalSearchUi();
+    globalSearchState.results = [];
+    globalSearchState.activeResultIndex = -1;
+    globalSearchState.query = '';
+    if (ui.panel) {
+        ui.panel.innerHTML = '';
+        ui.panel.hidden = true;
+    }
+    if (ui.count) { ui.count.textContent = ''; }
+    if (ui.input) { ui.input.setAttribute('aria-expanded', 'false'); }
+}
+
+function handleGlobalSearchInput() {
+    var ui = getGlobalSearchUi();
+    if (!ui.input) { return; }
+    var query = normalizeGlobalSearchText(ui.input.value);
+    globalSearchState.query = query;
+    if (ui.clear) { ui.clear.hidden = !ui.input.value; }
+    if (query.length < GLOBAL_SEARCH_MIN_LENGTH) {
+        resetGlobalSearchResults();
+        if (ui.clear) { ui.clear.hidden = !ui.input.value; }
+        return;
+    }
+    if (!globalSearchState.index.length) { buildGlobalSearchIndex(); }
+    globalSearchState.results = searchGlobalIndex(query);
+    renderGlobalSearchResults(query);
+}
+
+function clearGlobalSearch() {
+    var ui = getGlobalSearchUi();
+    if (ui.input) { ui.input.value = ''; }
+    if (ui.clear) { ui.clear.hidden = true; }
+    resetGlobalSearchResults();
+    clearGlobalSearchTargetHighlight();
+    if (ui.input) { ui.input.focus(); }
+}
+
+function setGlobalSearchActiveResult(index, shouldScroll) {
+    var ui = getGlobalSearchUi();
+    if (!ui.panel || !globalSearchState.results.length) { return; }
+    var maxIndex = globalSearchState.results.length - 1;
+    var nextIndex = index;
+    if (nextIndex < 0) { nextIndex = maxIndex; }
+    if (nextIndex > maxIndex) { nextIndex = 0; }
+    Array.prototype.forEach.call(ui.panel.querySelectorAll('.global-search-result-row'), function(row) {
+        row.classList.remove('active');
+        row.setAttribute('aria-selected', 'false');
+    });
+    var activeRow = ui.panel.querySelector('.global-search-result-row[data-result-index="' + nextIndex + '"]');
+    if (activeRow) {
+        var parentGroup = activeRow.closest('details');
+        if (parentGroup) { parentGroup.open = true; }
+        activeRow.classList.add('active');
+        activeRow.setAttribute('aria-selected', 'true');
+        if (shouldScroll) { activeRow.scrollIntoView({ block: 'nearest' }); }
+    }
+    globalSearchState.activeResultIndex = nextIndex;
+}
+
+function getGlobalSearchJumpElement(element) {
+    if (!element) { return null; }
+    if (element.tagName === 'OPTION') { return element.closest('select') || element; }
+    return element;
+}
+
+function activateGlobalSearchSection(sectionId) {
+    var section = document.getElementById(sectionId);
+    if (!section || !section.classList.contains('section')) { return; }
+    var alprHub = section.closest('#alprPlusHub');
+    if (alprHub) {
+        var index = section.getAttribute('data-alpr-index') || '0';
+        switchProduct('alpr-plus', { skipScroll: true });
+        switchAlprTab(index, getAlprTabButton(index), true);
+        return;
+    }
+    switchProduct('redactor', { skipScroll: true });
+    switchTab(sectionId, getRedactorTabButton(sectionId), true);
+}
+function resetFeatureFiltersForGlobalSearch() {
+    var features = document.getElementById('features');
+    if (!features) { return; }
+    var groups = features.querySelectorAll('.filter-group');
+    if (groups[0]) {
+        var companyAll = groups[0].querySelector('.filter-btn');
+        try { filterFeatureCompany('all', companyAll); } catch (e) {}
+    }
+    if (groups[1]) {
+        var typeAll = groups[1].querySelector('.filter-btn');
+        try { filterComparisonType('all', typeAll); } catch (e) {}
+    }
+}
+
+function revealGlobalSearchTarget(element) {
+    var target = getGlobalSearchJumpElement(element);
+    if (!target) { return null; }
+    var section = target.closest('.section');
+    if (section && section.id) {
+        activateGlobalSearchSection(section.id);
+    }
+
+    if (section && section.id === 'competitors') {
+        var competitorSelector = document.getElementById('competitorSelector');
+        if (competitorSelector) { competitorSelector.value = 'all'; }
+        try { filterCompetitorProfiles(); } catch (e) {}
+    }
+    if (section && section.id === 'features') {
+        resetFeatureFiltersForGlobalSearch();
+    }
+    if (section && section.id === 'icp') {
+        var industryFilter = document.getElementById('industryFilter');
+        var buyerFilter = document.getElementById('buyerTypeFilter');
+        if (industryFilter) { industryFilter.value = 'all'; }
+        if (buyerFilter) { buyerFilter.value = 'all'; }
+        try { filterIcp(); } catch (e) {}
+    }
+
+    if (target.closest('#pricingSummaryTableView')) {
+        try { setPricingSummaryView('table'); } catch (e) {}
+    }
+    if (target.closest('#pricingSummaryCardView')) {
+        try { setPricingSummaryView('card'); } catch (e) {}
+    }
+    var summaryViewer = target.closest('#pricingSummaryViewer.collapsed');
+    if (summaryViewer) {
+        try { togglePricingSummarySection(); } catch (e) {}
+    }
+
+    var hiddenAncestor = target.closest('[hidden]');
+    while (hiddenAncestor && !hiddenAncestor.classList.contains('pricing-template-store')) {
+        hiddenAncestor.hidden = false;
+        hiddenAncestor.removeAttribute('hidden');
+        hiddenAncestor = hiddenAncestor.parentElement ? hiddenAncestor.parentElement.closest('[hidden]') : null;
+    }
+
+    var accordion = target.closest('.accordion-item');
+    if (accordion) {
+        accordion.classList.add('active');
+        var accordionHeader = accordion.querySelector('.accordion-header');
+        var accordionToggle = accordion.querySelector('.accordion-toggle');
+        if (accordionHeader) { accordionHeader.setAttribute('aria-expanded', 'true'); }
+        if (accordionToggle) { accordionToggle.textContent = '▼'; }
+    }
+
+    var objectDetails = target.closest('.object-categories-details');
+    if (objectDetails && objectDetails.hidden) {
+        objectDetails.hidden = false;
+        objectDetails.removeAttribute('hidden');
+        var objectRow = objectDetails.closest('.object-categories-row');
+        var objectLabel = objectRow ? objectRow.querySelector('.object-categories-label') : null;
+        var objectArrow = objectLabel ? objectLabel.querySelector('.object-categories-arrow') : null;
+        var objectHint = objectLabel ? objectLabel.querySelector('.object-categories-hint') : null;
+        if (objectRow) { objectRow.classList.add('expanded'); }
+        if (objectLabel) { objectLabel.setAttribute('aria-expanded', 'true'); }
+        if (objectArrow) { objectArrow.textContent = '▼'; }
+        if (objectHint) { objectHint.textContent = '(click to collapse)'; }
+    }
+
+    return target;
+}
+
+function clearGlobalSearchTargetHighlight() {
+    if (globalSearchState.highlightTimer) {
+        clearTimeout(globalSearchState.highlightTimer);
+        globalSearchState.highlightTimer = null;
+    }
+    if (globalSearchState.highlightedElement) {
+        globalSearchState.highlightedElement.classList.remove('global-search-highlight-target');
+        globalSearchState.highlightedElement = null;
+    }
+}
+
+function highlightGlobalSearchTarget(element) {
+    clearGlobalSearchTargetHighlight();
+    if (!element) { return; }
+    element.classList.add('global-search-highlight-target');
+    globalSearchState.highlightedElement = element;
+    globalSearchState.highlightTimer = setTimeout(function() {
+        clearGlobalSearchTargetHighlight();
+    }, 2200);
+}
+
+function jumpToGlobalSearchResult(index) {
+    var result = globalSearchState.results[index];
+    if (!result) { return; }
+    var target = revealGlobalSearchTarget(result.entry.element);
+    if (!target) { return; }
+    window.requestAnimationFrame(function() {
+        window.requestAnimationFrame(function() {
+            try {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (e) {
+                target.scrollIntoView();
+            }
+            highlightGlobalSearchTarget(target);
+            if (target.matches && target.matches('button,a,input,select,textarea,[tabindex]') && typeof target.focus === 'function') {
+                try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
+            }
+        });
+    });
+}
+
+function handleGlobalSearchKeydown(event) {
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        clearGlobalSearch();
+        return;
+    }
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'Enter') { return; }
+    if (!globalSearchState.results.length) { return; }
+    event.preventDefault();
+    if (event.key === 'ArrowDown') {
+        setGlobalSearchActiveResult(globalSearchState.activeResultIndex + 1, true);
+        return;
+    }
+    if (event.key === 'ArrowUp') {
+        setGlobalSearchActiveResult(globalSearchState.activeResultIndex - 1, true);
+        return;
+    }
+    jumpToGlobalSearchResult(globalSearchState.activeResultIndex >= 0 ? globalSearchState.activeResultIndex : 0);
+}
+
+function handleGlobalSearchPanelClick(event) {
+    var button = event.target.closest('.global-search-jump[data-result-index]');
+    if (!button) { return; }
+    var index = parseInt(button.getAttribute('data-result-index'), 10);
+    if (!isFinite(index)) { return; }
+    setGlobalSearchActiveResult(index, false);
+    jumpToGlobalSearchResult(index);
+}
+
+function shouldIgnoreGlobalSearchMutations(mutations) {
+    for (var i = 0; i < mutations.length; i += 1) {
+        var target = mutations[i].target;
+        var element = target.nodeType === 1 ? target : target.parentElement;
+        if (!element || !element.closest('.global-search')) { return false; }
+    }
+    return true;
+}
+
+function scheduleGlobalSearchRebuild(mutations) {
+    if (mutations && shouldIgnoreGlobalSearchMutations(mutations)) { return; }
+    if (globalSearchState.rebuildTimer) { clearTimeout(globalSearchState.rebuildTimer); }
+    globalSearchState.rebuildTimer = setTimeout(function() {
+        buildGlobalSearchIndex();
+        if (globalSearchState.query.length >= GLOBAL_SEARCH_MIN_LENGTH) {
+            globalSearchState.results = searchGlobalIndex(globalSearchState.query);
+            renderGlobalSearchResults(globalSearchState.query);
+        }
+    }, 80);
+}
+
+function observeGlobalSearchDom() {
+    var root = getGlobalSearchRoot();
+    if (!root || typeof MutationObserver === 'undefined') { return; }
+    if (globalSearchState.observer) { globalSearchState.observer.disconnect(); }
+    globalSearchState.observer = new MutationObserver(scheduleGlobalSearchRebuild);
+    globalSearchState.observer.observe(root, {
+        childList: true,
+        characterData: true,
+        subtree: true
+    });
+}
+
+function initGlobalSearch() {
+    var ui = getGlobalSearchUi();
+    if (!ui.root || !ui.input || !ui.panel || ui.root.getAttribute('data-global-search-ready') === 'true') {
+        if (ui.root) {
+            buildGlobalSearchIndex();
+            observeGlobalSearchDom();
+        }
+        return;
+    }
+    ui.input.addEventListener('input', handleGlobalSearchInput);
+    ui.input.addEventListener('keydown', handleGlobalSearchKeydown);
+    ui.panel.addEventListener('click', handleGlobalSearchPanelClick);
+    ui.panel.addEventListener('keydown', handleGlobalSearchKeydown);
+    if (ui.clear) { ui.clear.addEventListener('click', clearGlobalSearch); }
+    ui.root.setAttribute('data-global-search-ready', 'true');
+    buildGlobalSearchIndex();
+    observeGlobalSearchDom();
+}
 // Expose functions to global scope so inline onclick handlers can find them
 // (This is redundant when loaded as a regular script, but ensures reliability.)
 if (typeof window !== 'undefined') {
@@ -2465,12 +4625,20 @@ if (typeof window !== 'undefined') {
     window.handleObjectCategoriesKey = handleObjectCategoriesKey;
     window.updateComparison = updateComparison;
     window.updateDiscoveryQuestions = updateDiscoveryQuestions;
-    window.initDiscoveryQuestions = initDiscoveryQuestions;
     window.updateVersionDetails = updateVersionDetails;
-    window.updatePricingRecommendation = updatePricingRecommendation;
-    window.togglePricingCompetitor = togglePricingCompetitor;
     window.calculatePricing = calculatePricing;
+    window.handlePricingSelectionChange = handlePricingSelectionChange;
     window.resetPricingCalc = resetPricingCalc;
+    window.handlePricingCompetitorChange = handlePricingCompetitorChange;
+    window.handlePricingSummaryChange = handlePricingSummaryChange;
+    window.comparePricingCompetitors = comparePricingCompetitors;
+    window.setPricingSummaryView = setPricingSummaryView;
+    window.togglePricingSummarySection = togglePricingSummarySection;
+    window.handleFoiaContractSourceChange = handleFoiaContractSourceChange;
+    window.renderFoiaContractData = renderFoiaContractData;
+    window.setFoiaContractView = setFoiaContractView;
+    window.resetFoiaContractFilters = resetFoiaContractFilters;
+    window.toggleFoiaContractSection = toggleFoiaContractSection;
     window.toggleScrollButton = toggleScrollButton;
     window.renderMarketingResources = renderMarketingResources;
     window.setMarketingResourceView = setMarketingResourceView;
@@ -2488,10 +4656,13 @@ if (typeof window !== 'undefined') {
         try { initializeProductSwitcher(); } catch (e) {}
         try { updateComparison(); } catch (e) {}
         try { updateVersionDetails(); } catch (e) {}
-        try { updatePricingRecommendation(); } catch (e) {}
         try { toggleScrollButton(); } catch (e) {}
-        try { initDiscoveryQuestions(); } catch (e) {}
+        try { updateDiscoveryQuestions(); } catch (e) {}
+        try { initPricingAnalysisDropdowns(); } catch (e) {}
+        try { initFoiaContractPricing(); } catch (e) {}
+        try { initPricingCalculator(); } catch (e) {}
         try { initMarketingResources(); } catch (e) {}
+        try { initGlobalSearch(); } catch (e) {}
         if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
             try { window.lucide.createIcons(); } catch (e) {}
         }
@@ -2499,6 +4670,10 @@ if (typeof window !== 'undefined') {
     window.__redactorInit = __redactorInit;
 
     window.addEventListener('scroll', toggleScrollButton);
+    window.addEventListener('resize', function() {
+        try { updatePricingSummaryBodyHeight(); } catch (e) {}
+        try { updateFoiaContractBodyHeight(); } catch (e) {}
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', __redactorInit);
