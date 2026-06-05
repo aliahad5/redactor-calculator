@@ -1931,14 +1931,369 @@
                 <h2><i data-lucide="badge"></i> Competitor Profiles</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — Competitor Profiles</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain sourced one-page ALPR competitor profiles with positioning, strengths, weaknesses, and Sighthound win themes.</p>
-                    <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    <h3><i data-lucide="file-search"></i> Official-source competitor profiles</h3>
+                    <p>Each profile uses official vendor pages accessed June 5, 2026. Sighthound ALPR+ win themes reference official ALPR+ and developer documentation for MMCG, API-first REST/JSON output, RTSP/RabbitMQ integration, camera-agnostic operation, Windows/Linux/Docker/custom deployment, and ALPR Engine OEM integration.</p>
+
+                    <div class="competitor-profile" data-competitor="rekor">
+                        <div class="card">
+                            <h4><i data-lucide="building-2"></i> Rekor — Scout</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.rekor.ai/software/scout" target="_blank" rel="noopener">rekor.ai/software/scout</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Rekor Scout is positioned as a software ALPR product that can turn nearly any IP, traffic, or security camera into a license plate reader. Its official page emphasizes cloud-hosted, self-hosted, and on-premise workflows, public pricing tiers, hotlists, searchable reads, and vehicle attributes in higher tiers.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> Basic $12/month per camera; Pro $72/month per camera; Enterprise custom per license.</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Camera flexibility is strong because Scout states it works with nearly any IP, traffic, or security camera. Public pricing helps buyers self-qualify Basic and Pro tiers without waiting for sales. The platform supports operational workflows such as hotlists, searchable vehicle records, and make/model/color/direction attributes in Pro or Enterprise tiers.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Advanced vehicle attributes are not included in every public tier, so value depends on selecting Pro or Enterprise. Enterprise pricing is still custom, limiting full TCO visibility for larger deployments. Official Scout packaging is ALPR-platform oriented rather than an OEM engine tier for embedding vehicle analytics into another product.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer needs documented MMCG vehicle attributes as a core recognition outcome, not only a higher-tier add-on. Use ALPR+ when the architecture decision centers on REST/JSON, RTSP, RabbitMQ, Windows, Linux, Docker, or custom integration paths that must fit an existing system. Use the ALPR Engine OEM tier when a product team wants embeddable recognition instead of adopting a finished Scout workflow.</p>
+                            <p><strong>Discovery questions:</strong> Which vehicle attributes need to be included in the first production phase, and which can wait for a later tier or package? How much control does your team need over where recognition runs and how results are delivered into downstream systems?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Rekor is a legitimate fit when a buyer wants transparent self-serve per-camera pricing and a packaged ALPR workflow. Rekor can also win when the organization already prefers its Scout user experience, hotlist tooling, and Rekor ecosystem.</p>
+                        </div>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(3, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel3" class="alpr-prompt-panel" hidden></div>
+
+                    <div class="competitor-profile" data-competitor="vaidio">
+                        <div class="card">
+                            <h4><i data-lucide="scan-eye"></i> Vaidio</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.vaidio.ai/platform" target="_blank" rel="noopener">vaidio.ai/platform</a>, <a href="https://www.vaidio.ai/solutions/smart-cities" target="_blank" rel="noopener">vaidio.ai/solutions/smart-cities</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Vaidio is positioned as a broad AI video analytics platform with more than ALPR, including LPR, vehicle make/model analytics, traffic analytics, and smart-city video intelligence. Its official pages emphasize deployment across cameras, VMS integrations, Jetson devices, servers, Kubernetes, cloud, hybrid, and SaaS environments.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Breadth is a major strength because Vaidio documents 30+ analytics, not only plate recognition. Deployment flexibility is well documented across edge, server, Kubernetes, cloud, hybrid, and SaaS. Integration breadth is strong because the platform states support for any camera and more than 30 VMS integrations.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed, so procurement requires vendor engagement. ALPR is one capability inside a broader video analytics suite, which may add scope for buyers who only need a focused ALPR engine. Official pages do not publicly package a distinct ALPR OEM engine tier for embedding recognition into third-party products.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants a vehicle-recognition-specific conversation centered on plate reads plus MMCG rather than a broad analytics suite. Use ALPR+ when the integration proof must start quickly through REST/JSON, RTSP, Docker, Windows, Linux, or RabbitMQ pathways. Use ALPR Engine when the customer’s real requirement is OEM embedding rather than deploying a full video analytics platform.</p>
+                            <p><strong>Discovery questions:</strong> Are you looking for a broad video analytics platform, or is the priority a focused ALPR and vehicle attribute engine? Which existing systems need to consume plate and MMCG results, and in what format?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Vaidio can win when the buyer wants many analytics beyond ALPR from one platform. It can also win when existing VMS integration breadth is the primary buying criterion.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="eagle-eye-networks">
+                        <div class="card">
+                            <h4><i data-lucide="cloud"></i> Eagle Eye Networks — LPR / Vehicle Surveillance Package</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.een.com/product/vehicle-surveillance-package/" target="_blank" rel="noopener">een.com/product/vehicle-surveillance-package</a>, <a href="https://www.een.com/product/license-plate-recognition-old/" target="_blank" rel="noopener">een.com/product/license-plate-recognition-old</a>, <a href="https://www.een.com/docs/app-notes/an102/" target="_blank" rel="noopener">een.com/docs/app-notes/an102</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Eagle Eye positions LPR as an add-on capability within its cloud video surveillance ecosystem. Official pages emphasize ONVIF camera support, open APIs, cloud VMS subscriptions, vehicle search by plate and attributes, and rule-based alerts.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [INFERRED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Cloud VMS integration is strong because LPR and VSP are built into the Eagle Eye Cloud VMS motion. Camera compatibility is documented through ONVIF support. The official developer and product pages document API access, plate rules, alerts, and searches by plate, make, color, or body type.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pages position VSP as requiring an Eagle Eye Cloud VMS subscription, which can constrain buyers outside that ecosystem. Pricing is not publicly listed. Official pages describe LPR as a VMS add-on rather than a standalone ALPR OEM engine for third-party products.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer needs vehicle intelligence without first standardizing on a specific VMS subscription. Use ALPR+ when camera-agnostic recognition, REST/JSON, RTSP, RabbitMQ, Docker, Windows, and Linux deployment flexibility are more important than VMS-native workflow. Use ALPR Engine when the prospect needs recognition embedded into their own application rather than purchased as a surveillance add-on.</p>
+                            <p><strong>Discovery questions:</strong> Is your ALPR decision tied to a broader cloud VMS standardization, or do you need recognition to fit multiple video environments? Which downstream applications need access to plate and vehicle attribute data outside the VMS?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Eagle Eye can win when the buyer already runs Eagle Eye Cloud VMS and wants a native add-on. It can also win when centralized cloud video operations are more important than standalone ALPR deployment control.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="platesmart">
+                        <div class="card">
+                            <h4><i data-lucide="server"></i> PlateSmart</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.platesmart.com/" target="_blank" rel="noopener">platesmart.com</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> PlateSmart positions itself as a camera-brand-agnostic ALPR provider for law enforcement, commercial, and security operations. Its official site emphasizes on-premise servers or private cloud, integration with current video/security systems, CJIS-oriented controls, audit trails, evidence sealing, and no customer-data monetization.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [UNVERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Camera-agnostic positioning is clear because PlateSmart states it works with existing cameras and video systems. Security and evidentiary messaging is strong through CJIS, cryptographic sealing, audit trails, and data-ownership claims. Deployment control is documented through on-premise server and private cloud options.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Pricing is not publicly listed. Official pages reviewed do not publicly document a packaged OEM ALPR engine tier. Edge deployment and detailed developer integration options are less explicit publicly than the on-premise/private-cloud positioning.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer needs a documented API-first path with REST/JSON, RTSP, RabbitMQ, Docker, Windows, and Linux integration details. Use ALPR+ when MMCG outputs are central to the value story, especially for partial-plate or no-plate workflows. Use ALPR Engine when a systems integrator wants embeddable recognition rather than a full vendor-managed ALPR platform.</p>
+                            <p><strong>Discovery questions:</strong> Beyond the ALPR interface, which applications need direct programmatic access to recognition results? Are vehicle make, model, color, and generation outputs part of the operational requirement?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> PlateSmart can win when CJIS-oriented evidence handling, private cloud/on-premise control, and audit messaging are the dominant requirements. It can also win where an agency already trusts PlateSmart as its ALPR platform provider.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="flock-safety">
+                        <div class="card">
+                            <h4><i data-lucide="radio-tower"></i> Flock Safety</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.flocksafety.com/products/license-plate-readers" target="_blank" rel="noopener">flocksafety.com/products/license-plate-readers</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Flock Safety positions its license plate readers as a managed public-safety network with camera hardware, installation, maintenance, upgrades, support, real-time alerts, searchable vehicle data, retention controls, and permission/audit features. The product family includes fixed, long-range, trailer, flex, and video integration options.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [UNVERIFIED]; edge [INFERRED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Managed deployment is strong because subscription packaging includes installation, maintenance, upgrades, and support. Public-safety workflow depth is strong through real-time alerts, searchable vehicle data, Vehicle Signature, FreeForm, permissions, audits, and retention controls. Flock’s hardware family is broad across standard, long-range, trailer, flex, and video-integration use cases.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official pages position the offering as a managed network and device subscription, not a standalone software engine that customers can self-host. On-premise deployment is not publicly documented on the reviewed official LPR page.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants to control deployment across edge, on-premise, cloud, Windows, Linux, Docker, or custom environments instead of buying a managed camera network. Use ALPR+ when the customer needs camera-agnostic recognition against existing IP cameras. Use ALPR Engine when a product or platform team needs ALPR/MMCG embedded into its own workflow rather than adopting a managed hardware service.</p>
+                            <p><strong>Discovery questions:</strong> Do you want a managed camera network, or do you need software that can run inside infrastructure you already control? How important is reusing existing cameras versus procuring a vendor-managed camera fleet?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Flock can win when a public-safety buyer wants a turnkey managed network with installation and ongoing maintenance included. It can also win when participation in Flock’s broader public-safety data ecosystem is a primary requirement.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="lumana">
+                        <div class="card">
+                            <h4><i data-lucide="camera"></i> Lumana</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.lumana.ai/solutions/license-plate-recognition" target="_blank" rel="noopener">lumana.ai/solutions/license-plate-recognition</a>, <a href="https://www.lumana.ai/pricing" target="_blank" rel="noopener">lumana.ai/pricing</a>, <a href="https://www.lumana.ai/products/via-1" target="_blank" rel="noopener">lumana.ai/products/via-1</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Lumana positions LPR as part of an AI video security platform that can turn existing cameras into real-time vehicle intelligence. Official pages emphasize plate search, make/model/color/type search, partial-plate workflows, alerts, gate access integrations, hybrid-cloud operation, and licensing based on camera feeds, storage days, and license terms.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Existing-camera reuse is strong because Lumana states it turns any camera into ALPR. Search breadth is documented through plate, make, model, color, type, and incomplete-plate search. The platform story is strong for security teams because VMS, Core, Via-1, hybrid cloud, and outage-resilient local operation are part of the official product narrative.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public price amounts are not listed. ALPR is positioned inside a broader video security platform, which may be more scope than buyers need for an ALPR-only engine. Official pages do not publicly present a separate OEM ALPR Engine tier for embedding recognition into third-party products.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the prospect wants a focused ALPR/MMCG engine rather than a broader VMS replacement or security platform. Use ALPR+ when technical validation depends on REST/JSON, RTSP, RabbitMQ, Docker, Windows, or Linux details. Use ALPR Engine when the buyer needs embeddable recognition inside an existing product instead of a complete surveillance platform.</p>
+                            <p><strong>Discovery questions:</strong> Is the project mainly an ALPR integration, or are you also replacing your VMS and broader video security workflow? Which recognition outputs need to be consumed by your access-control, analytics, or business systems?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Lumana can win when the buyer wants LPR bundled with a modern AI VMS and security workflow. It can also win where replacing or consolidating video infrastructure is the primary project driver.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="briefcam">
+                        <div class="card">
+                            <h4><i data-lucide="video"></i> BriefCam</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.briefcam.com/products/protect-insights/" target="_blank" rel="noopener">briefcam.com/products/protect-insights</a>, <a href="https://www.briefcam.com/company/faq/how-is-pricing-determined-for-briefcam-nexus/" target="_blank" rel="noopener">briefcam.com/company/faq/how-is-pricing-determined-for-briefcam-nexus</a>, <a href="https://www.briefcam.com/wp-content/uploads/2025/06/BriefCam-Nexus-Datasheet-1.pdf" target="_blank" rel="noopener">BriefCam Nexus Datasheet, June 2025</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> BriefCam positions LPR as one capability inside a broader video analytics platform for review, response, research, alerting, and business-intelligence workflows. Official materials emphasize patented Video Synopsis, searchable object and attribute filtering, multi-site Nexus hub-and-site deployments, local processing, and LPR recognition from cameras rather than a standalone ALPR-only product.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [UNVERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Video investigation workflow depth is strong because LPR sits inside a broader searchable video analytics platform. Patented Video Synopsis condenses long surveillance periods into a shorter review experience with object and attribute filtering. Nexus supports multi-site local processing with a central hub aggregating alerts and business-intelligence metadata.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public price information is not listed. LPR is packaged as part of a broad video analytics and investigation platform rather than a standalone ALPR engine. Official FAQ materials document NVIDIA GPU requirements and note that virtual deployments are possible but optimal performance is not guaranteed.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the customer wants a focused vehicle analytics layer with MMCG and plate outputs rather than a full video investigation platform. Use ALPR+ when the proof needs to start from API, Docker, RTSP, or direct integration work instead of platform adoption. Use ALPR Engine when the requirement is to embed plate and vehicle recognition inside an existing solution.</p>
+                            <p><strong>Discovery questions:</strong> Are you buying a video investigation platform, or do you need an ALPR/MMCG engine to feed systems you already use? What camera conditions and scene constraints must be validated before relying on recognition results operationally?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> BriefCam can win when the buyer’s main requirement is broad video review, response, and research analytics. It can also win when the organization already uses BriefCam or Milestone workflows and wants LPR inside that environment.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="senstar">
+                        <div class="card">
+                            <h4><i data-lucide="shield"></i> Senstar — Symphony ALPR Analytics</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://senstar.com/product-resources/analytics-packs/" target="_blank" rel="noopener">senstar.com/product-resources/analytics-packs</a>, <a href="https://senstar.com/wp-content/uploads/Video-Analytics-Datasheet.pdf" target="_blank" rel="noopener">Senstar Video Analytics Datasheet</a>, <a href="https://senstar.com/wp-content/uploads/Symphony_Datasheet_EN.pdf" target="_blank" rel="noopener">Senstar Symphony Datasheet</a>, <a href="https://senstar.com/product-resources/symphony-platform-licensing/" target="_blank" rel="noopener">senstar.com/product-resources/symphony-platform-licensing</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Senstar positions ALPR as an analytics pack within the Symphony video management, analytics, security management, access control, and sensor-fusion environment. Official materials emphasize reading plates and vehicle markings, multi-lane support, gate-control workflows, searchable logs, vehicle access, and perimeter/security operations.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [UNVERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Symphony integration is strong for buyers already standardized on Senstar VMS and analytics. Official materials document ALPR, vehicle markings, gate control, multi-lane use, searchable logs, container identification, fleet markings, and support for plates from more than 100 countries. Symphony also documents multi-vendor cameras, ONVIF support, RESTful API availability, and platform licensing options.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Pricing is not publicly listed. ALPR is tied to Senstar’s VMS/analytics environment rather than presented as an independent API-first ALPR engine. Official licensing materials indicate deeper server API/SDK capabilities depend on Symphony edition, and public materials reviewed do not document Docker or OEM embedding paths for ALPR.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer needs ALPR/MMCG outputs to fit existing systems without adopting a specific VMS analytics pack. Use ALPR+ when documented Docker, Windows, Linux, REST/JSON, RTSP, and RabbitMQ integration paths reduce IT risk. Use ALPR Engine when the customer needs OEM embedding rather than a VMS-bound analytics module.</p>
+                            <p><strong>Discovery questions:</strong> Does ALPR need to live inside your VMS, or does it need to serve several operational systems independently? Which deployment and integration requirements must be documented before procurement can approve the architecture?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Senstar can win when Symphony is already the video management standard. It can also win when the buyer wants ALPR bundled with Senstar perimeter security and VMS analytics.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="q-free-intrada">
+                        <div class="card">
+                            <h4><i data-lucide="route"></i> Q-Free — Intrada</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://intrada.q-free.com/intrada-alpr/" target="_blank" rel="noopener">intrada.q-free.com/intrada-alpr</a>, <a href="https://intrada.q-free.com/" target="_blank" rel="noopener">intrada.q-free.com</a>, <a href="https://www.q-free.com/solution/automatic-license-plate-recognition/" target="_blank" rel="noopener">q-free.com/solution/automatic-license-plate-recognition</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Q-Free positions Intrada as a hardware-independent ALPR software, SDK, API, and cloud recognition offering for tolling, ITS, and OEM use cases. Official pages emphasize global plate coverage, multiple programming language bindings, broad operating-system support, vehicle class/color/model/make/side recognition, and high-volume licensing experience.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> OEM and SDK fit is strong because Intrada documents SDK/API options and C/C++/C#/.NET with Java and Python bindings. Platform breadth is strong across Windows, Linux, Android, Solaris, ARM, DSP, and managed cloud. Tolling and ITS credibility is reinforced by global plate coverage and a large active-license footprint on official pages.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public price amounts are not listed. Official positioning is strongly tolling/ITS and recognition-engine oriented, which may be more specialized than a general commercial ALPR deployment. Buyers seeking a simple packaged sales workflow may need more vendor consultation because pricing and deployment details are enterprise-style.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants a simpler camera-agnostic ALPR+ package with MMCG, REST/JSON, RTSP, RabbitMQ, Docker, Windows, and Linux paths documented for sales engineering. Use ALPR+ when vehicle make, model, color, and generation are central to business value outside tolling. Use ALPR Engine when the buyer wants OEM embedding but prefers Sighthound’s ALPR+ deployment and API approach.</p>
+                            <p><strong>Discovery questions:</strong> Is the project a tolling-grade recognition engine evaluation, or a broader vehicle analytics deployment across existing cameras? Which development model is easier for your team: SDK integration, REST service integration, or a packaged deployment?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Q-Free can win when the buyer needs a mature tolling or ITS recognition engine with SDK depth and global plate coverage. It can also win when an existing Q-Free roadside or back-office architecture is already in place.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="tattile">
+                        <div class="card">
+                            <h4><i data-lucide="cctv"></i> Tattile</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.tattile.com/anpr-cameras/" target="_blank" rel="noopener">tattile.com/anpr-cameras</a>, <a href="https://www.tattile.com/alpr-camera/" target="_blank" rel="noopener">tattile.com/alpr-camera</a>, <a href="https://www.tattile.com/vision-solutions/vega-11/" target="_blank" rel="noopener">tattile.com/vision-solutions/vega-11</a>, <a href="https://www.tattile.com/applications/stark-ocr-cloud/" target="_blank" rel="noopener">tattile.com/applications/stark-ocr-cloud</a>, <a href="https://www.tattile.com/applications/free-flow/" target="_blank" rel="noopener">tattile.com/applications/free-flow</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Tattile positions itself as a specialist ANPR/ALPR camera, sensor, and OCR vendor for tolling, enforcement, vehicle tracking, traffic monitoring, parking, and access control. Official pages emphasize embedded processing, rugged camera systems, REST APIs, LTE/storage options, offline operation, Stark OCR Cloud or on-prem OCR, and optional vehicle brand/class/color/model recognition.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Purpose-built edge hardware is strong because Tattile documents onboard capture and processing in ANPR cameras. Rugged roadside fit is documented through embedded free-flow tolling cameras, LTE/storage options, REST integration, and offline operation. Stark OCR Cloud documents SaaS and on-prem options with REST API and high-availability service positioning.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official positioning is camera-hardware led, which may require hardware refresh when a buyer wants to reuse a heterogeneous camera estate. Official FAQ and product materials indicate lane coverage depends on model, geometry, and plate characteristics, so wider sites may require multiple devices or complementary sensors.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants to evaluate recognition on existing IP cameras before committing to purpose-built ALPR cameras. Use ALPR+ when Docker, Windows, Linux, RTSP, REST/JSON, RabbitMQ, and custom integration flexibility matter more than a camera-appliance procurement. Use ALPR+ when MMCG is needed as a software output across varied camera sources.</p>
+                            <p><strong>Discovery questions:</strong> Are you planning a new roadside camera procurement, or do you need to extract more value from cameras already installed? Which parts of the workflow must remain software-controlled rather than tied to a specific camera appliance?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Tattile can win when the project requires purpose-built ANPR cameras for roadside, tolling, or enforcement conditions. It can also win when embedded camera processing and rugged hardware procurement are primary requirements.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="axis">
+                        <div class="card">
+                            <h4><i data-lucide="box"></i> Axis — License Plate Verifier</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.axis.com/en-us/products/axis-license-plate-verifier" target="_blank" rel="noopener">axis.com/en-us/products/axis-license-plate-verifier</a>, <a href="https://developer.axis.com/vapix/applications/license-plate-verifier-api/" target="_blank" rel="noopener">developer.axis.com/vapix/applications/license-plate-verifier-api</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Axis License Plate Verifier is positioned as an edge-based application running on compatible Axis cameras for parking, access, search, and selected free-flow use cases. Official pages emphasize ACAP/VAPIX openness, vehicle type/color/make/model metadata, selected country support, eLicense procurement, and a 60-day trial.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [UNVERIFIED]; on-prem [INFERRED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Edge operation is strong because recognition runs on compatible Axis cameras. API documentation is strong through VAPIX events, push events, and metadata fields. The Axis ecosystem is a strength for organizations already standardized on Axis camera hardware and ACAP applications.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed and sales run through Axis channels. Deployment depends on selected compatible Axis cameras and countries, which can narrow fit for mixed-camera estates. Official pages position the product as an Axis camera application rather than a camera-agnostic ALPR engine across Windows/Linux/Docker or OEM product embedding.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer must support mixed IP cameras rather than only compatible Axis devices. Use ALPR+ when deployment flexibility across edge, on-premise, cloud, Windows, Linux, Docker, and custom integration is the deciding factor. Use ALPR Engine when a product team needs OEM ALPR/MMCG rather than an app tied to a camera vendor ecosystem.</p>
+                            <p><strong>Discovery questions:</strong> Is your camera estate standardized on Axis, or do you need the ALPR layer to work across multiple camera brands? Which deployment controls do IT and security need beyond running analytics on the camera?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Axis can win when the buyer already owns compatible Axis cameras and wants edge ALPR inside that ecosystem. It can also win when a simple camera-side access-control or parking workflow is enough.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="adaptive-recognition">
+                        <div class="card">
+                            <h4><i data-lucide="cpu"></i> Adaptive Recognition — Carmen / Vidar</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://adaptiverecognition.com/products/vidar-anpr-camera/?lang=en" target="_blank" rel="noopener">adaptiverecognition.com/products/vidar-anpr-camera</a>, <a href="https://adaptiverecognition.com/products/carmen-freeflow/" target="_blank" rel="noopener">adaptiverecognition.com/products/carmen-freeflow</a>, <a href="https://adaptiverecognition.com/products/carmen-nano/" target="_blank" rel="noopener">adaptiverecognition.com/products/carmen-nano</a>, <a href="https://adaptiverecognition.com/products/carmen-box/" target="_blank" rel="noopener">adaptiverecognition.com/products/carmen-box</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Adaptive Recognition positions Carmen and Vidar as a deep portfolio of ANPR/ALPR, MMR, SDK, edge, camera, and traffic/logistics recognition products. Official pages emphasize high-speed capture, multi-lane ANPR, hazardous-material sign recognition, more than 160 country coverage, Windows/Linux support, NVIDIA Jetson edge deployment, and API-based output.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Portfolio breadth is strong across Vidar cameras, Carmen SDKs, Carmen Nano, and Carmen Box. Traffic and logistics specialization is strong through high-speed, multi-lane, MMR, and hazardous-material recognition capabilities. Technical flexibility is documented through Windows/Linux support, Jetson on-premise deployment, API output, HTTP/S/FTP/SFTP/GDS, and flexible licensing concepts.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public price amounts are not listed. The breadth of SDK, camera, appliance, and specialized traffic products may require careful product selection before a simple ALPR proof. Hardware-led or SDK-led buying motions may be more complex than a focused API-first ALPR+ evaluation.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants a focused proof of plate plus MMCG results through a REST/JSON service instead of selecting among multiple SDK, camera, and appliance products. Use ALPR+ when existing-camera reuse and Docker-based deployment are more important than purpose-built traffic hardware. Use ALPR Engine when OEM embedding is needed but the buyer wants Sighthound’s ALPR+ API and deployment model.</p>
+                            <p><strong>Discovery questions:</strong> Which product form factor best matches the project: SDK, camera, edge appliance, or service API? Are specialized traffic and logistics recognizers required, or is the core requirement plate plus vehicle attribute recognition?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Adaptive Recognition can win when the buyer needs specialized high-speed traffic, logistics, hazardous-material, or SDK capabilities. It can also win when the RFP requires its purpose-built camera portfolio.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="parking-logix">
+                        <div class="card">
+                            <h4><i data-lucide="parking-circle"></i> Parking Logix</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://parkinglogix.com/our-solutions/" target="_blank" rel="noopener">parkinglogix.com/our-solutions</a>, <a href="https://parkinglogix.com/openspace-ai-camera/" target="_blank" rel="noopener">parkinglogix.com/openspace-ai-camera</a>, <a href="https://parkinglogix.com/guardian-awareness/" target="_blank" rel="noopener">parkinglogix.com/guardian-awareness</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Parking Logix is primarily positioned around smart parking occupancy, guidance, signs, analytics, and parking operations rather than broad ALPR. Official pages emphasize OpenSpace AI Camera occupancy detection, cloud-based parking insights, API integration, and Guardian Awareness OCR/front-plate speed-awareness workflows.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [INFERRED]; edge [INFERRED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Parking operations fit is strong because the official site centers on occupancy, guidance, signs, and parking analytics. OpenSpace AI Camera documents real-time parking data, cloud insights, virtual sensors, and high occupancy accuracy. Guardian Awareness documents OCR/front-plate use for speed-awareness and violation-adjacent workflows.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official pages reviewed do not position Parking Logix as a broad ALPR/MMCG platform for law enforcement, ITS, or OEM embedding. Vehicle make, model, color, generation, and camera-agnostic ALPR engine capabilities are not publicly documented on the reviewed pages.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer needs plate and MMCG vehicle identity rather than parking occupancy alone. Use ALPR+ when the solution must integrate through REST/JSON, RTSP, RabbitMQ, Docker, Windows, Linux, or custom workflows outside a parking platform. Use ALPR+ when existing cameras and multiple vertical use cases matter more than parking-specific guidance hardware.</p>
+                            <p><strong>Discovery questions:</strong> Is your primary objective parking occupancy and guidance, or vehicle identity and recognition data? Which non-parking systems need to use the plate and vehicle attribute results?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Parking Logix can win when the buyer’s main problem is parking occupancy, guidance signage, and lot analytics. It can also win when parking-specific hardware and cloud insights are more important than broad ALPR/MMCG integration.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="perceptics">
+                        <div class="card">
+                            <h4><i data-lucide="landmark"></i> Perceptics — Summitt LPR</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://perceptics.com/summitt-lpr/" target="_blank" rel="noopener">perceptics.com/summitt-lpr</a>, <a href="https://perceptics.com/summitt-software-suite/" target="_blank" rel="noopener">perceptics.com/summitt-software-suite</a>, <a href="https://perceptics.com/fixed-camera/" target="_blank" rel="noopener">perceptics.com/fixed-camera</a>, <a href="https://perceptics.com/portable-camera/" target="_blank" rel="noopener">perceptics.com/portable-camera</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Perceptics positions Summitt LPR as a vendor-agnostic vehicle recognition solution with edge, cloud, and on-premise computing options. Official pages emphasize border, tolling, and vehicle identification applications, up to 90% automation at 99.95% accuracy, up to nine plates in one image, optional make/model/color/type, and fixed or portable purpose-built cameras.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Border and high-assurance vehicle recognition credibility is strong through Perceptics’ official product focus. Deployment breadth is documented across edge, cloud, and on-premise computing. Summitt LPR’s official claims around automation, accuracy, multi-plate reads, and optional MMCT add-on are strong for controlled vehicle-processing environments.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official positioning is strongest around vehicle-processing and border/tolling contexts, which may be more specialized than general commercial ALPR deployments. Purpose-built camera options may be more than buyers need when they want to test existing cameras first.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants a fast software-first proof on existing video sources before a hardware-led deployment. Use ALPR+ when MMCG, REST/JSON, RTSP, RabbitMQ, Docker, Windows, and Linux integration paths are the key acceptance criteria. Use ALPR Engine when a vendor-agnostic embedded recognition tier is the main requirement.</p>
+                            <p><strong>Discovery questions:</strong> Are the operating conditions closer to controlled border/tolling lanes or a mixed camera environment? Do you need a full vehicle-processing solution, or an ALPR/MMCG layer that feeds existing systems?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Perceptics can win when border, tolling, or controlled vehicle-processing requirements dominate. It can also win when the buyer values Perceptics’ purpose-built cameras and Summitt software suite as a complete stack.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="kapsch-trafficcom">
+                        <div class="card">
+                            <h4><i data-lucide="traffic-cone"></i> Kapsch TrafficCom</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.kapsch.net/en/tolling/all-electronic-tolling" target="_blank" rel="noopener">kapsch.net/en/tolling/all-electronic-tolling</a>, <a href="https://www.kapsch.net/en/tolling/city-tolling-and-clean-air-zones" target="_blank" rel="noopener">kapsch.net/en/tolling/city-tolling-and-clean-air-zones</a>, <a href="https://www.kapsch.net/en/press/releases/ktc-20250226-pr-en" target="_blank" rel="noopener">kapsch.net press release, Feb. 26, 2025</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Kapsch TrafficCom positions ANPR inside end-to-end tolling, city tolling, clean-air zone, roadside, enforcement, and back-office programs. Official pages emphasize roadside hardware/software, video-based ANPR for tagless vehicles, cloud or on-premise back offices, large-scale city processing, and a North American ANPR engine for tolling plates.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [UNVERIFIED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Tolling and ITS program depth is strong because ANPR is part of all-electronic tolling, city tolling, clean-air zones, enforcement, and back-office systems. Deployment flexibility is documented at the back-office level with cloud and on-premise options. The Feb. 26, 2025 official release documents a North American ANPR engine focused on 58 jurisdictions and more than 150 plate types.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official materials position ANPR as a component of larger tolling and ITS systems rather than a standalone ALPR+ style product for broad commercial use. The buying motion may be heavier than needed for customers seeking only a recognition engine or API integration.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the project is a software-first vehicle analytics layer rather than a full tolling or urban access-control program. Use ALPR+ when the customer wants camera-agnostic deployment plus MMCG outputs through REST/JSON, RTSP, RabbitMQ, Docker, Windows, or Linux. Use ALPR Engine when the buyer needs recognition embedded in an existing ITS or product workflow without procuring a full roadside system.</p>
+                            <p><strong>Discovery questions:</strong> Is the procurement for an end-to-end tolling or city access program, or for a recognition service that existing systems will consume? Which parts of the architecture must remain under your team’s control versus a turnkey ITS vendor?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Kapsch can win when the buyer needs a full tolling, enforcement, or city-mobility system. It can also win when existing Kapsch roadside, back-office, or program-management capabilities are already part of the infrastructure roadmap.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="neology">
+                        <div class="card">
+                            <h4><i data-lucide="scan-line"></i> Neology</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://neology.com/solutions/enforcement/products/neoforce-anpr-camera/" target="_blank" rel="noopener">neology.com/solutions/enforcement/products/neoforce-anpr-camera</a>, <a href="https://neology.com/solutions/enforcement/" target="_blank" rel="noopener">neology.com/solutions/enforcement</a>, <a href="https://neology.com/solutions/enforcement/products/neoguard/" target="_blank" rel="noopener">neology.com/solutions/enforcement/products/neoguard</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Neology positions ANPR as part of enforcement, road safety, law enforcement, road user charging, and critical infrastructure solutions. Official pages emphasize the neoForce ANPR camera, multi-lane intelligent ANPR, AI detection/classification, vehicles with or without plates, make/model/color/features, mobile enforcement, and neoGuard cloud-hosted SaaS for central search, hotlists, alerts, and sharing.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [INFERRED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Enforcement specialization is strong across traffic enforcement, law enforcement, road user charging, and critical infrastructure. Edge camera capability is strong because neoForce documents multi-lane intelligent ANPR, dual OCR, edge classification, GPS, cellular, and PoE options. Cloud operations are documented through neoGuard SaaS for search, hotlists, alerts, sharing, and central repositories.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official product positioning is hardware and enforcement-solution led, which may be less direct for buyers seeking a camera-agnostic software engine. Public pages reviewed do not present a separate OEM ALPR Engine tier or Docker-style deployment model.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants to run recognition on existing IP camera feeds rather than procure specialized ANPR cameras first. Use ALPR+ when documented REST/JSON, RTSP, RabbitMQ, Docker, Windows, Linux, and custom integration options drive the architecture decision. Use ALPR+ when MMCG outputs need to be consumed outside an enforcement platform.</p>
+                            <p><strong>Discovery questions:</strong> Is the project centered on enforcement hardware, or on vehicle recognition data that must feed multiple systems? What level of control do you need over the processing environment and API outputs?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Neology can win when the requirement is an enforcement-focused camera and SaaS stack. It can also win when road user charging or critical-infrastructure enforcement expertise is central to the deal.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="leonardo-elsag">
+                        <div class="card">
+                            <h4><i data-lucide="badge-check"></i> Leonardo — ELSAG LPR</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.leonardocompany-us.com/lpr" target="_blank" rel="noopener">leonardocompany-us.com/lpr</a>, <a href="https://www.leonardocompany-us.com/lpr/products" target="_blank" rel="noopener">leonardocompany-us.com/lpr/products</a>, <a href="https://www.leonardocompany-us.com/lpr/elsag-eoc" target="_blank" rel="noopener">leonardocompany-us.com/lpr/elsag-eoc</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Leonardo positions ELSAG LPR as a law-enforcement-focused ecosystem spanning fixed, mobile, solar, video, covert, radar, parking, and cloud options. Official pages emphasize data sovereignty, 24/7 support, regulatory compliance, flexible purchase/finance/subscription options, EOC software, CAD/RMS integration, hotlists, alerts, audits, permissions, and vehicle make/type/color.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [INFERRED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Law-enforcement fit is strong through mobile, fixed, solar, video, covert, radar, parking, cloud, and EOC workflows. Operational controls are documented through audits, permissions, mapping, notifications, hotlists, and CAD/RMS integration. Procurement flexibility is supported by official purchase, finance, and subscription language.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Pricing still requires contacting the vendor. Official pages position ELSAG as a full law-enforcement LPR ecosystem, which may be more scope than buyers need for API-first vehicle analytics. Public pages reviewed do not present Docker, RabbitMQ, or a distinct OEM ALPR Engine tier.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants a software-first ALPR/MMCG engine that can fit existing cameras and systems without adopting a full law-enforcement LPR ecosystem. Use ALPR+ when REST/JSON, RTSP, RabbitMQ, Docker, Windows, Linux, and custom integrations are required in the technical proof. Use ALPR Engine when the use case is embedded vehicle recognition rather than ELSAG operational software.</p>
+                            <p><strong>Discovery questions:</strong> Are you looking for a complete law-enforcement LPR operating environment, or a recognition layer that integrates with systems you already use? Which deployment and data-sovereignty requirements need to be proven before a pilot?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Leonardo ELSAG can win when a law-enforcement agency wants a mature fixed/mobile/cloud LPR ecosystem with operational software and support. It can also win when existing ELSAG deployments or procurement vehicles create an incumbent advantage.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="jenoptik">
+                        <div class="card">
+                            <h4><i data-lucide="gauge"></i> Jenoptik</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.jenoptik.us/products/civil-security/alpr" target="_blank" rel="noopener">jenoptik.us/products/civil-security/alpr</a>, <a href="https://www.jenoptik.us/products/civil-security" target="_blank" rel="noopener">jenoptik.us/products/civil-security</a>, <a href="https://www.jenoptik.us/products/civil-security/data-analysis-software" target="_blank" rel="noopener">jenoptik.us/products/civil-security/data-analysis-software</a>, <a href="https://www.jenoptik.com/sites/gardovia-cost-effective-anpr-camera" target="_blank" rel="noopener">jenoptik.com/sites/gardovia-cost-effective-anpr-camera</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> Jenoptik positions ALPR inside its civil security portfolio with VECTOR and GardoVia camera systems, deep learning, worldwide plate recognition, vehicle classification, fixed/mobile use, hotlists, rapid-deployment trailers, and data analysis software. Official pages emphasize more than 40 years of civil-security experience, hardware/software from one source, high-speed multi-lane recognition, and retention controls.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [UNVERIFIED]; on-prem [INFERRED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Civil-security and enforcement credibility is strong through decades of official portfolio positioning. Purpose-built camera capability is strong across VECTOR, GardoVia, fixed, mobile, high-speed, multi-lane, and rapid-deployment trailer use cases. Data analysis support is documented through TraffiData, hotlists, filters, real-time analysis, and configurable retention/deletion controls.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official positioning is hardware/software civil-security solution led, which may be heavier than a focused API-first ALPR proof. Public pages reviewed do not emphasize camera-agnostic reuse, Docker deployment, RabbitMQ integration, or OEM engine packaging.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer needs to start with existing cameras and software deployment flexibility rather than civil-security camera procurement. Use ALPR+ when MMCG, REST/JSON, RTSP, RabbitMQ, Docker, Windows, and Linux integration requirements must be documented up front. Use ALPR Engine when the buyer needs recognition embedded into another workflow instead of a complete enforcement camera stack.</p>
+                            <p><strong>Discovery questions:</strong> Are you procuring a full civil-security camera system, or validating recognition software against your current infrastructure? Which existing systems need structured plate and vehicle attribute data?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> Jenoptik can win when the project requires purpose-built enforcement cameras, rapid-deployment trailers, and civil-security data analysis software. It can also win when worldwide plate coverage and integrated hardware/software procurement are top requirements.</p>
+                        </div>
+                    </div>
+
+                    <div class="competitor-profile" data-competitor="ndi-recognition-systems">
+                        <div class="card">
+                            <h4><i data-lucide="car-front"></i> NDI Recognition Systems</h4>
+                            <p><strong>Official source URLs:</strong> <a href="https://www.ndi-rs.com/company-profile/" target="_blank" rel="noopener">ndi-rs.com/company-profile</a>, <a href="https://www.ndi-rs.com/how-alpr-works/" target="_blank" rel="noopener">ndi-rs.com/how-alpr-works</a>, <a href="https://www.ndi-rs.com/type/software/" target="_blank" rel="noopener">ndi-rs.com/type/software</a>, <a href="https://www.ndi-rs.com/type/mobile-alpr-solutions/" target="_blank" rel="noopener">ndi-rs.com/type/mobile-alpr-solutions</a>, <a href="https://www.ndi-rs.com/type/fixed-alpr-solutions/" target="_blank" rel="noopener">ndi-rs.com/type/fixed-alpr-solutions</a>. <strong>Access date:</strong> June 5, 2026.</p>
+                            <p><strong>Positioning:</strong> NDI Recognition Systems positions itself as a manufacturer and provider of custom ALPR hardware and software solutions for law enforcement, military, government, commercial, parking, and critical-infrastructure use cases. Official pages emphasize cameras, processors, VeriPlate, VISCE, PlateParQ, TALON, fixed/mobile/portable systems, hotlists, whitelists, analytics, real-time alerts, and subject-matter support.</p>
+                            <p><strong>Deployment modes:</strong> Cloud [VERIFIED]; on-prem [VERIFIED]; edge [VERIFIED]; hardware-only [INFERRED].</p>
+                            <p><strong>Pricing model:</strong> not publicly listed — contact vendor</p>
+                            <div class="strength-box">
+                                <p><strong>Strengths:</strong> Full-stack ALPR ownership is strong because NDI develops cameras, software, processors, and services. Fixed, mobile, and portable coverage is documented across roadways, vehicles, trailers, parking, and covert workflows. Software depth is documented through hotlist synchronization, whitelist databases, reporting, real-time intelligence, command dispatch integration, VISCE cloud/on-premise back office, and TALON recognition engine.</p>
+                            </div>
+                            <div class="weakness-box">
+                                <p><strong>Weaknesses:</strong> Public pricing is not listed. Official pages emphasize NDI cameras, processors, and software as a complete provider stack, which may be less attractive when the buyer wants a lightweight software-only layer. Public pages reviewed do not document MMCG generation, Docker deployment, RabbitMQ integration, or an OEM engine tier for third-party product embedding.</p>
+                            </div>
+                            <p><strong>Sighthound ALPR+ win themes:</strong> Use ALPR+ when the buyer wants to validate recognition on existing IP cameras rather than commit to a full vendor hardware/software stack. Use ALPR+ when MMCG outputs, REST/JSON, RTSP, RabbitMQ, Docker, Windows, and Linux deployment details are central to the architecture review. Use ALPR Engine when the customer needs embeddable recognition in another product rather than a complete ALPR system provider.</p>
+                            <p><strong>Discovery questions:</strong> Do you need a turnkey ALPR hardware/software provider, or a recognition layer that fits an existing camera and application architecture? Which integration outputs and deployment environments must be proven during the pilot?</p>
+                            <p><strong>Scenarios where the competitor wins:</strong> NDI can win when the buyer wants a long-running full-stack ALPR vendor with fixed, mobile, portable, software, and support capabilities. It can also win when agency procurement favors NDI’s cameras, processors, VeriPlate, VISCE, PlateParQ, or TALON ecosystem.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
             <section id="alpr-feature-comparison" class="section alpr-section" data-alpr-index="4">
