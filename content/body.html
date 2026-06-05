@@ -1801,14 +1801,130 @@
                 <h2><i data-lucide="users"></i> ICP &amp; Personas</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — ICP &amp; Personas</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain ideal customer profiles and buyer personas for ALPR+ verticals, technical gatekeepers, budget owners, and operational recommenders.</p>
-                    <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    <h3><i data-lucide="target"></i> ICP Lens for Sales Qualification</h3>
+                    <div class="strength-box">
+                        <p>Best-fit ALPR+ opportunities are teams that need more than a plate read: they need MMCG vehicle identification, deployment control for private, restricted, or air-gapped environments, API-first integration, and a no-friction way to validate results through the free Test Drive.</p>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(2, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel2" class="alpr-prompt-panel" hidden></div>
+
+                    <h3><i data-lucide="user-check"></i> Six Primary Buyer Personas</h3>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4><i data-lucide="shield"></i> Public Safety Technology Commander — Law Enforcement Agency</h4>
+                            <p><strong>Vertical:</strong> Law enforcement &amp; public safety</p>
+                            <p><strong>Buying role:</strong> Budget owner</p>
+                            <p><strong>Primary pain point:</strong> Plate-only evidence does not always resolve BOLO, partial-plate, no-plate, or post-incident investigation workflows.</p>
+                            <p><strong>Key capability needs:</strong> MMCG analytics, BOLO alert support, searchable vehicle attributes, on-premise or edge deployment, Docker-based and air-gapped deployment planning, existing-camera compatibility, and controlled data retention.</p>
+                            <p><strong>Buying influence level:</strong> High — sponsors the operational need and secures approval with IT, legal, and procurement.</p>
+                            <p><strong>Trigger event:</strong> Crime spike, investigative backlog, grant-funded camera expansion, privacy policy update, or replacement of aging fixed/mobile LPR hardware.</p>
+                            <p><strong>Most likely competitor in evaluation:</strong> Flock Safety — official LPR positioning covers law enforcement agencies, real-time alerts, vehicle detail search, audit trails, and a national LPR network.</p>
+                            <p><strong>Success metrics:</strong> Faster vehicle-of-interest identification, higher percentage of actionable searches from incomplete vehicle data, shorter investigation cycle time, and fewer manual video review hours.</p>
+                            <p><strong>Common objections:</strong> “We already use a public-safety LPR network,” “Will this fit our data-retention policy?” and “Can we validate results before procurement?”</p>
+                            <p><strong>Best talk track phrase:</strong> “Use the Test Drive to compare the same images, then decide whether controlled deployment plus MMCG gives your investigators more usable vehicle leads.”</p>
+                            <p><strong>Fair-fit note:</strong> If the primary need is turnkey access to an existing shared LPR network, Flock may be the cleaner fit; position ALPR+ when local control, camera flexibility, or deeper vehicle attributes matter more.</p>
+                        </div>
+
+                        <div class="card">
+                            <h4><i data-lucide="parking-circle"></i> Parking &amp; EV Operations Director — Parking Authority, Campus, or Operator</h4>
+                            <p><strong>Vertical:</strong> Parking, EV &amp; access control</p>
+                            <p><strong>Buying role:</strong> Operational recommender</p>
+                            <p><strong>Primary pain point:</strong> Manual permit checks, EV bay misuse, overstays, and gate exceptions create enforcement cost, customer friction, and poor occupancy visibility.</p>
+                            <p><strong>Key capability needs:</strong> Accurate plate reads at entrances/exits, vehicle attribute confirmation, EV-zone and overstay workflows, API handoff to parking/payment systems, low-latency edge processing, and on-premise options for sensitive sites.</p>
+                            <p><strong>Buying influence level:</strong> Medium-high — defines operational requirements and influences the final platform choice with finance and IT.</p>
+                            <p><strong>Trigger event:</strong> Virtual-permit rollout, gateless parking initiative, EV charging enforcement need, new garage opening, or pressure to reduce manual patrol routes.</p>
+                            <p><strong>Most likely competitor in evaluation:</strong> Genetec AutoVu — official AutoVu parking pages cover parking enforcement, virtual permits, gateless parking, occupancy insights, and unified parking/security operations.</p>
+                            <p><strong>Success metrics:</strong> Fewer manual patrol hours, higher permit/overstay detection coverage, faster gate exception handling, better occupancy reporting, and improved customer throughput.</p>
+                            <p><strong>Common objections:</strong> “Will it integrate with our parking platform?” “Can it handle low-speed gate reads and lot occupancy?” and “Do we need to replace cameras?”</p>
+                            <p><strong>Best talk track phrase:</strong> “Start with a camera and workflow fit check: ALPR+ can validate plates and vehicle attributes, then send structured results into the systems you already run.”</p>
+                            <p><strong>Fair-fit note:</strong> If the buyer is already standardized on Genetec Security Center and wants parking/security unification above all else, AutoVu may have a natural incumbent advantage.</p>
+                        </div>
+
+                        <div class="card">
+                            <h4><i data-lucide="traffic-cone"></i> ITS Program Manager — Smart City, DOT, Tolling, or Roadway Authority</h4>
+                            <p><strong>Vertical:</strong> Smart city, ITS &amp; tolling</p>
+                            <p><strong>Buying role:</strong> Technical gatekeeper</p>
+                            <p><strong>Primary pain point:</strong> Legacy roadside systems are difficult to modernize, integrate, and govern across high-volume traffic, tolling, enforcement, and city-mobility programs.</p>
+                            <p><strong>Key capability needs:</strong> Real-time and batch processing, RTSP support, Docker deployment, Windows/Linux support, edge/on-premise/cloud options, JSON output, RabbitMQ integration, and vehicle attributes beyond plate strings.</p>
+                            <p><strong>Buying influence level:</strong> High — validates architecture, integration risk, and deployment feasibility before procurement advances.</p>
+                            <p><strong>Trigger event:</strong> Smart corridor project, tolling modernization, congestion or emissions-zone program, traffic analytics refresh, or requirement to keep processing inside controlled infrastructure.</p>
+                            <p><strong>Most likely competitor in evaluation:</strong> Adaptive Recognition Carmen/Vidar — official pages cover traffic monitoring, tolling, smart city applications, ANPR/MMR cameras, SDKs, and logistics-adjacent recognition products.</p>
+                            <p><strong>Success metrics:</strong> Integration readiness, lower rework on existing camera infrastructure, reliable structured outputs, deployment acceptance by IT/security, and improved vehicle classification for analytics.</p>
+                            <p><strong>Common objections:</strong> “Can it meet our roadway capture conditions?” “How does it integrate with existing ITS middleware?” and “Who is responsible for legal enforcement validation?”</p>
+                            <p><strong>Best talk track phrase:</strong> “Use ALPR+ as a software-first vehicle analytics layer where deployment control, Docker repeatability, and MMCG-enriched outputs are more valuable than a hardware-only refresh.”</p>
+                            <p><strong>Fair-fit note:</strong> If the RFP requires a turnkey certified roadside enforcement stack or specialized traffic camera hardware, a hardware-led vendor may be better suited.</p>
+                        </div>
+
+                        <div class="card">
+                            <h4><i data-lucide="store"></i> Drive-Thru &amp; Guest Experience Leader — Retail, QSR, Car Wash, or Automotive Services</h4>
+                            <p><strong>Vertical:</strong> Retail, QSR &amp; automotive services</p>
+                            <p><strong>Buying role:</strong> Operational recommender</p>
+                            <p><strong>Primary pain point:</strong> Vehicle visits are disconnected from loyalty, service-lane, order-status, queue-time, and customer-experience workflows.</p>
+                            <p><strong>Key capability needs:</strong> Fast vehicle recognition at low-speed approaches, MMCG for no-plate or partial-plate cases, API integration to CRM/POS/service systems, JSON output, camera flexibility, and a quick image-based proof path.</p>
+                            <p><strong>Buying influence level:</strong> Medium — builds the use case and proof of value before IT and finance validate scale-up.</p>
+                            <p><strong>Trigger event:</strong> Drive-thru speed initiative, loyalty personalization program, service-lane automation project, customer pickup expansion, or loss-prevention incident tied to a vehicle.</p>
+                            <p><strong>Most likely competitor in evaluation:</strong> Plate Recognizer Stream — official Stream use cases include parking management, police surveillance, car wash, drive-thru, payment automation, and operational workflows.</p>
+                            <p><strong>Success metrics:</strong> Shorter queue times, faster vehicle-to-customer matching, higher automated check-in accuracy, fewer manual lookups, and better repeat-visit visibility.</p>
+                            <p><strong>Common objections:</strong> “Will plate recognition work in our lanes?” “Can it connect to store systems?” and “Is this too technical for operations to manage?”</p>
+                            <p><strong>Best talk track phrase:</strong> “Have operations upload real site images first; if ALPR+ returns the plate and vehicle attributes reliably, the API conversation becomes much easier.”</p>
+                            <p><strong>Fair-fit note:</strong> If the buyer primarily wants broad restaurant video analytics, POS fraud monitoring, and multi-camera store operations rather than vehicle identity workflows, a broader video intelligence platform may fit better.</p>
+                        </div>
+
+                        <div class="card">
+                            <h4><i data-lucide="truck"></i> Yard &amp; Fleet Operations Director — Transportation, Logistics, Warehouse, or Depot</h4>
+                            <p><strong>Vertical:</strong> Transportation &amp; logistics</p>
+                            <p><strong>Buying role:</strong> Operational recommender</p>
+                            <p><strong>Primary pain point:</strong> Manual gate logs, missed arrivals, dock congestion, dwell-time uncertainty, and weak auditability slow down high-volume vehicle movement.</p>
+                            <p><strong>Key capability needs:</strong> Gate and yard recognition, vehicle attribute capture, batch and real-time processing, edge/on-premise deployment, API export to yard or fleet systems, and offline-friendly architecture planning.</p>
+                            <p><strong>Buying influence level:</strong> Medium-high — owns operational outcomes and pushes the business case to IT, security, and finance.</p>
+                            <p><strong>Trigger event:</strong> New distribution center, carrier SLA pressure, gate automation project, cargo-loss incident, facility security upgrade, or need to reduce manual check-in staffing.</p>
+                            <p><strong>Most likely competitor in evaluation:</strong> Adaptive Recognition Carmen Worker/Carmen GO — official pages list transportation and logistics, parking management, traffic enforcement, retail/commercial centers, and on-premise/offline recognition use cases.</p>
+                            <p><strong>Success metrics:</strong> Faster gate throughput, lower manual check-in time, better dwell and exception visibility, fewer unidentified vehicles, and smoother integration with yard-management workflows.</p>
+                            <p><strong>Common objections:</strong> “Can it operate if connectivity is limited?” “Can it distinguish similar vehicles?” and “Will it fit our existing cameras and gate systems?”</p>
+                            <p><strong>Best talk track phrase:</strong> “ALPR+ is strongest when the yard needs controlled deployment plus vehicle attributes that make gate events more useful than plate reads alone.”</p>
+                            <p><strong>Fair-fit note:</strong> If the project requires container, rail, or hazardous-goods code recognition in addition to vehicle ALPR, Adaptive Recognition’s specialized logistics portfolio may be stronger.</p>
+                        </div>
+
+                        <div class="card">
+                            <h4><i data-lucide="code-2"></i> Solutions Architect or Product Manager — Developer, OEM, or Systems Integrator</h4>
+                            <p><strong>Vertical:</strong> Developer, OEM &amp; systems integrator</p>
+                            <p><strong>Buying role:</strong> Technical gatekeeper</p>
+                            <p><strong>Primary pain point:</strong> The team needs embeddable vehicle intelligence without forcing customers into a single hosted workflow, hardware stack, or opaque integration path.</p>
+                            <p><strong>Key capability needs:</strong> REST API, JSON responses, Docker service deployment, RTSP support, RabbitMQ integration, Python customization, Windows/Linux support, no-sign-up Test Drive, and repeatable self-hosted or air-gapped proof environments.</p>
+                            <p><strong>Buying influence level:</strong> High — owns technical validation and can block or accelerate vendor selection.</p>
+                            <p><strong>Trigger event:</strong> Customer RFP, new vehicle-analytics product feature, incumbent API cost/performance concern, migration from prototype to production, or need for a self-hosted deployment option.</p>
+                            <p><strong>Most likely competitor in evaluation:</strong> Plate Recognizer — official pages publish API/Stream workflows, cloud/on-premise deployment, webhooks, JSON/CSV output, free trials, and developer-friendly pricing context.</p>
+                            <p><strong>Success metrics:</strong> Faster prototype, clean API handoff, stable self-hosted deployment, lower integration rework, and stronger recognition results on customer-provided images.</p>
+                            <p><strong>Common objections:</strong> “How fast can we test?” “Can we run this in our environment?” “Is there enough API control?” and “How does current pricing work?”</p>
+                            <p><strong>Best talk track phrase:</strong> “Start with the no-sign-up Test Drive, inspect the JSON, then prove the same workflow through REST, Docker, RTSP, and your integration stack.”</p>
+                            <p><strong>Fair-fit note:</strong> If the buyer requires a traditional SDK with specific language bindings or public self-serve pricing above deployment flexibility, another developer-first ALPR vendor may remain competitive.</p>
+                        </div>
+                    </div>
+
+                    <h3><i data-lucide="table-2"></i> Prioritization Matrix</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fastest close</th>
+                                    <th>Highest ACV</th>
+                                    <th>Highest volume</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Developer / Integrator Solutions Architect</strong><br />Shortest proof path because the no-sign-up Test Drive, REST/JSON output, and Docker deployment map directly to technical validation.</td>
+                                    <td><strong>Smart City / ITS Program Manager [ESTIMATED]</strong><br />Largest representative expansion potential when ALPR+ is part of a corridor, tolling, traffic, or multi-site infrastructure modernization program.</td>
+                                    <td><strong>Parking &amp; EV Operations Director [ESTIMATED]</strong><br />Broadest repeatable motion across campuses, municipalities, private operators, EV charging sites, access control, and gateless parking workflows.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Runner-up:</strong> Retail/QSR operator when a single-lane test can prove service-lane value quickly.</td>
+                                    <td><strong>Runner-up:</strong> Law enforcement command buyer when deployment spans fixed, mobile, and investigative workflows.</td>
+                                    <td><strong>Runner-up:</strong> Developer/integrator channel when ALPR+ becomes embedded into repeatable customer deployments.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><small>Pricing and compliance caveat: ALPR+ pricing is not publicly listed; contact the Sighthound sales team at <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a>, and buyers are responsible for legal/compliance determinations.</small></p>
                 </div>
             </section>
             <section id="alpr-competitor-profiles" class="section alpr-section" data-alpr-index="3">
