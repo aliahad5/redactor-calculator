@@ -3008,14 +3008,353 @@
                 <h2><i data-lucide="calculator"></i> Pricing Calculator</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — Pricing Calculator</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain an ALPR+ pricing estimation framework for pre-sales conversations, with all figures clearly marked for sales verification.</p>
                     <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                        <i data-lucide="alert-triangle"></i>
+                        <span><strong>Internal sales enablement only:</strong> ALPR+ current pricing is not publicly listed. Treat every calculated output as potential, estimated, and illustrative until Sighthound sales provides a current quote.</span>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(8, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel8" class="alpr-prompt-panel" hidden></div>
+
+                    <h3><i data-lucide="sliders-horizontal"></i> Input Variable Specification</h3>
+                    <p>Use this specification before any custom quoting conversation. Defaults represent a realistic mid-market deployment scenario, not a scenario engineered to make any vendor appear cheapest.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Variable name</th>
+                                    <th>Input type</th>
+                                    <th>Permitted range or options</th>
+                                    <th>Default value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Camera count</strong></td>
+                                    <td>Slider with numeric readout</td>
+                                    <td>1–500+ cameras; anything above 500 is treated as custom enterprise scope.</td>
+                                    <td>25 cameras</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Deployment type</strong></td>
+                                    <td>Dropdown</td>
+                                    <td>On-prem, cloud, edge, air-gapped</td>
+                                    <td>Edge</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Use case vertical</strong></td>
+                                    <td>Dropdown</td>
+                                    <td>Law enforcement, parking, smart city, retail, developer</td>
+                                    <td>Parking</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Feature tier</strong></td>
+                                    <td>Tier selector</td>
+                                    <td>Free, Pro, Engine</td>
+                                    <td>Pro</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pricing-recommendation-panel">
+                        <h3><i data-lucide="settings-2"></i> Default Scenario Preview</h3>
+                        <p class="pricing-recommendation-note">Default scenario: 25-camera edge deployment for a parking or access-control buyer evaluating Pro-tier capabilities. Verify with sales team before presenting any output from this panel.</p>
+                        <div class="pricing-control-grid" aria-label="Default ALPR+ calculator settings preview">
+                            <div class="pricing-control">
+                                <label for="alprCameraCountPreview">Camera count</label>
+                                <select id="alprCameraCountPreview" disabled>
+                                    <option>25 cameras</option>
+                                </select>
+                            </div>
+                            <div class="pricing-control">
+                                <label for="alprDeploymentPreview">Deployment type</label>
+                                <select id="alprDeploymentPreview" disabled>
+                                    <option>Edge</option>
+                                </select>
+                            </div>
+                            <div class="pricing-control">
+                                <label for="alprVerticalPreview">Use case vertical</label>
+                                <select id="alprVerticalPreview" disabled>
+                                    <option>Parking</option>
+                                </select>
+                            </div>
+                            <div class="pricing-control">
+                                <label for="alprTierPreview">Feature tier</label>
+                                <select id="alprTierPreview" disabled>
+                                    <option>Pro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3><i data-lucide="layers-3"></i> Tier Mapping Logic</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ALPR+ tier</th>
+                                    <th>Input combinations that map here</th>
+                                    <th>Pricing caveat</th>
+                                    <th>Sales-use note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Free (limited)</strong></td>
+                                    <td>Small evaluation, cloud-only validation, limited users, short retention, or buyer explicitly selects Free.</td>
+                                    <td>Historical Free tier reference only [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us].</td>
+                                    <td>Use only for pre-production validation framing. Do not position as a production pricing quote.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pro (per-camera subscription)</strong></td>
+                                    <td>Production deployment across on-prem, cloud, or edge; non-OEM buyer; typical 1–500 camera scenario where per-camera economics matter.</td>
+                                    <td>Historical ALPR Pro reference: $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us].</td>
+                                    <td>Use as a dated budget anchor only. Current ALPR+ pricing is not publicly listed.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Engine (OEM/developer)</strong></td>
+                                    <td>Developer vertical, embedded/OEM requirement, custom API packaging, air-gapped architecture, 500+ cameras, or non-standard throughput/hosting terms.</td>
+                                    <td>Engine pricing is not publicly listed; verify with Sighthound sales before any numeric comparison.</td>
+                                    <td>Use when the buyer needs an embeddable recognition layer, custom integration, or quote-led enterprise scope.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="file-search"></i> Source Snapshot for Pricing Inputs</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pricing input</th>
+                                    <th>Source name and access date</th>
+                                    <th>Use in calculator</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sighthound ALPR+ current pricing</td>
+                                    <td>Sighthound ALPR+ product page and contact page; accessed June 5, 2026.</td>
+                                    <td>Current ALPR+ pricing is not publicly listed; all Sighthound outputs must be verified by sales.</td>
+                                </tr>
+                                <tr>
+                                    <td>Historical ALPR Pro</td>
+                                    <td>Sighthound ALPR launch release; accessed June 5, 2026.</td>
+                                    <td>$29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] is the only Sighthound numeric pricing anchor used here.</td>
+                                </tr>
+                                <tr>
+                                    <td>Plate Recognizer Snapshot and Stream</td>
+                                    <td>Plate Recognizer pricing page; accessed June 5, 2026.</td>
+                                    <td>Snapshot: $50/month for 50,000 lookups, $150/month for 250,000 lookups, $250/month for 500,000 lookups, plus 50% for vehicle make/model/color/orientation. Stream + MMC: $45/month per camera.</td>
+                                </tr>
+                                <tr>
+                                    <td>Rekor benchmark</td>
+                                    <td>Software Finder Rekor profile; accessed June 5, 2026.</td>
+                                    <td>Uses ~$12/camera/month [UNVERIFIED — NOT FROM OFFICIAL SOURCE] only as a third-party low-end benchmark, not as an official Rekor quote.</td>
+                                </tr>
+                                <tr>
+                                    <td>Flock Safety and LE hardware vendors</td>
+                                    <td>Flock Safety LPR page, Leonardo ELSAG pages, NDI pages, and Jenoptik ALPR pages; accessed June 5, 2026.</td>
+                                    <td>No public self-serve pricing is used; treat as hardware bundle, cloud subscription, or procurement-contract quote scenarios.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="table-2"></i> TCO Comparison at 5, 25, and 100 Cameras</h3>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="info"></i>
+                        <span><strong>Output panel note:</strong> Verify with sales team before use. The table is a potential, estimated, illustrative comparison and is not a customer quote.</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Scale Point</th>
+                                    <th>ALPR+ Tier</th>
+                                    <th>Est. Annual Cost</th>
+                                    <th>Competitor Model</th>
+                                    <th>Competitor Est.</th>
+                                    <th>Delta</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>5 cameras [ESTIMATE]</td>
+                                    <td>Free (limited) [ESTIMATE]</td>
+                                    <td>No current public ALPR+ production price; historical Free tier is limited and caveated [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] [ESTIMATE].</td>
+                                    <td>Plate Recognizer Snapshot + MMC; assumes 10,000 lookups/camera/month from Plate Recognizer pricing page, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>50,000 lookups/month: $75/month or $900/year [ESTIMATE].</td>
+                                    <td>Not calculable until current Sighthound quote; competitor public input is $900/year [ESTIMATE].</td>
+                                    <td>Low for ALPR+ cost; medium for public competitor tier math [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>25 cameras [ESTIMATE]</td>
+                                    <td>Free (limited) [ESTIMATE]</td>
+                                    <td>No current public ALPR+ production price; historical Free tier is limited and caveated [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] [ESTIMATE].</td>
+                                    <td>Plate Recognizer Snapshot + MMC; assumes 10,000 lookups/camera/month from Plate Recognizer pricing page, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>250,000 lookups/month: $225/month or $2,700/year [ESTIMATE].</td>
+                                    <td>Not calculable until current Sighthound quote; competitor public input is $2,700/year [ESTIMATE].</td>
+                                    <td>Low for ALPR+ cost; medium for public competitor tier math [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>100 cameras [ESTIMATE]</td>
+                                    <td>Free (limited) [ESTIMATE]</td>
+                                    <td>No current public ALPR+ production price; historical Free tier is limited and caveated [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] [ESTIMATE].</td>
+                                    <td>Plate Recognizer Snapshot + MMC; assumes 10,000 lookups/camera/month from Plate Recognizer pricing page, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>1,000,000 lookups/month modeled as two Large + MMC blocks: $750/month or $9,000/year [ESTIMATE].</td>
+                                    <td>Not calculable until current Sighthound quote; competitor input may require custom validation [ESTIMATE].</td>
+                                    <td>Low for both until enterprise terms are quoted [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>5 cameras [ESTIMATE]</td>
+                                    <td>Pro (per-camera subscription) [ESTIMATE]</td>
+                                    <td>$1,740/year [ESTIMATE], modeled as 5 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12.</td>
+                                    <td>Plate Recognizer Stream + MMC from Plate Recognizer pricing page, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>$2,700/year [ESTIMATE], modeled as 5 × $45/camera/month × 12.</td>
+                                    <td>Competitor higher by $960/year [ESTIMATE].</td>
+                                    <td>Low for ALPR+ historical pricing; high for public competitor list input [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>25 cameras [ESTIMATE]</td>
+                                    <td>Pro (per-camera subscription) [ESTIMATE]</td>
+                                    <td>$8,700/year [ESTIMATE], modeled as 25 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12.</td>
+                                    <td>Plate Recognizer Stream + MMC from Plate Recognizer pricing page, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>$13,500/year [ESTIMATE], modeled as 25 × $45/camera/month × 12.</td>
+                                    <td>Competitor higher by $4,800/year [ESTIMATE].</td>
+                                    <td>Low for ALPR+ historical pricing; high for public competitor list input [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>100 cameras [ESTIMATE]</td>
+                                    <td>Pro (per-camera subscription) [ESTIMATE]</td>
+                                    <td>$34,800/year [ESTIMATE], modeled as 100 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12.</td>
+                                    <td>Plate Recognizer Stream + MMC from Plate Recognizer pricing page, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>$54,000/year [ESTIMATE], modeled as 100 × $45/camera/month × 12.</td>
+                                    <td>Competitor higher by $19,200/year [ESTIMATE].</td>
+                                    <td>Low for ALPR+ historical pricing; high for public competitor list input [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>5 cameras [ESTIMATE]</td>
+                                    <td>Pro (per-camera subscription) [ESTIMATE]</td>
+                                    <td>$1,740/year [ESTIMATE], modeled as 5 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12.</td>
+                                    <td>Rekor low-end per-camera benchmark from Software Finder, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>$720/year [ESTIMATE], modeled as 5 × $12/camera/month [UNVERIFIED — NOT FROM OFFICIAL SOURCE] × 12.</td>
+                                    <td>Competitor lower by $1,020/year [ESTIMATE]; show this honestly and verify scope/features.</td>
+                                    <td>Low because Rekor input is not an official quote and may not cover enterprise/government requirements [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>25 cameras [ESTIMATE]</td>
+                                    <td>Pro (per-camera subscription) [ESTIMATE]</td>
+                                    <td>$8,700/year [ESTIMATE], modeled as 25 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12.</td>
+                                    <td>Rekor low-end per-camera benchmark from Software Finder, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>$3,600/year [ESTIMATE], modeled as 25 × $12/camera/month [UNVERIFIED — NOT FROM OFFICIAL SOURCE] × 12.</td>
+                                    <td>Competitor lower by $5,100/year [ESTIMATE]; show this honestly and verify scope/features.</td>
+                                    <td>Low because Rekor input is not an official quote and may not cover enterprise/government requirements [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>100 cameras [ESTIMATE]</td>
+                                    <td>Pro (per-camera subscription) [ESTIMATE]</td>
+                                    <td>$34,800/year [ESTIMATE], modeled as 100 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12.</td>
+                                    <td>Rekor low-end per-camera benchmark from Software Finder, accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>$14,400/year [ESTIMATE], modeled as 100 × $12/camera/month [UNVERIFIED — NOT FROM OFFICIAL SOURCE] × 12.</td>
+                                    <td>Competitor lower by $20,400/year [ESTIMATE]; show this honestly and verify scope/features.</td>
+                                    <td>Low because Rekor input is not an official quote and may not cover enterprise/government requirements [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>5 cameras [ESTIMATE]</td>
+                                    <td>Engine (OEM/developer) [ESTIMATE]</td>
+                                    <td>Custom quote required; no public ALPR+ Engine figure is used [ESTIMATE].</td>
+                                    <td>Flock Safety or LE hardware vendor bundle; official vendor pages accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>No public self-serve numeric estimate shown; quote required for hardware, install, cloud, support, retention, and procurement terms [ESTIMATE].</td>
+                                    <td>Not calculable until both vendors provide quotes [ESTIMATE].</td>
+                                    <td>Low; quote-led procurement [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>25 cameras [ESTIMATE]</td>
+                                    <td>Engine (OEM/developer) [ESTIMATE]</td>
+                                    <td>Custom quote required; no public ALPR+ Engine figure is used [ESTIMATE].</td>
+                                    <td>Flock Safety or LE hardware vendor bundle; official vendor pages accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>No public self-serve numeric estimate shown; quote required for hardware, install, cloud, support, retention, and procurement terms [ESTIMATE].</td>
+                                    <td>Not calculable until both vendors provide quotes [ESTIMATE].</td>
+                                    <td>Low; quote-led procurement [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>100 cameras [ESTIMATE]</td>
+                                    <td>Engine (OEM/developer) [ESTIMATE]</td>
+                                    <td>Custom quote required; no public ALPR+ Engine figure is used [ESTIMATE].</td>
+                                    <td>Flock Safety or LE hardware vendor bundle; official vendor pages accessed June 5, 2026 [ESTIMATE].</td>
+                                    <td>No public self-serve numeric estimate shown; quote required for hardware, install, cloud, support, retention, and procurement terms [ESTIMATE].</td>
+                                    <td>Not calculable until both vendors provide quotes [ESTIMATE].</td>
+                                    <td>Low; quote-led procurement [ESTIMATE].</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="trending-up"></i> Volume Crossover Calculation</h3>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="info"></i>
+                        <span><strong>Output panel note:</strong> Verify with sales team before use. This is a potential, estimated, illustrative crossover model, not current Sighthound ALPR+ pricing.</span>
+                    </div>
+                    <div class="pricing-recommendation-output">
+                        <h4>Assumption → Formula → Result</h4>
+                        <p><strong>Assumption:</strong> 30-day month [ESTIMATE]; Plate Recognizer Snapshot Small + MMC modeled at $75/month for 50,000 lookups, or $0.0015/lookup [ESTIMATE], from Plate Recognizer pricing page accessed June 5, 2026; subscription benchmark modeled at $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] [ESTIMATE].</p>
+                        <p><strong>Formula:</strong> $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] ÷ $0.0015 per lookup = 19,333 lookups/camera/month [ESTIMATE]; 19,333 ÷ 30 days = 645 lookups/camera/day [ESTIMATE].</p>
+                        <p><strong>Result:</strong> Above approximately 645 lookups per camera per day [ESTIMATE], the modeled per-lookup approach potentially becomes more expensive than the modeled per-camera subscription benchmark. At the 25-camera default, crossover is about 483,333 lookups/month and about $725/month [ESTIMATE], derived from the same $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] benchmark.</p>
+                    </div>
+
+                    <h3><i data-lucide="badge-dollar-sign"></i> Law Enforcement ROI Example</h3>
+                    <div class="alpr-populate-note">
+                        <i data-lucide="info"></i>
+                        <span><strong>Output panel note:</strong> Verify with sales team before use. This ROI panel is illustrative only and should be replaced with the agency's actual workload, labor rate, and current quote.</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Input assumption</th>
+                                    <th>Value used</th>
+                                    <th>Source/basis</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Manual lookup workload</td>
+                                    <td>2,500 lookups/month [ASSUMED VALUE]</td>
+                                    <td>Illustrative mid-market law enforcement workload for a 25-camera deployment; replace with agency data.</td>
+                                </tr>
+                                <tr>
+                                    <td>Hours per manual lookup</td>
+                                    <td>0.08 hours, or about 5 minutes [ASSUMED VALUE]</td>
+                                    <td>Manual search, review, and record-check estimate; replace with observed workflow timing.</td>
+                                </tr>
+                                <tr>
+                                    <td>Lookup reduction percentage</td>
+                                    <td>60% reduction [ASSUMED VALUE]</td>
+                                    <td>Illustrative productivity assumption; validate in pilot or proof of concept.</td>
+                                </tr>
+                                <tr>
+                                    <td>Hourly rate</td>
+                                    <td>$45/hour [ASSUMED VALUE]</td>
+                                    <td>Loaded labor-rate placeholder; replace with agency finance value.</td>
+                                </tr>
+                                <tr>
+                                    <td>Estimated ALPR+ annual cost basis</td>
+                                    <td>25 × $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us] × 12 = $8,700/year [ILLUSTRATIVE ESTIMATE]</td>
+                                    <td>Historical Pro benchmark only; not current ALPR+ pricing.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="strength-box">
+                        <p><strong>Input → Value → Basis → Result:</strong> 2,500 lookups/month [ASSUMED VALUE] × 0.08 hours/lookup [ASSUMED VALUE] × 60% reduction [ASSUMED VALUE] = 120 estimated manual hours saved/month [ILLUSTRATIVE ESTIMATE]. 120 hours/month × $45/hour [ASSUMED VALUE] × 12 months = $64,800 estimated annual labor value [ILLUSTRATIVE ESTIMATE]. Compared with the historical 25-camera model of $8,700/year [ILLUSTRATIVE ESTIMATE], derived from $29/camera/month [2023 press release — may be outdated; verify with sales team at sighthound.com/contact-us], the potential net labor-value frame is $56,100/year [ILLUSTRATIVE ESTIMATE], before hardware, integration, support, procurement, and current quote adjustments.</p>
+                    </div>
+
+                    <p><small>Internal sales enablement only; do not share as a definitive pricing document. All pricing and ROI outputs require current Sighthound and competitor quotes.</small></p>
+
+                    <div class="strength-box">
+                        <h3><i data-lucide="phone-call"></i> Get a current quote</h3>
+                        <p><a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us — Get a current quote</a></p>
+                    </div>
                 </div>
             </section>
             <section id="alpr-key-marketing-resources" class="section alpr-section" data-alpr-index="9">
