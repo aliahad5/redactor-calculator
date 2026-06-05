@@ -247,7 +247,8 @@ var ALPR_PROMPTS = [
       "Developer portal: dev.sighthound.com",
       "ALPR+ Factsheet (July 2024): publicly linked from the product page — may not reflect current Gen 6 capabilities",
       "Free test drive: sighthound.com/products/alpr/demo (no sign-up required)",
-      "Solution pages: law enforcement, parking & EV, retail & QSR, education & campus, transportation & logistics"
+      "Solution pages: law enforcement, parking & EV, retail & QSR, education & campus, transportation & logistics",
+      "Pricing: current ALPR+ pricing is not publicly listed; cite only verified live official pricing references and flag historical references as potentially outdated"
     ],
     instructions: [
       "List all official Sighthound ALPR+ web pages with verified URLs and one-line descriptions",
@@ -263,7 +264,7 @@ var ALPR_PROMPTS = [
       "Do not list Sighthound Redactor or other Sighthound product pages as ALPR+ resources",
       "Do not list third-party review sites (G2, Capterra, Slashdot) as official Sighthound resources",
       "Note if the July 2024 factsheet may not reflect current capabilities — recommend marketing review",
-      "Flag the 2023 pricing press release as the most recent public pricing reference and recommend it be updated"
+      "Do not fabricate a 2023 pricing press release; if no live official 2023 URL is verified, say so and recommend marketing update current pricing guidance"
     ]
   }
 ];
