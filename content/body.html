@@ -2300,28 +2300,351 @@
                 <h2><i data-lucide="columns-3"></i> Feature Comparison</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — Feature Comparison</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain side-by-side ALPR feature matrices covering plate reads, MMCG analytics, deployment, and integration capabilities.</p>
-                    <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    <h3><i data-lucide="table-2"></i> ALPR Depth, Deployment &amp; Integration Matrix</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Sighthound ALPR+<sup>1</sup></th>
+                                    <th>Flock Safety<sup>2</sup></th>
+                                    <th>Rekor Scout<sup>3</sup></th>
+                                    <th>Plate Recognizer<sup>4</sup></th>
+                                    <th>Genetec AutoVu<sup>5</sup></th>
+                                    <th>Sighthound Advantage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>LPR coverage</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Core plate recognition is table stakes; ALPR+ advantage is combining LPR with documented MMCG, object detection, and flexible deployment in the same product story.</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="version-meta">Primary differentiator</span><br />MMCG analytics</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>ALPR+ documents make, model, color, and generation; cited competitors document vehicle attributes such as make/model/color, type, year, or unique features, but not the same full MMCG package as a public core claim.</td>
+                                </tr>
+                                <tr>
+                                    <td>Object detection</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>ALPR+ publicly documents broader object recognition beyond plates and vehicles; competitors primarily document vehicle, plate, or vehicle-attribute detection.</td>
+                                </tr>
+                                <tr>
+                                    <td>Real-time processing</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Parity on real-time alerts and live processing; ALPR+ advantage is keeping real-time processing available across on-premise, cloud, edge, and Docker deployment paths.</td>
+                                </tr>
+                                <tr>
+                                    <td>On-premise deployment</td>
+                                    <td>Yes</td>
+                                    <td>?</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>ALPR+ matches self-hosted competitors and has a clearer advantage against managed-network products where customer-controlled on-premise deployment is not publicly documented.</td>
+                                </tr>
+                                <tr>
+                                    <td>Cloud deployment</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>ALPR+ offers cloud without forcing a cloud-only architecture; Flock and Rekor are strong cloud peers, while Genetec cloud processing is documented through adjacent Cloudrunner/read-data paths.</td>
+                                </tr>
+                                <tr>
+                                    <td>Edge/IoT deployment</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>ALPR+ competes with edge-capable vendors while retaining a camera-agnostic software route; Flock documents deployable LTE/solar cameras but not customer-controlled edge processing in the cited pages.</td>
+                                </tr>
+                                <tr>
+                                    <td>Air-gapped support</td>
+                                    <td>Yes</td>
+                                    <td>?</td>
+                                    <td>Partial</td>
+                                    <td>Yes</td>
+                                    <td>?</td>
+                                    <td>No forced win: Plate Recognizer clearly documents no-internet operation, and Rekor documents offline SDK operation; ALPR+ remains differentiated when air-gapped needs also require Docker, REST, RTSP, and MMCG together.</td>
+                                </tr>
+                                <tr>
+                                    <td>REST API</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>ALPR+ keeps REST/JSON central to technical validation; some competitors expose APIs only for authorized integrations, product subsets, exports, SDKs, or platform-specific workflows.</td>
+                                </tr>
+                                <tr>
+                                    <td>Docker</td>
+                                    <td>Yes</td>
+                                    <td>?</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>?</td>
+                                    <td>ALPR+ has parity with developer-first vendors that publish Docker paths and an advantage over managed camera/VMS ecosystems where Docker deployment is not publicly documented.</td>
+                                </tr>
+                                <tr>
+                                    <td>100+ country plate support</td>
+                                    <td>Yes</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>Partial</td>
+                                    <td>ALPR+ documents 100+ country plate support; Rekor and Plate Recognizer document 90+ countries, Flock publicly emphasizes 49 U.S. states, and Genetec documents broad regional contexts without a public 100+ country claim.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(4, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel4" class="alpr-prompt-panel" hidden></div>
+                    <h3><i data-lucide="link"></i> Footnotes &amp; Official Sources</h3>
+                    <ol style="margin-left: 20px;">
+                        <li><strong>Sighthound ALPR+:</strong> <a href="https://www.sighthound.com/products/alpr" target="_blank" rel="noopener">sighthound.com/products/alpr</a>, <a href="https://dev.sighthound.com/vehicle-analytics/rest-api/quickstart/docker/" target="_blank" rel="noopener">Vehicle Analytics REST API self-hosted Docker docs</a>, <a href="https://dev.sighthound.com/sio/docs/quickstart/" target="_blank" rel="noopener">SIO Vehicle Analytics setup docs</a>, and <a href="https://dev.sighthound.com/sio/examples/VehicleAnalytics/" target="_blank" rel="noopener">VehicleAnalytics RTSP examples</a>. Access date: June 5, 2026.</li>
+                        <li><strong>Flock Safety:</strong> <a href="https://www.flocksafety.com/products/license-plate-readers" target="_blank" rel="noopener">flocksafety.com/products/license-plate-readers</a>, <a href="https://www.flocksafety.com/products/flock-safety-platform" target="_blank" rel="noopener">flocksafety.com/products/flock-safety-platform</a>, <a href="https://www.flocksafety.com/products/national-lpr-network" target="_blank" rel="noopener">flocksafety.com/products/national-lpr-network</a>, <a href="https://www.flocksafety.com/legal/api-integration-terms" target="_blank" rel="noopener">flocksafety.com/legal/api-integration-terms</a>, and <a href="https://www.flocksafety.com/legal/lpr-policy" target="_blank" rel="noopener">flocksafety.com/legal/lpr-policy</a>. Access date: June 5, 2026.</li>
+                        <li><strong>Rekor Scout:</strong> <a href="https://www.rekor.ai/software/scout" target="_blank" rel="noopener">rekor.ai/software/scout</a>, <a href="https://docs.rekor.ai/scout" target="_blank" rel="noopener">docs.rekor.ai/scout</a>, <a href="https://docs.rekor.ai/scout/agent/installation" target="_blank" rel="noopener">docs.rekor.ai/scout/agent/installation</a>, <a href="https://docs.rekor.ai/scout/web-server/rest-api" target="_blank" rel="noopener">docs.rekor.ai/scout/web-server/rest-api</a>, <a href="https://docs.rekor.ai/scout/getting-started/countries-and-regions-supported" target="_blank" rel="noopener">docs.rekor.ai/scout/getting-started/countries-and-regions-supported</a>, and <a href="https://www.rekor.ai/intelligence-services/vehicle-recognition-sdk" target="_blank" rel="noopener">rekor.ai/intelligence-services/vehicle-recognition-sdk</a>. Access date: June 5, 2026.</li>
+                        <li><strong>Plate Recognizer:</strong> <a href="https://platerecognizer.com/lpr/" target="_blank" rel="noopener">platerecognizer.com/lpr</a>, <a href="https://platerecognizer.com/stream/" target="_blank" rel="noopener">platerecognizer.com/stream</a>, <a href="https://guides.platerecognizer.com/docs/stream/configuration" target="_blank" rel="noopener">guides.platerecognizer.com/docs/stream/configuration</a>, <a href="https://platerecognizer.com/docker/docker-faq/" target="_blank" rel="noopener">platerecognizer.com/docker/docker-faq</a>, and <a href="https://platerecognizer.com/camera-integrations/" target="_blank" rel="noopener">platerecognizer.com/camera-integrations</a>. Access date: June 5, 2026.</li>
+                        <li><strong>Genetec AutoVu:</strong> <a href="https://www.genetec.com/products/unified-security/autovu/law-enforcement" target="_blank" rel="noopener">genetec.com/products/unified-security/autovu/law-enforcement</a>, <a href="https://techdocs.genetec.com/r/en-US/Security-Center-Administrator-Guide-5.14/About-Security-Center-AutoVu" target="_blank" rel="noopener">Security Center AutoVu administrator guide</a>, <a href="https://techdocs.genetec.com/r/en-US/AutoVuTM-SharpV-Administrator-Guide-14.5/Supported-ALPR-analytics" target="_blank" rel="noopener">SharpV supported ALPR analytics</a>, <a href="https://techdocs.genetec.com/r/en-US/AutoVuTM-SharpV-Administrator-Guide-14.5/Supported-regional-ALPR-contexts" target="_blank" rel="noopener">SharpV supported regional ALPR contexts</a>, and <a href="https://techdocs.genetec.com/r/en-US/Security-Center-Administrator-Guide-5.13/Configuring-the-HTTPS-endpoint-to-export-read-and-hit-events" target="_blank" rel="noopener">Security Center HTTPS export documentation</a>. Access date: June 5, 2026.</li>
+                    </ol>
+                    <p><small>`?` means the capability was not publicly documented in the cited official sources; it is not treated as an absence claim.</small></p>
                 </div>
             </section>
             <section id="alpr-pricing-analysis" class="section alpr-section" data-alpr-index="5">
                 <h2><i data-lucide="wallet"></i> Pricing Analysis</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — Pricing Analysis</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain pricing-model comparisons and TCO framing using only verified or clearly caveated public pricing references.</p>
+                    <h3><i data-lucide="file-search"></i> Pricing Integrity Notes</h3>
                     <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                        <span><strong>ALPR+ current pricing is not publicly listed.</strong> Direct buyers to the Sighthound sales team at <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> for a current custom quote before comparing vendors.</span>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(5, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel5" class="alpr-prompt-panel" hidden></div>
+                    <div class="alpr-populate-note">
+                        <span>All TCO figures below are illustrative [ESTIMATE] examples for internal sales enablement only; actual costs require current vendor quotes, and public sector buyers may have different structures through cooperative purchasing agreements, GSA schedules, or direct procurement vehicles.</span>
+                    </div>
+
+                    <h3><i data-lucide="table-2"></i> Competitor Pricing Model Table</h3>
+                    <p>ALPR+ current pricing is not publicly listed; use this table to frame model differences, then direct buyers to <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> for a current Sighthound quote and to each competitor for a current competing quote.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>Pricing model type</th>
+                                    <th>Public pricing status / figures</th>
+                                    <th>Source URL and access date</th>
+                                    <th>Sales-use note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Sighthound ALPR+</strong></td>
+                                    <td>Custom quote / sales-led ALPR+ pricing</td>
+                                    <td>Current ALPR+ pricing is not publicly listed. Historical ALPR Pro from $29/camera/month [2023 press release — may be outdated; verify with sales team]; ALPR Free tier referenced in the same dated release [2023 press release — may be outdated; verify with sales team].</td>
+                                    <td><a href="https://www.sighthound.com/products/alpr" target="_blank" rel="noopener">ALPR+ product page</a>, <a href="https://www.sighthound.com/news/sighthound-launches-automatic-license-plate-recognition-products" target="_blank" rel="noopener">ALPR launch release</a>, and <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">contact page</a>; accessed June 5, 2026.</td>
+                                    <td>Do not use the historical ALPR Pro figure as an ALPR+ quote. Send buyers to sales for current pricing.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Plate Recognizer</strong></td>
+                                    <td>Per-lookup Snapshot pricing; per-camera Stream pricing</td>
+                                    <td>Snapshot lists Free 2,500 lookups/month, Small $50/month for 50,000 lookups, Medium $150/month for 250,000 lookups, Large $250/month for 500,000 lookups, plus 50% for vehicle make/model/color/orientation. Stream lists $35/camera/month or $45/camera/month with MMC.</td>
+                                    <td><a href="https://platerecognizer.com/pricing/" target="_blank" rel="noopener">Plate Recognizer pricing</a>; accessed June 5, 2026.</td>
+                                    <td>Best public benchmark for per-lookup economics; validate tier, MMC, support, deployment, and overage assumptions with the vendor.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Rekor</strong></td>
+                                    <td>Per-camera subscription with Enterprise custom per-license contracting</td>
+                                    <td>Third-party references cite approximately $12/camera/month [UNVERIFIED — NOT FROM OFFICIAL SOURCE]; do not use that figure in calculations without a Rekor quote.</td>
+                                    <td><a href="https://www.rekor.ai/software/scout" target="_blank" rel="noopener">Rekor Scout official page</a>, <a href="https://docs.rekor.ai/scout/getting-started/subscriptions-and-licensing" target="_blank" rel="noopener">Rekor Scout documentation</a>, and <a href="https://softwarefinder.com/fleet-management-software/rekor" target="_blank" rel="noopener">third-party pricing reference</a>; accessed June 5, 2026.</td>
+                                    <td>Treat public or third-party references as budgetary context only; ask the buyer to obtain a current Rekor quote.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Flock Safety</strong></td>
+                                    <td>Hardware bundle plus cloud subscription / managed network model</td>
+                                    <td>Not publicly listed — contact vendor.</td>
+                                    <td><a href="https://www.flocksafety.com/products/license-plate-readers" target="_blank" rel="noopener">Flock LPR product page</a>; accessed June 5, 2026.</td>
+                                    <td>Compare total bundle scope: cameras, installation, maintenance, support, retention, network participation, and replacement cycles.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Leonardo ELSAG</strong></td>
+                                    <td>Government / public-safety procurement contract</td>
+                                    <td>Not publicly listed — contact vendor.</td>
+                                    <td><a href="https://www.leonardocompany-us.com/lpr" target="_blank" rel="noopener">Leonardo LPR page</a>, <a href="https://www.leonardocompany-us.com/lpr/products" target="_blank" rel="noopener">Leonardo LPR products</a>; accessed June 5, 2026.</td>
+                                    <td>Frame as quote-led public-safety ecosystem procurement, not a self-serve software subscription.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Jenoptik</strong></td>
+                                    <td>Government / civil-security procurement contract</td>
+                                    <td>Not publicly listed — contact vendor.</td>
+                                    <td><a href="https://www.jenoptik.us/products/civil-security/alpr" target="_blank" rel="noopener">Jenoptik ALPR page</a>, <a href="https://www.jenoptik.us/products/civil-security" target="_blank" rel="noopener">civil security portfolio</a>; accessed June 5, 2026.</td>
+                                    <td>Expect hardware/software project quoting, especially for enforcement, trailers, and roadside deployments.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kapsch TrafficCom</strong></td>
+                                    <td>Enterprise infrastructure / tolling contract</td>
+                                    <td>Not publicly listed — contact vendor.</td>
+                                    <td><a href="https://www.kapsch.net/en/tolling/all-electronic-tolling" target="_blank" rel="noopener">Kapsch all-electronic tolling</a>, <a href="https://www.kapsch.net/en/press/releases/ktc-20250226-pr-en" target="_blank" rel="noopener">Kapsch ANPR engine release</a>; accessed June 5, 2026.</td>
+                                    <td>Use for enterprise tolling and infrastructure benchmarks, not SMB or departmental subscription benchmarks.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Perceptics</strong></td>
+                                    <td>Configured vehicle-recognition software and camera solution quote</td>
+                                    <td>Not publicly listed — contact vendor.</td>
+                                    <td><a href="https://perceptics.com/summitt-lpr/" target="_blank" rel="noopener">Perceptics Summitt LPR</a>, <a href="https://perceptics.com/contact-us/" target="_blank" rel="noopener">Perceptics contact page</a>; accessed June 5, 2026.</td>
+                                    <td>Compare as tolling, border, roadway-safety, or access-control solution pricing with implementation services.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NDI Recognition Systems</strong></td>
+                                    <td>Government / commercial ALPR hardware and software procurement contract</td>
+                                    <td>Not publicly listed — contact vendor.</td>
+                                    <td><a href="https://www.ndi-rs.com/company-profile/" target="_blank" rel="noopener">NDI company profile</a>, <a href="https://www.ndi-rs.com/type/software/" target="_blank" rel="noopener">NDI software</a>, <a href="https://www.ndi-rs.com/type/fixed-alpr-solutions/" target="_blank" rel="noopener">NDI fixed ALPR solutions</a>; accessed June 5, 2026.</td>
+                                    <td>Expect quote-led pricing tied to camera, processor, software, support, and deployment scope.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Other ALPR vendors in active evaluations</strong></td>
+                                    <td>Usually custom quote, reseller quote, or procurement-led contract</td>
+                                    <td>Not publicly listed unless a current official pricing page is verified — contact vendor.</td>
+                                    <td>Use each vendor’s official product or contact page before quoting; accessed source date must be recorded in the opportunity notes.</td>
+                                    <td>Do not reuse third-party pricing snippets unless marked [UNVERIFIED ESTIMATE] inline and validated with a current vendor quote.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="calculator"></i> Hypothetical TCO Comparison: Per-Lookup Model</h3>
+                    <p>ALPR+ current pricing is not publicly listed; direct buyers to <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> for a custom quote. The competitor estimate below uses Plate Recognizer Snapshot with MMC as the public per-lookup benchmark: 10,000 lookups/camera/month [ESTIMATE], annualized monthly subscription fees [ESTIMATE], and no hardware, storage, tax, support, procurement, or integration costs included [ESTIMATE].</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Scale Point</th>
+                                    <th>ALPR+ Est.</th>
+                                    <th>Competitor Est.</th>
+                                    <th>Delta</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>5 cameras [ESTIMATE]</td>
+                                    <td>Custom quote required; no public ALPR+ figure [ESTIMATE].</td>
+                                    <td>50,000 lookups/month using Plate Recognizer Small + MMC: $75/month, $900/year [ESTIMATE].</td>
+                                    <td>Not calculable until Sighthound quote; competitor public-tier input is $900/year [ESTIMATE].</td>
+                                    <td>ALPR+ low until quote; competitor high for listed tier, medium for full TCO [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>25 cameras [ESTIMATE]</td>
+                                    <td>Custom quote required; no public ALPR+ figure [ESTIMATE].</td>
+                                    <td>250,000 lookups/month using Plate Recognizer Medium + MMC: $225/month, $2,700/year [ESTIMATE].</td>
+                                    <td>Not calculable until Sighthound quote; competitor public-tier input is $2,700/year [ESTIMATE].</td>
+                                    <td>ALPR+ low until quote; competitor high for listed tier, medium for full TCO [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>100 cameras [ESTIMATE]</td>
+                                    <td>Custom quote required; no public ALPR+ figure [ESTIMATE].</td>
+                                    <td>1,000,000 lookups/month exceeds the single published Large tier; if modeled as two Large + MMC blocks: $750/month, $9,000/year [ESTIMATE; validate with vendor].</td>
+                                    <td>Not calculable until Sighthound quote; competitor input requires custom or multiple-license validation [ESTIMATE].</td>
+                                    <td>Low for both until current quotes confirm enterprise terms [ESTIMATE].</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="trending-up"></i> Volume Crossover Calculation</h3>
+                    <div class="strength-box">
+                        <p><strong>Purpose:</strong> This is a hypothetical crossover model, not Sighthound pricing. ALPR+ current pricing is not publicly listed, so send buyers to <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> for a custom quote before comparing.</p>
+                        <p><strong>Working shown:</strong> Assumed per-lookup rate = $0.0015/lookup [ESTIMATE], derived from Plate Recognizer Small + MMC at $75/month for 50,000 lookups. Assumed subscription rate = $45/camera/month [ESTIMATE], based on Plate Recognizer Stream + MMC public pricing. Break-even lookup volume per camera = $45 ÷ $0.0015 = 30,000 lookups/camera/month [ESTIMATE].</p>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Scale Point</th>
+                                    <th>Assumed subscription spend</th>
+                                    <th>Break-even lookup volume</th>
+                                    <th>Interpretation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>5 cameras [ESTIMATE]</td>
+                                    <td>$225/month [ESTIMATE]</td>
+                                    <td>150,000 lookups/month [ESTIMATE]</td>
+                                    <td>Above this volume, the modeled per-lookup cost becomes more expensive than the modeled subscription cost [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>25 cameras [ESTIMATE]</td>
+                                    <td>$1,125/month [ESTIMATE]</td>
+                                    <td>750,000 lookups/month [ESTIMATE]</td>
+                                    <td>Use TCO framing when site activity can exceed this modeled lookup threshold [ESTIMATE].</td>
+                                </tr>
+                                <tr>
+                                    <td>100 cameras [ESTIMATE]</td>
+                                    <td>$4,500/month [ESTIMATE]</td>
+                                    <td>3,000,000 lookups/month [ESTIMATE]</td>
+                                    <td>At this scale, quote-level details, deployment architecture, and support terms matter more than public list prices [ESTIMATE].</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="message-square"></i> Verbatim Pricing Objection Responses</h3>
+                    <p>ALPR+ current pricing is not publicly listed; each response should end by offering to obtain a current custom quote through <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> rather than using an assumed price.</p>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4>Per-lookup model</h4>
+                            <p>“If your workload stays light, a per-lookup model can look efficient, so let’s compare it against your expected monthly lookup volume, retention needs, deployment requirements, and integration costs using current vendor quotes; Sighthound ALPR+ pricing is not publicly listed, so I’ll get you a current custom quote instead of anchoring this discussion on an outdated or assumed number.”</p>
+                        </div>
+                        <div class="card">
+                            <h4>Hardware bundle model</h4>
+                            <p>“A bundled camera subscription can be the right fit when you want the vendor to manage hardware, installation, maintenance, and cloud operations, but if you already have usable cameras or need edge, on-premise, or custom integration control, the real comparison is total cost of ownership; let’s quote both options and compare the required hardware, services, retention, support, and deployment path.”</p>
+                        </div>
+                        <div class="card">
+                            <h4>Existing vendor renewal</h4>
+                            <p>“Before renewing the incumbent vendor, let’s ask for the renewal quote and compare total contract cost, included cameras, support, overages, deployment limits, retention, and integration effort against a current Sighthound ALPR+ quote; the goal is not to delay the decision, but to make sure the renewal reflects your current operating requirements.”</p>
+                        </div>
+                    </div>
+
+                    <h3><i data-lucide="target"></i> When to Lead With Pricing vs. TCO / Potential ROI</h3>
+                    <p>ALPR+ current pricing is not publicly listed; use <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> to obtain a quote before presenting customer-specific comparisons.</p>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4>Lead with pricing when...</h4>
+                            <p>The buyer is running a small proof of concept, comparing self-serve developer tools, asking for a first-pass budget check, or already has current quotes from other vendors. Keep the conversation factual, source-dated, and quote-dependent.</p>
+                        </div>
+                        <div class="card">
+                            <h4>Lead with TCO when...</h4>
+                            <p>The buyer has many cameras, uncertain lookup volume, public-sector procurement rules, hardware bundle comparisons, integration labor, data-retention requirements, or deployment-control requirements. Use potential and estimated language, and never imply guaranteed savings.</p>
+                        </div>
+                        <div class="card">
+                            <h4>Lead with potential ROI framing when...</h4>
+                            <p>The buyer cares about operational outcomes such as fewer manual reviews, faster investigations, reuse of existing cameras, or controlled deployment. Frame the benefit as hypothetical and validation-dependent, then quantify it only with the buyer’s own current workload and vendor quotes.</p>
+                        </div>
+                    </div>
+
+                    <div class="strength-box">
+                        <h3><i data-lucide="phone-call"></i> Quote Call-to-Action</h3>
+                        <p>For any buyer-ready pricing discussion, direct the prospect to <a href="https://www.sighthound.com/contact-us" target="_blank" rel="noopener">sighthound.com/contact-us</a> so the sales team can provide a current custom ALPR+ quote for the exact deployment scope.</p>
+                    </div>
+
+                    <p><small>Internal enablement only; all [ESTIMATE] figures require current vendor quotes, and public-sector procurement vehicles may change final pricing.</small></p>
                 </div>
             </section>
             <section id="alpr-positioning-strategy" class="section alpr-section" data-alpr-index="6">
