@@ -2651,14 +2651,119 @@
                 <h2><i data-lucide="target"></i> Positioning Strategy</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — Positioning Strategy</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain ALPR+ elevator pitches, competitive win themes, trap questions, talk tracks, and walk-away guidance.</p>
-                    <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                    <div class="strength-box">
+                        <p><strong>Source basis:</strong> Claims about ALPR+ use the official ALPR+ product page, Test Drive, and Sighthound Developer Portal for MMCG, plate and region recognition, no-plate vehicle details, REST/Docker/SIO/RTSP/RabbitMQ integration, camera flexibility, Gen 6 AI, and deployment options. Competitive statements below use official competitor pages where available; unverified competitive assertions are marked before use.</p>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(6, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel6" class="alpr-prompt-panel" hidden></div>
+
+                    <h3><i data-lucide="megaphone"></i> Elevator Pitches by Vertical</h3>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4><i data-lucide="shield"></i> Law Enforcement</h4>
+                            <p>You can turn fixed, mobile, or aerial imagery into plate, region, make, model, color, and generation leads instead of relying on plate strings alone. You can also keep the recognition workflow aligned to your infrastructure because ALPR+ supports on-premise, cloud, edge, Docker, Windows, Linux, and custom API deployment paths.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="parking-circle"></i> Parking</h4>
+                            <p>You can automate entry, payment, EV bay monitoring, gated access, overstays, and unauthorized-vehicle workflows with plate recognition plus vehicle attributes. You can start with existing IP cameras when the site conditions fit, then add specialized LPR cameras or Sighthound Compute hardware only where the traffic speed or imaging conditions require it.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="traffic-cone"></i> Smart City</h4>
+                            <p>You can support tolling, traffic enforcement, roadway monitoring, and situational awareness with real-time plate, vehicle type, orientation, tracking, and MMCG analytics. You can run processing at the edge, on local servers, in the cloud, or in Docker so each corridor, agency, or integration partner can use the architecture that fits its operating model.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="store"></i> Retail</h4>
+                            <p>You can connect vehicle visits to drive-thru, service-lane, loyalty, car wash, and automotive-service workflows through structured vehicle and plate outputs. You can validate real site images in the no-sign-up Test Drive, then use REST JSON outputs and custom integration paths to connect ALPR+ to the systems your operators already use.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="code-2"></i> Developer</h4>
+                            <p>You can embed vehicle analytics through REST image calls, Docker self-hosting, SIO pipelines, RTSP stream processing, RabbitMQ control, and Python output customization. You can show buyers exactly what the system returns because ALPR+ exposes plate, region, detection coordinates, make, model, color, and generation in JSON.</p>
+                        </div>
+                    </div>
+
+                    <h3><i data-lucide="award"></i> Core Win Themes</h3>
+                    <div class="positioning-grid">
+                        <div class="card">
+                            <h4><i data-lucide="car-front"></i> MMCG Beyond Plate Reads</h4>
+                            <p>When the buyer needs vehicle identity beyond a plate string, lead with ALPR+ Detailed Vehicle Analytics because it returns make, model, color, and generation, exposing the gap in any plate-read-only workflow that cannot support partial-plate, no-plate, or attribute-based searches.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="server"></i> Deployment Control vs. Managed Network Fit</h4>
+                            <p>Against managed-network evaluations such as Flock Safety, lead with ALPR+ on-premise, cloud, edge, Docker, Windows, Linux, and custom integration options because Flock’s public LPR page packages cameras, installation, maintenance, upgrades, and support as one subscription rather than documenting customer-controlled self-hosted ALPR software.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="cctv"></i> Camera-Agnostic Modernization</h4>
+                            <p>Against hardware-led evaluations such as ELSAG, NDI, and Jenoptik, lead with ALPR+ camera flexibility because Sighthound documents that ALPR+ can work with almost any IP camera, while those vendors’ public pages center on ALPR camera systems, fixed/mobile deployments, or hardware portfolios.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="workflow"></i> API-First Integration Proof</h4>
+                            <p>Against developer-first tools such as Plate Recognizer, lead with ALPR+ REST API, Docker self-hosting, SIO pipelines, RTSP inputs, RabbitMQ control, and Python output customization when the gap to test is not whether an API exists, but whether the proof can run across the buyer’s image, stream, queue, and custom-output architecture.</p>
+                        </div>
+                        <div class="card">
+                            <h4><i data-lucide="layers"></i> Standalone Analytics Layer</h4>
+                            <p>Against security-platform incumbents such as Genetec AutoVu, lead with ALPR+ as a standalone vehicle analytics layer with JSON output and custom integration paths because the gap appears when the buyer needs ALPR/MMCG data in systems outside a unified security-platform workflow.</p>
+                        </div>
+                    </div>
+
+                    <h3><i data-lucide="help-circle"></i> Trap Questions for Discovery</h3>
+                    <ol style="margin-left: 20px;">
+                        <li>When a plate is partial, obscured, missing, or unreadable, what other vehicle attributes do your operators need in order to keep the workflow useful?</li>
+                        <li>Where does recognition need to run in production, and what constraints do you have around cloud, edge, on-premise, Docker, Windows, Linux, or network isolation?</li>
+                        <li>Which existing cameras, VMS tools, parking systems, case systems, or business applications need to remain in the architecture?</li>
+                        <li>What downstream systems need to consume plate and vehicle data, and what formats or transport methods do they require?</li>
+                        <li>How will your team validate competing vendors on the same images, streams, attribute outputs, latency requirements, and no-plate scenarios?</li>
+                    </ol>
+
+                    <h3><i data-lucide="flame"></i> Kill Phrases vs. Better Alternatives</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Do not say</th>
+                                    <th>Say instead</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>“We are more accurate.”</td>
+                                    <td>“Let’s run your images through the ALPR+ Test Drive and compare the returned plate, region, make, model, color, and generation fields side by side.”</td>
+                                </tr>
+                                <tr>
+                                    <td>“We are not cloud-only.”</td>
+                                    <td>“You can choose where ALPR+ runs: local servers, edge devices, cloud, Docker, Windows, or Linux, then design the data path around your infrastructure requirements.”</td>
+                                </tr>
+                                <tr>
+                                    <td>“We beat Flock, Rekor, and Genetec.”</td>
+                                    <td>“If the priority is a managed network, a packaged ALPR workflow, or a unified security platform, those vendors may fit; if the priority is controlled deployment, existing cameras, embeddable JSON outputs, or MMCG, ALPR+ is the fit to test.”</td>
+                                </tr>
+                                <tr>
+                                    <td>“ALPR+ is compliant.”</td>
+                                    <td>“ALPR+ gives you architecture choices such as on-premise, edge, Docker, and custom integration; your legal and security teams decide whether the final deployment meets your policy requirements.”</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3><i data-lucide="message-square"></i> Talk Tracks</h3>
+                    <div class="strength-box">
+                        <h4><i data-lucide="radio-tower"></i> Vs. Flock Safety</h4>
+                        <p>When Flock comes up, I would first acknowledge the fit: if you want a managed public-safety LPR camera network with installation, maintenance, upgrades, support, real-time alerts, audits, retention controls, and shared-network access, that is exactly how its public LPR page is positioned. The reason to evaluate ALPR+ is different. You want the recognition layer to fit your architecture rather than requiring a managed-network architecture. ALPR+ documents on-premise, cloud, edge, Docker, Windows, Linux, custom integration, and existing IP-camera support, and the Test Drive lets you validate your own images before procurement. You also get plate and region recognition plus make, model, color, and generation outputs, including vehicle details when the plate is not visible. So the question is not “which brand is better?” It is “do you want a managed camera network, or do you need controlled deployment and vehicle analytics that can feed your own systems?”</p>
+                    </div>
+                    <div class="strength-box">
+                        <h4><i data-lucide="scan-line"></i> Vs. Rekor</h4>
+                        <p>Rekor is a serious comparison because its public Scout page documents nearly-any-IP-camera support, cloud and on-premise options, real-time alerts, webhooks, searchable vehicle data, and make, model, and color in certain plans. I would not argue that ALPR+ is the only flexible option. I would focus the evaluation on the output and integration details that matter in your deployment. ALPR+ documents plate string and region recognition, vehicle make, model, color, and generation, and Sighthound’s FAQ says vehicle details can still be returned when the plate is not visible. On the integration side, ALPR+ has a REST image API, Docker self-hosting, SIO pipelines for files, watched folders, and RTSP streams, RabbitMQ control, and Python output customization. Let’s run the same images and architecture checklist through both vendors: attributes returned, no-plate cases, deployment target, downstream JSON needs, and who owns the production data path.</p>
+                    </div>
+                    <div class="strength-box">
+                        <h4><i data-lucide="camera"></i> Vs. a Hardware-Led Vendor</h4>
+                        <p>When a hardware-led vendor is in the deal, I would separate the camera decision from the recognition and data-flow decision. If the buyer needs purpose-built roadside cameras, trailers, high-speed multi-lane capture, or field hardware as the main project, a hardware-led proposal may be the better starting point. If the buyer already has usable IP cameras, mixed sites, or a requirement to send vehicle intelligence into existing applications, ALPR+ deserves a software-first proof. Sighthound documents that ALPR+ can work with almost any IP camera, while recommending specialized LPR cameras for fast-moving highway scenarios, so we can be honest about camera fit. ALPR+ also documents on-premise, cloud, edge, Docker, Windows, Linux, RTSP, REST JSON output, RabbitMQ, and Python customization. The practical next step is to test site images or streams, confirm whether hardware must change, and decide whether the buyer needs a complete camera system or a vehicle analytics layer.</p>
+                    </div>
+
+                    <h3><i data-lucide="door-open"></i> When to Walk Away</h3>
+                    <div class="weakness-box">
+                        <ol style="margin-left: 20px;">
+                            <li>If the buyer’s primary requirement is a turnkey managed public-safety LPR network with vendor-installed cameras, bundled maintenance, shared-network access, and minimal internal IT ownership, Flock Safety is the better fit.</li>
+                            <li>If the buyer is already standardized on Genetec Security Center and wants ALPR to live inside that unified security operations environment above all other criteria, Genetec AutoVu is the better fit.</li>
+                            <li>If the buyer needs a purpose-built roadside, tolling, trailer, or enforcement-camera system and has no interest in existing cameras, APIs, Docker, or software-first integration, a hardware-led ALPR vendor is the better fit.</li>
+                        </ol>
+                    </div>
                 </div>
             </section>
             <section id="alpr-discovery-questions" class="section alpr-section" data-alpr-index="7">
