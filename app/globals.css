@@ -3555,7 +3555,7 @@ a:hover {
 }
 
 .product-header.product-alpr::before {
-    background: linear-gradient(135deg, #064e3b 0%, #34d399 100%);
+    background: var(--sh-gradient-brand);
 }
 
 .product-switcher-row {
@@ -3628,8 +3628,8 @@ a:hover {
 }
 
 .product-pill-alpr {
-    background: #064e3b;
-    color: #34d399;
+    background: var(--sh-navy);
+    color: var(--sh-blurple-100);
 }
 
 .product-heading[hidden],
@@ -3647,22 +3647,22 @@ a:hover {
 .product-header.product-alpr h3 i[data-lucide],
 .alpr-section h2 i[data-lucide],
 .alpr-section h3 i[data-lucide] {
-    color: #059669;
+    color: var(--sh-blurple);
 }
 
 .alpr-header-title {
-    color: #064e3b !important;
+    color: var(--sh-navy) !important;
     font-size: 1.6em !important;
 }
 
 .alpr-nav .nav-tab:hover {
-    color: #047857;
-    background: #ecfdf5;
+    color: var(--sh-blurple);
+    background: var(--sh-blurple-50);
 }
 
 .alpr-nav .nav-tab.active {
-    color: #047857;
-    border-bottom-color: #10b981;
+    color: var(--sh-blurple);
+    border-bottom-color: var(--sh-blurple);
 }
 
 .product-hub {
@@ -3670,21 +3670,21 @@ a:hover {
 }
 
 .alpr-section {
-    border-top: 4px solid #10b981;
+    border-top: 4px solid var(--sh-blurple);
 }
 
 .alpr-placeholder {
     display: grid;
     gap: 16px;
     padding: 24px;
-    background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
-    border: 1px solid #bbf7d0;
+    background: linear-gradient(135deg, var(--sh-blurple-50) 0%, #ffffff 58%, rgba(249, 159, 37, 0.08) 100%);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
 }
 
 .alpr-eyebrow {
     margin: 0;
-    color: #047857;
+    color: var(--sh-blurple);
     font-size: 0.78em;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -3695,21 +3695,306 @@ a:hover {
     margin-top: 0;
 }
 
+.alpr-brand-hero,
+.alpr-design-system-hero {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+    gap: 32px;
+    align-items: center;
+    padding: 32px;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+}
+
+.alpr-brand-hero::before,
+.alpr-design-system-hero::before {
+    content: "";
+    position: absolute;
+    inset: auto -8% -36% -8%;
+    height: 56%;
+    background: linear-gradient(135deg, rgba(79, 96, 220, 0.11), rgba(246, 36, 112, 0.10));
+    border-radius: 50% 50% 0 0;
+    pointer-events: none;
+}
+
+.alpr-brand-copy,
+.alpr-brand-visual,
+.alpr-design-system-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.alpr-brand-logo {
+    display: block;
+    max-width: 210px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.alpr-brand-copy h3,
+.alpr-design-system-hero h3 {
+    color: var(--sh-navy);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.1;
+    margin: 8px 0 16px;
+}
+
+.alpr-brand-copy p:not(.alpr-eyebrow),
+.alpr-design-system-hero p {
+    max-width: 680px;
+    color: var(--sh-navy-500);
+    font-size: 1.02em;
+}
+
+.alpr-brand-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 22px 0;
+}
+
+.alpr-brand-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-button);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--dur-base) var(--ease-standard), color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard);
+}
+
+.alpr-brand-btn.primary {
+    background: var(--sh-blurple);
+    color: #ffffff;
+}
+
+.alpr-brand-btn.primary:hover {
+    background: var(--sh-blurple-700);
+    color: #ffffff;
+}
+
+.alpr-brand-btn.secondary {
+    background: #ffffff;
+    color: var(--sh-navy);
+    border-color: var(--sh-navy);
+}
+
+.alpr-brand-btn.secondary:hover {
+    background: var(--sh-navy);
+    color: #ffffff;
+}
+
+.alpr-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.alpr-stat-card {
+    padding: 14px;
+    background: var(--sh-gray);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+}
+
+.alpr-stat-card strong {
+    display: block;
+    color: var(--sh-blurple);
+    font-size: 1.8em;
+    line-height: 1;
+}
+
+.alpr-stat-card span {
+    display: block;
+    margin-top: 6px;
+    color: var(--sh-navy-500);
+    font-size: 0.86em;
+}
+
+.alpr-brand-visual {
+    min-height: 340px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.alpr-brand-visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    object-fit: cover;
+}
+
+.alpr-hero-chip {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    background: rgba(26, 29, 56, 0.88);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.alpr-hero-chip span {
+    color: var(--sh-blurple-300);
+    font-size: 0.78em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.alpr-capability-showcase {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.alpr-image-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.alpr-image-card img {
+    display: block;
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    background: var(--sh-navy);
+}
+
+.alpr-image-card div {
+    padding: 20px;
+}
+
+.alpr-image-card h4 {
+    color: var(--sh-navy);
+}
+
+.alpr-design-system-preview {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    padding: 28px;
+    background: var(--sh-gradient-cool);
+    color: #ffffff;
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+}
+
+.alpr-design-system-preview img {
+    max-width: 220px;
+    height: auto;
+}
+
+.alpr-design-system-preview span {
+    display: block;
+    margin-top: 20px;
+    color: var(--sh-orange-light);
+    font-size: 2.3em;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.alpr-design-system-preview small {
+    color: var(--sh-blurple-100);
+}
+
+.alpr-resource-catalog {
+    display: grid;
+    gap: 14px;
+}
+
+.alpr-resource-group {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.alpr-resource-group summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    color: var(--sh-navy);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.alpr-resource-group summary small {
+    flex: 0 0 auto;
+    padding: 4px 9px;
+    background: var(--sh-blurple-50);
+    color: var(--sh-blurple);
+    border-radius: var(--radius-pill);
+    font-size: 0.75em;
+}
+
+.alpr-file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+    padding: 0 18px 18px;
+}
+
+.alpr-file-grid a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 11px 12px;
+    background: var(--sh-gray);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--sh-navy);
+    text-decoration: none;
+}
+
+.alpr-file-grid a:hover {
+    border-color: var(--sh-blurple-300);
+    background: var(--sh-blurple-50);
+    color: var(--sh-blurple);
+}
+
+.alpr-file-grid a span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .alpr-populate-note {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     padding: 14px 16px;
     background: #ffffff;
-    border: 1px solid #a7f3d0;
-    border-left: 4px solid #10b981;
+    border: 1px solid var(--sh-blurple-100);
+    border-left: 4px solid var(--sh-blurple);
     border-radius: var(--radius-md);
-    color: #065f46;
+    color: var(--sh-navy);
     font-weight: 500;
 }
 
 .alpr-populate-note i[data-lucide] {
-    color: #059669;
+    color: var(--sh-blurple);
     flex: 0 0 auto;
     margin-top: 2px;
 }
@@ -3722,9 +4007,9 @@ a:hover {
     gap: 8px;
     width: fit-content;
     padding: 11px 18px;
-    background: #064e3b;
+    background: var(--sh-navy);
     color: #ffffff;
-    border: 1px solid #064e3b;
+    border: 1px solid var(--sh-navy);
     border-radius: var(--radius-button);
     font-family: var(--font-sans);
     font-size: 0.9em;
@@ -3736,8 +4021,8 @@ a:hover {
 .alpr-prompt-toggle:hover,
 .alpr-prompt-toggle.active,
 .alpr-copy-btn:hover {
-    background: #047857;
-    border-color: #047857;
+    background: var(--sh-blurple);
+    border-color: var(--sh-blurple);
     color: #ffffff;
 }
 
@@ -3750,8 +4035,8 @@ a:hover {
     display: grid;
     gap: 12px;
     padding: 18px;
-    background: #061a16;
-    border: 1px solid #0f3d33;
+    background: var(--sh-navy);
+    border: 1px solid var(--sh-navy-700);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
 }
@@ -3770,13 +4055,13 @@ a:hover {
 
 .alpr-prompt-toolbar strong {
     display: block;
-    color: #d1fae5;
+    color: #ffffff;
     font-size: 0.95em;
 }
 
 .alpr-prompt-toolbar span {
     display: block;
-    color: #6ee7b7;
+    color: var(--sh-blurple-300);
     font-size: 0.82em;
     margin-top: 2px;
 }
@@ -3802,6 +4087,20 @@ a:hover {
 }
 
 @media (max-width: 768px) {
+    .alpr-brand-hero,
+    .alpr-design-system-hero,
+    .alpr-capability-showcase,
+    .alpr-stat-grid {
+        grid-template-columns: 1fr;
+    }
+    .alpr-brand-hero,
+    .alpr-design-system-hero {
+        padding: 22px;
+    }
+    .alpr-brand-visual,
+    .alpr-brand-visual img {
+        min-height: 260px;
+    }
     .product-switcher-row {
         align-items: stretch;
     }
