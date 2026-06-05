@@ -2770,14 +2770,238 @@
                 <h2><i data-lucide="help-circle"></i> Discovery Questions</h2>
                 <div class="alpr-placeholder">
                     <p class="alpr-eyebrow">Sighthound ALPR+ — Discovery Questions</p>
-                    <h3><i data-lucide="sparkles"></i> Placeholder content workspace</h3>
-                    <p>This section will contain vertical-specific discovery questions that qualify pain, technical constraints, competitive context, and buying urgency.</p>
+                    <h3><i data-lucide="message-circle-question"></i> Vertical Sales Call Guide</h3>
+                    <p>Use these questions to qualify pain, deployment constraints, integration needs, camera scale, MMCG requirements, lookup volume, competitive context, and buying timing during ALPR+ discovery calls.</p>
                     <div class="alpr-populate-note">
-                        <i data-lucide="wand-sparkles"></i>
-                        <span>Content for this section is being populated. Use the AI prompt below to generate content for this tab.</span>
+                        <i data-lucide="scale"></i>
+                        <span><strong>Compliance guardrail:</strong> ALPR data-retention and usage laws vary by jurisdiction and are actively evolving; ask policy-discovery questions without assuming any specific compliance posture is already in place.</span>
                     </div>
-                    <button type="button" class="alpr-prompt-toggle" onclick="toggleAlprPrompt(7, this)">View AI Prompt for this section (WARP / Claude Code)</button>
-                    <div id="alprPromptPanel7" class="alpr-prompt-panel" hidden></div>
+
+                    <div class="resource-view-toggle" aria-label="Discovery vertical navigation">
+                        <a class="resource-toggle" href="#alpr-discovery-law-enforcement">Law Enforcement</a>
+                        <a class="resource-toggle" href="#alpr-discovery-parking-ev">Parking &amp; EV</a>
+                        <a class="resource-toggle" href="#alpr-discovery-smart-city">Smart City / ITS</a>
+                        <a class="resource-toggle" href="#alpr-discovery-retail-qsr">Retail / QSR</a>
+                        <a class="resource-toggle" href="#alpr-discovery-developer">Developer / Integrator</a>
+                    </div>
+
+                    <div id="alpr-discovery-law-enforcement" class="card">
+                        <h3><i data-lucide="shield"></i> Law Enforcement</h3>
+                        <h4>Pain / Problem</h4>
+                        <ol>
+                            <li>What vehicle-related workflows are hardest to support today across patrol alerts, investigations, or post-incident review? <span class="social-link">Open</span></li>
+                            <li>
+                                <div class="strength-box">
+                                    <p><strong>MMCG question:</strong> In cases where a plate is partial, obscured, or unavailable, what role should vehicle make, model, color, and generation play in developing leads while keeping the investigation scope clearly defined? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Technical Constraint</h4>
+                        <ol start="3">
+                            <li>Where would recognition need to run for your agency — cloud, edge, on-prem, mobile, or isolated network — and what controls shape that choice? <span class="social-link">Qualifying</span></li>
+                            <li>What VMS, CAD, RMS, evidence, or alerting systems would need to receive plate reads, vehicle attributes, hotlist results, or audit events? <span class="social-link">Probing</span></li>
+                            <li>How is your agency evaluating retention, access, and audit policies for ALPR data across the jurisdictions where reads may be collected or queried? <span class="social-link">Qualifying</span>
+                                <p><strong>Rationale:</strong> ALPR data-retention and usage laws vary by jurisdiction and are actively evolving; this discovers policy scope without assuming a requirement is already met.</p>
+                            </li>
+                        </ol>
+                        <h4>Competitive Displacement</h4>
+                        <ol start="6">
+                            <li>
+                                <div class="weakness-box">
+                                    <p><strong>Trap question:</strong> What flexibility do you need to use existing agency cameras or agency-controlled infrastructure alongside any ALPR systems already in place? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Budget / Timeline</h4>
+                        <ol start="7">
+                            <li>What camera count, expected reads per camera per day, and growth rate are you planning for the first phase versus later expansion? <span class="social-link">Qualifying</span></li>
+                            <li>What event, procurement window, grant cycle, or operational deadline is driving the timing for this evaluation? <span class="social-link">Open</span></li>
+                        </ol>
+                    </div>
+
+                    <div id="alpr-discovery-parking-ev" class="card">
+                        <h3><i data-lucide="parking-circle"></i> Parking &amp; EV</h3>
+                        <h4>Pain / Problem</h4>
+                        <ol>
+                            <li>Which parking, EV charging, or access workflows are most affected by plate-read failures, gate exceptions, payment disputes, or unauthorized occupancy? <span class="social-link">Open</span></li>
+                            <li>
+                                <div class="strength-box">
+                                    <p><strong>MMCG question:</strong> When a plate is unreadable at entry, exit, or an EV bay, how could vehicle make, model, color, and generation help reconcile sessions, permits, access events, or disputes? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Technical Constraint</h4>
+                        <ol start="3">
+                            <li>Which lane, lot, garage, or charger camera conditions must be supported, and where do lighting, angles, weather, speed, or plate placement create uncertainty? <span class="social-link">Probing</span></li>
+                            <li>What PARCS, payment, access-control, EV charging, mobile app, or permit systems need ALPR events, and what format or timing do those systems require? <span class="social-link">Qualifying</span></li>
+                            <li>How are you evaluating retention and permitted-use policies for parking or EV vehicle data across locations, operators, or municipalities? <span class="social-link">Qualifying</span>
+                                <p><strong>Rationale:</strong> ALPR data-retention and usage laws vary by jurisdiction and are actively evolving; this frames policy discovery without assuming a specific requirement is already satisfied.</p>
+                            </li>
+                        </ol>
+                        <h4>Competitive Displacement</h4>
+                        <ol start="6">
+                            <li>
+                                <div class="weakness-box">
+                                    <p><strong>Trap question:</strong> Looking back at prior ALPR attempts, what parts of site conditions, operations, integrations, or support made the system difficult to trust? <span class="social-link">Open</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Budget / Timeline</h4>
+                        <ol start="7">
+                            <li>How many entry lanes, exit lanes, lots, chargers, cameras, and reads per camera per day need to be supported in phase one? <span class="social-link">Qualifying</span></li>
+                            <li>What operational cost, revenue-protection metric, or customer-experience metric would justify a pilot, and when would the business need to see that result? <span class="social-link">Probing</span></li>
+                        </ol>
+                    </div>
+
+                    <div id="alpr-discovery-smart-city" class="card">
+                        <h3><i data-lucide="traffic-cone"></i> Smart City / ITS</h3>
+                        <h4>Pain / Problem</h4>
+                        <ol>
+                            <li>Which corridor, intersection, tolling, curb, or roadway workflows need better vehicle recognition data today? <span class="social-link">Open</span></li>
+                            <li>
+                                <div class="strength-box">
+                                    <p><strong>MMCG question:</strong> For roadway analytics, incident review, or exception handling, how would vehicle make, model, color, and generation improve context when the plate read is low confidence or not the primary signal? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Technical Constraint</h4>
+                        <ol start="3">
+                            <li>What deployment constraints apply across edge cabinets, city data centers, cloud systems, agency networks, or isolated environments? <span class="social-link">Qualifying</span></li>
+                            <li>Which ITS, ATMS, VMS, tolling, citation, or data platforms must consume vehicle events, and what latency or output-format requirements matter most? <span class="social-link">Probing</span></li>
+                            <li>How are transportation, legal, and policy stakeholders evaluating retention, allowed uses, and public transparency for ALPR-derived data? <span class="social-link">Qualifying</span>
+                                <p><strong>Rationale:</strong> ALPR data-retention and usage laws vary by jurisdiction and are actively evolving; this invites the prospect to describe governance needs without presupposing a compliance posture.</p>
+                            </li>
+                        </ol>
+                        <h4>Competitive Displacement</h4>
+                        <ol start="6">
+                            <li>
+                                <div class="weakness-box">
+                                    <p><strong>Trap question:</strong> How do you want to test fit with mixed camera environments, multiple agencies, and existing systems before deciding whether a platform change is required? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Budget / Timeline</h4>
+                        <ol start="7">
+                            <li>What camera scale, locations, reads per camera per day, and expansion rate are expected from pilot to production? <span class="social-link">Qualifying</span></li>
+                            <li>What funding source, RFP milestone, interagency approval, or infrastructure timeline determines the decision date? <span class="social-link">Open</span></li>
+                        </ol>
+                    </div>
+
+                    <div id="alpr-discovery-retail-qsr" class="card">
+                        <h3><i data-lucide="store"></i> Retail / QSR</h3>
+                        <h4>Pain / Problem</h4>
+                        <ol>
+                            <li>Where do vehicle identification gaps show up in drive-thru, curbside, service-lane, car wash, loss-prevention, or loyalty workflows? <span class="social-link">Open</span></li>
+                            <li>
+                                <div class="strength-box">
+                                    <p><strong>MMCG question:</strong> When plates are unavailable or customers use multiple vehicles, how could vehicle make, color, model, or generation context improve order matching, queue analysis, service recovery, or appointment workflows? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Technical Constraint</h4>
+                        <ol start="3">
+                            <li>Which store systems need vehicle data — POS, order management, loyalty, queue timing, access control, security, or analytics — and what integration path is preferred? <span class="social-link">Qualifying</span></li>
+                            <li>What camera positions, lighting conditions, weather exposure, lane geometry, or privacy zones need validation before a pilot? <span class="social-link">Probing</span></li>
+                            <li>How are you evaluating customer notice, retention, and permitted-use policies for vehicle data across stores, franchises, or regions? <span class="social-link">Qualifying</span>
+                                <p><strong>Rationale:</strong> ALPR data-retention and usage laws vary by jurisdiction and are actively evolving; this keeps the question focused on the buyer’s policy process rather than assuming legal readiness.</p>
+                            </li>
+                        </ol>
+                        <h4>Competitive Displacement</h4>
+                        <ol start="6">
+                            <li>
+                                <div class="weakness-box">
+                                    <p><strong>Trap question:</strong> How do operators handle exceptions today when plate capture varies across lighting, angle, lane, traffic, or store conditions? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Budget / Timeline</h4>
+                        <ol start="7">
+                            <li>What site count, lanes or cameras per site, reads per camera per day, and rollout pace would define a practical first phase? <span class="social-link">Qualifying</span></li>
+                            <li>What business outcome and decision date would make this a priority over other store-technology initiatives? <span class="social-link">Open</span></li>
+                        </ol>
+                    </div>
+
+                    <div id="alpr-discovery-developer" class="card">
+                        <h3><i data-lucide="code-2"></i> Developer / Integrator</h3>
+                        <h4>Pain / Problem</h4>
+                        <ol>
+                            <li>What product requirement, customer workflow, or integration request is driving the need to embed ALPR or vehicle analytics now? <span class="social-link">Open</span></li>
+                            <li>
+                                <div class="strength-box">
+                                    <p><strong>MMCG question:</strong> Which downstream features need make, model, color, and generation in the JSON payload when the plate field is missing, low-confidence, or not enough by itself? <span class="social-link">Qualifying</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Technical Constraint</h4>
+                        <ol start="3">
+                            <li>What execution model does your architecture need — image API calls, stream processing, Docker or self-hosting, on-prem, edge, cloud, or isolated network? <span class="social-link">Qualifying</span></li>
+                            <li>What VMS, message queue, data warehouse, enforcement, parking, access-control, or customer-app endpoints need to consume ALPR+ results? <span class="social-link">Probing</span></li>
+                            <li>How are your product, legal, and customer teams evaluating retention, data use, and tenant controls across the jurisdictions where your solution may operate? <span class="social-link">Qualifying</span>
+                                <p><strong>Rationale:</strong> ALPR data-retention and usage laws vary by jurisdiction and are actively evolving; this checks product governance needs without assuming the buyer or ALPR+ already satisfies a specific rule.</p>
+                            </li>
+                        </ol>
+                        <h4>Competitive Displacement</h4>
+                        <ol start="6">
+                            <li>
+                                <div class="weakness-box">
+                                    <p><strong>Trap question:</strong> How do you compare prototype lookup costs with production lookup volume, stream workloads, self-hosting needs, retries, and attribute outputs before committing? <span class="social-link">Probing</span></p>
+                                </div>
+                            </li>
+                        </ol>
+                        <h4>Budget / Timeline</h4>
+                        <ol start="7">
+                            <li>What reads per camera per day, camera count, burst volume, and growth assumptions should the production cost model use? <span class="social-link">Qualifying</span></li>
+                            <li>Who owns technical validation, commercial approval, and customer launch timing, and what must each group see before moving forward? <span class="social-link">Open</span></li>
+                        </ol>
+                    </div>
+
+                    <h3><i data-lucide="clipboard-check"></i> Qualification Scorecard</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Hot Signal</th>
+                                    <th>Warm Signal</th>
+                                    <th>Cold Signal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Is there a hard deployment or data-control constraint?</td>
+                                    <td>On-prem, edge, isolated network, customer-controlled infrastructure, or strict data-path ownership is required.</td>
+                                    <td>Deployment control is preferred, but the buyer can evaluate multiple architectures.</td>
+                                    <td>A fully managed cloud or turnkey network is acceptable and internal control is not a priority.</td>
+                                </tr>
+                                <tr>
+                                    <td>Do existing systems need structured ALPR+ outputs?</td>
+                                    <td>VMS, CAD, RMS, PARCS, ITS, POS, access-control, or product APIs must receive structured results.</td>
+                                    <td>One integration is likely, but manual export or a limited pilot could work initially.</td>
+                                    <td>No meaningful integration need; a standalone manual workflow is sufficient.</td>
+                                </tr>
+                                <tr>
+                                    <td>Is camera scale and lookup volume defined?</td>
+                                    <td>Camera count, reads per camera per day, site count, and growth expectations are quantified.</td>
+                                    <td>Pilot scope is known, but production volume and expansion timing need discovery.</td>
+                                    <td>The buyer cannot estimate cameras, reads, sites, or growth.</td>
+                                </tr>
+                                <tr>
+                                    <td>Is MMCG important beyond plate reads?</td>
+                                    <td>Make, model, color, and generation are needed for partial-plate, no-plate, exception, investigation, or matching workflows.</td>
+                                    <td>Vehicle attributes are useful, but not yet tied to a required workflow.</td>
+                                    <td>Plate strings alone satisfy the known use case.</td>
+                                </tr>
+                                <tr>
+                                    <td>Is there a real buying path and decision timeline?</td>
+                                    <td>Named owner, budget path, pilot success metric, and decision window are clear.</td>
+                                    <td>Business interest exists, but owner, funding, or timing needs confirmation.</td>
+                                    <td>No owner, no decision date, and no defined success criteria.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Classification:</strong> Hot = 4–5 hot signals; Warm = 2–3 hot signals or one unresolved blocker; Cold = 0–1 hot signals or no defined owner/timeline.</p>
+                    <p><small>Sales enablement only; confirm retention, usage, and policy decisions with the prospect’s legal and security stakeholders.</small></p>
                 </div>
             </section>
             <section id="alpr-pricing-calculator" class="section alpr-section" data-alpr-index="8">
