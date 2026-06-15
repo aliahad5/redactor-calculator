@@ -1,141 +1,90 @@
 # AGENTS.md – Sighthound Design System Integration
 
 ## Overview
+This project uses the **Sighthound Design System v06.15.2026 / v0.9.1 provisional** for the redactor-calculator Next.js app. Sighthound Redactor is treated as part of one unified Sighthound brand, with ALPR+, Redactor, Edge Compute, and Video sharing the same visual and content foundations.
 
-This document outlines the integration of the **Sighthound Design System v04.22.2026** into the redactor-calculator project. This is a starter setup aligned with **SH branding guidelines**.
-
-## Design System Location
-
-The design system has been extracted to:
+## Design System Locations
+The canonical project copy lives in `design-system/`. A mirrored static copy lives in `public/design-system/` so previews, assets, and UI kit references can be served by the app.
 
 ```
 redactor-calculator/
 ├── design-system/
-│   ├── assets/              # Design system assets (icons, graphics, etc.)
-│   ├── fonts/               # Custom fonts and typography assets
-│   ├── preview/             # Preview files and reference materials
-│   ├── ui_kits/             # UI component kits and templates
-│   ├── uploads/             # Uploaded resources and supporting files
-│   ├── colors_and_type.css  # Color palette and typography definitions
-│   ├── README.md            # Design system documentation
-│   ├── Sighthound Design System.md  # Comprehensive design guidelines
-│   ├── Sighthound Redactor App.html # Reference implementation
-│   └── SKILL.md             # Warp skill documentation (if applicable)
+│   ├── assets/
+│   ├── fonts/
+│   ├── preview/
+│   ├── ui_kits/
+│   │   ├── alpr-app/
+│   │   ├── redactor-app/
+│   │   ├── sighthound-marketing/
+│   │   └── video-app/
+│   ├── uploads/
+│   ├── AUTHORITATIVE_STATUS.md
+│   ├── colors_and_type.css
+│   ├── DECISIONS_LOG.md
+│   ├── OPERATING_MODE.md
+│   ├── README.md
+│   ├── Sighthound Design System.md
+│   ├── Sighthound Redactor App.html
+│   ├── SKILL.md
+│   ├── _adherence.oxlintrc.json
+│   ├── _ds_bundle.js
+│   └── _ds_manifest.json
+└── public/design-system/
+    └── mirrored static copy of the same files
 ```
 
 ## Integration Points
+### CSS and styling
+- `app/globals.css` carries the app-specific token block sourced from `design-system/colors_and_type.css`.
+- Keep Sighthound body text Dark Navy `#1a1d38`; do not use pure black.
+- Use Blurple `#4f60dc` as the primary action/brand color.
+- Use orange accents sparingly and avoid orange/pink for body text because of contrast risk.
+- Prefer 20px radius for CTA/marketing buttons and 8px for dense app controls.
+- Use the v0.9.1 composition utilities where imagery is unnecessary: `.sh-pattern-dots`, `.sh-pattern-grid`, `.sh-pattern-topo`, `.sh-pattern-scan`, `.sh-pattern-detect`, `.sh-soft-mist`, and `.sh-soft-fade`.
 
-### 1. CSS & Styling
+### Assets and resources
+- Use existing logo, image, icon, and hardware assets from `design-system/assets/` or `/design-system/assets/`.
+- Do not recreate the wordmark; use the provided logo files.
+- Imagery is optional. Prefer typography-led layouts, cards, data panels, soft gradients, detection/grid/topo patterns, and schematics when imagery does not add specific meaning.
 
-The design system's CSS assets are available in `design-system/colors_and_type.css`. To integrate:
+### Documentation
+Read these before design-heavy changes:
+- `design-system/README.md` for brand story, voice, visual foundations, and product naming.
+- `design-system/AUTHORITATIVE_STATUS.md` for confirmed rules, practice-not-policy items, and open gaps.
+- `design-system/OPERATING_MODE.md` for how to use the provisional system.
+- `design-system/DECISIONS_LOG.md` for pending decisions.
+- `design-system/Sighthound Design System.md` for the comprehensive reference.
 
-- Import the design system CSS in `app/globals.css`:
-  ```css
-  @import '../design-system/colors_and_type.css';
-  ```
-- Reference design tokens (colors, typography) when styling components
-
-### 2. Assets & Resources
-
-All design assets are located in `design-system/assets/` and `design-system/fonts/`:
-
-- Use assets in components via relative imports
-- Font files are available for custom font declarations
-- Graphics and icons follow SH branding specifications
-
-### 3. Component References
-
-The `design-system/ui_kits/` directory contains reusable component templates and patterns aligned with SH brand guidelines.
-
-### 4. Documentation
-
-Refer to `design-system/Sighthound Design System.md` for:
-- Color palette specifications
-- Typography guidelines
-- Component patterns
-- Branding standards
-- Design principles
+### Product naming and voice
+- Use **Sighthound Redactor** in proper case.
+- Use **ALPR+** exactly; do not write “ALPR Plus” or bare “ALPR” in marketing/product headers.
+- Spell out **Make/Model/Color/Generation (MMCG)** on first use.
+- Keep copy informal, polished, succinct, and human. Use sentence case for headings unless the design pattern explicitly calls for an overline/all-caps label.
+- Do not use emoji in production UI.
 
 ## Configuration
-
-### Current Setup
-
-- **Framework:** Next.js 14 (App Router)
-- **Design System Version:** 04.22.2026
-- **Status:** Extracted and ready for integration
-
-### Required Configuration
-
-No additional configuration is required for the design system to be recognized. The folder structure maintains integrity, and all references use relative paths from the project root.
+- **Framework:** Next.js 16 App Router.
+- **Deployment:** Vercel via GitHub repository `aliahad5/redactor-calculator`.
+- **Live site:** `https://redactor-calculator.vercel.app/`.
+- **Design System Version:** v06.15.2026 / v0.9.1 provisional.
+- **Status:** Integrated into `design-system/`, `public/design-system/`, and app-level global tokens.
 
 ## Development Workflow
-
-### Adding SH Branded Components
-
-1. Reference the design system documentation: `design-system/Sighthound Design System.md`
-2. Use color and typography tokens from `design-system/colors_and_type.css`
-3. Implement components following patterns in `design-system/ui_kits/`
-4. Test against the preview: `design-system/preview/`
-
-### Using Design Assets
-
-- Store new design assets in `design-system/assets/`
-- Reference fonts from `design-system/fonts/`
-- Maintain asset organization following existing structure
+1. Reference `design-system/README.md` and `design-system/colors_and_type.css`.
+2. Use app tokens from `app/globals.css` for project-specific styling.
+3. Reference UI kit examples in `design-system/ui_kits/` for ALPR+, Redactor, marketing, and Video app patterns.
+4. Validate with `npm run lint`, `npm test`, and `npm run build` before deployment.
+5. Keep `design-system/` and `public/design-system/` synchronized when updating the package.
 
 ## Verification Checklist
-
-- [x] Design system folder extracted to `design-system/`
-- [x] Folder structure intact with all subdirectories
-- [x] CSS files accessible at `design-system/colors_and_type.css`
-- [x] Documentation available in `design-system/*.md`
-- [x] UI kits accessible in `design-system/ui_kits/`
-- [x] Assets and fonts in place
-
-## Next Steps
-
-### Immediate Tasks
-
-1. **Review Design System Docs**
-   - Read `design-system/Sighthound Design System.md` for brand guidelines
-   - Review `design-system/colors_and_type.css` for available tokens
-
-2. **Integrate Design Tokens**
-   - Import design system CSS in `app/globals.css`
-   - Create CSS custom properties (variables) for colors and typography
-   - Update component styles to use design tokens
-
-3. **Component Implementation**
-   - Build SH-branded components using design system specifications
-   - Reference `design-system/ui_kits/` for component patterns
-   - Ensure consistency with design guidelines
-
-4. **Testing & Validation**
-   - Run development server: `npm run dev`
-   - Verify design tokens are applied correctly
-   - Compare rendered output against `design-system/preview/`
-
-### Future Work
-
-- **Dedicated Repository:** A dedicated design system repository will be created for better maintainability
-- **Component Library:** Build a reusable component library based on the design system
-- **Brand Refinements:** Further refinements to align with evolving SH brand standards
-
-## Project Status
-
-- **Setup Phase:** Complete ✓
-- **Integration Phase:** Ready to begin
-- **Production Phase:** Pending component implementation
-
-## Support
-
-For design system inquiries:
-- Refer to: `design-system/Sighthound Design System.md`
-- Review templates: `design-system/ui_kits/`
-- Check examples: `design-system/Sighthound Redactor App.html`
+- [x] v06.15.2026 package copied into `design-system/`.
+- [x] Static design-system copy mirrored to `public/design-system/`.
+- [x] v0.9.1 tokens and composition utilities available in `app/globals.css`.
+- [x] Documentation and manifest files available in the project.
+- [x] ALPR+, Redactor, Sighthound marketing, and Video UI kits available.
 
 ---
 
-**Last Updated:** 2026-04-23  
-**Design System Version:** 04.22.2026  
+**Last Updated:** 2026-06-15  
+**Design System Version:** v06.15.2026 / v0.9.1 provisional  
 **Status:** Integrated and Ready for Development
