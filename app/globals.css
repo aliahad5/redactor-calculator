@@ -1,74 +1,120 @@
 /* =========================================================
    Sighthound Design System tokens
-   Source: design-system/colors_and_type.css (April 2022 brand guide)
+   Source: design-system/colors_and_type.css
+   Version: v0.9.1 provisional / uploaded v06.15.2026
    ========================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    /* Primary — Blurple (60% of design) */
-    --sh-blurple:       #4f60dc;
-    --sh-blurple-700:   #3d4bc2;
-    --sh-blurple-800:   #2e3ba4;
-    --sh-blurple-300:   #8792e8;
-    --sh-blurple-100:   #dee2f8;
-    --sh-blurple-50:    #eef1fc;
-    --sh-white:         #ffffff;
+    /* Color — Primary */
+    --sh-blurple:          #4f60dc;
+    --sh-blurple-700:      #3d4bc2;
+    --sh-blurple-800:      #2e3ba4;
+    --sh-blurple-300:      #8792e8;
+    --sh-blurple-100:      #dee2f8;
+    --sh-blurple-50:       #eef1fc;
+    --sh-white:            #ffffff;
 
-    /* Secondary — Navy + neutral grays (30%) */
-    --sh-navy:          #1a1d38;
-    --sh-navy-700:      #2a2e56;
-    --sh-navy-500:      #4b4f73;
-    --sh-gray:          #eff3f7;
-    --sh-gray-200:      #d9dfe6;
-    --sh-gray-400:      #9aa3b2;
-    --sh-gray-600:      #64708a;
+    /* Color — Secondary */
+    --sh-navy:             #1a1d38;
+    --sh-navy-700:         #2a2e56;
+    --sh-navy-500:         #4b4f73;
+    --sh-gray:             #eff3f7;
+    --sh-gray-200:         #d9dfe6;
+    --sh-gray-400:         #9aa3b2;
+    --sh-gray-600:         #64708a;
 
-    /* Accents (10% — pops only) */
-    --sh-orange-light:  #f99f25;
-    --sh-orange-medium: #f05d22;
-    --sh-orange-red:    #f62470;
+    /* Color — Accents */
+    --sh-orange-light:     #f99f25;
+    --sh-orange-medium:    #f05d22;
+    --sh-orange-red:       #f62470;
 
     /* Gradients */
     --sh-gradient-brand:   linear-gradient(135deg, #4f60dc 0%, #f62470 100%);
+    --sh-gradient-warm:    linear-gradient(135deg, #f99f25 0%, #f05d22 50%, #f62470 100%);
     --sh-gradient-cool:    linear-gradient(135deg, #1a1d38 0%, #4f60dc 100%);
     --sh-gradient-surface: linear-gradient(180deg, #eff3f7 0%, #ffffff 100%);
+    --sh-gradient-soft:    linear-gradient(180deg, rgba(79, 96, 220, 0.06) 0%, #ffffff 60%);
+    --sh-gradient-mist:    radial-gradient(120% 80% at 30% 0%, rgba(79, 96, 220, 0.08), transparent 60%);
+
+    /* Composition motifs */
+    --pattern-dot-grid:    radial-gradient(circle at 1px 1px, rgba(26, 29, 56, 0.08) 1px, transparent 0);
+    --pattern-dot-size:    20px 20px;
+    --pattern-square-grid: linear-gradient(rgba(26, 29, 56, 0.05) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(26, 29, 56, 0.05) 1px, transparent 1px);
+    --pattern-square-size: 32px 32px;
+    --pattern-topo:        repeating-linear-gradient(135deg, rgba(79, 96, 220, 0.08) 0 1px, transparent 1px 24px);
+    --pattern-scan:        repeating-linear-gradient(0deg, rgba(79, 96, 220, 0.05) 0 2px, transparent 2px 6px);
+    --pattern-detection:   radial-gradient(circle at 1px 1px, rgba(79, 96, 220, 0.18) 1px, transparent 0);
 
     /* Semantic */
-    --fg-1:             var(--sh-navy);
-    --fg-2:             var(--sh-navy-500);
-    --fg-3:             var(--sh-gray-600);
-    --fg-inverse:       var(--sh-white);
-    --fg-accent:        var(--sh-blurple);
-    --bg-canvas:        var(--sh-white);
-    --bg-surface:       var(--sh-gray);
-    --bg-raised:        #ffffff;
-    --bg-brand:         var(--sh-blurple);
-    --border-subtle:    #e4e8ef;
-    --border-default:   var(--sh-gray-200);
-    --border-focus:     var(--sh-blurple);
-    --status-success:   #1f9d55;
-    --status-warning:   var(--sh-orange-light);
-    --status-danger:    var(--sh-orange-red);
-    --status-info:      var(--sh-blurple);
+    --fg-1:                var(--sh-navy);
+    --fg-2:                var(--sh-navy-500);
+    --fg-3:                var(--sh-gray-600);
+    --fg-inverse:          var(--sh-white);
+    --fg-accent:           var(--sh-blurple);
+    --fg-link:             var(--sh-blurple);
+    --bg-canvas:           var(--sh-white);
+    --bg-surface:          var(--sh-gray);
+    --bg-raised:           #ffffff;
+    --bg-inverse:          var(--sh-navy);
+    --bg-brand:            var(--sh-blurple);
+    --border-subtle:       #e4e8ef;
+    --border-default:      var(--sh-gray-200);
+    --border-strong:       var(--sh-navy-500);
+    --border-focus:        var(--sh-blurple);
+    --status-success:      #1f9d55;
+    --status-warning:      var(--sh-orange-light);
+    --status-danger:       var(--sh-orange-red);
+    --status-info:         var(--sh-blurple);
 
     /* Type */
-    --font-sans:        'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Verdana, sans-serif;
-    --font-mono:        'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+    --font-sans:           'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', Verdana, sans-serif;
+    --font-fallback:       Verdana, Geneva, sans-serif;
+    --font-mono:           'SF Mono', Menlo, Consolas, 'Roboto Mono', monospace;
+    --fw-light:            300;
+    --fw-regular:          400;
+    --fw-medium:           500;
+    --fw-semibold:         600;
+    --fw-bold:             700;
+    --fs-h1:               46px;
+    --fs-h2:               32px;
+    --fs-h3:               16px;
+    --fs-h4:               16px;
+    --fs-h5:               18px;
+    --fs-body:             16px;
+    --fs-button:           16px;
+    --fs-caption:          13px;
+    --fs-overline:         12px;
 
-    /* Radii / shadows / motion */
-    --radius-sm:        4px;
-    --radius-md:        8px;
-    --radius-lg:        12px;
-    --radius-button:    20px;  /* brand: buttons are always 20px */
-    --radius-pill:      999px;
-    --shadow-xs:        0 1px 2px rgba(26, 29, 56, 0.06);
-    --shadow-sm:        0 2px 6px rgba(26, 29, 56, 0.08);
-    --shadow-md:        0 8px 20px rgba(26, 29, 56, 0.10);
-    --shadow-lg:        0 20px 40px rgba(26, 29, 56, 0.14);
-    --shadow-focus:     0 0 0 3px rgba(79, 96, 220, 0.35);
-    --ease-standard:    cubic-bezier(0.2, 0.0, 0.2, 1);
-    --dur-fast:         120ms;
-    --dur-base:         200ms;
+    /* Spacing / radii / shadows / motion */
+    --space-1:             4px;
+    --space-2:             8px;
+    --space-3:             12px;
+    --space-4:             16px;
+    --space-5:             20px;
+    --space-6:             24px;
+    --space-8:             32px;
+    --space-10:            40px;
+    --space-12:            48px;
+    --space-16:            64px;
+    --space-20:            80px;
+    --space-24:            96px;
+    --radius-sm:           4px;
+    --radius-md:           8px;
+    --radius-lg:           12px;
+    --radius-button:       20px;
+    --radius-pill:         999px;
+    --shadow-xs:           0 1px 2px rgba(26, 29, 56, 0.06);
+    --shadow-sm:           0 2px 6px rgba(26, 29, 56, 0.08);
+    --shadow-md:           0 8px 20px rgba(26, 29, 56, 0.10);
+    --shadow-lg:           0 20px 40px rgba(26, 29, 56, 0.14);
+    --shadow-focus:        0 0 0 3px rgba(79, 96, 220, 0.35);
+    --ease-standard:       cubic-bezier(0.2, 0.0, 0.2, 1);
+    --ease-out:            cubic-bezier(0.0, 0.0, 0.2, 1);
+    --dur-fast:            120ms;
+    --dur-base:            200ms;
+    --dur-slow:            320ms;
 }
 
 * {
@@ -88,6 +134,38 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+/* ---------- Design-system composition utilities (v0.9.1) ---------- */
+.sh-pattern-dots {
+    background-image: var(--pattern-dot-grid);
+    background-size: var(--pattern-dot-size);
+}
+
+.sh-pattern-grid {
+    background-image: var(--pattern-square-grid);
+    background-size: var(--pattern-square-size);
+}
+
+.sh-pattern-topo {
+    background-image: var(--pattern-topo);
+}
+
+.sh-pattern-scan {
+    background-image: var(--pattern-scan);
+}
+
+.sh-pattern-detect {
+    background-image: var(--pattern-detection);
+    background-size: var(--pattern-dot-size);
+}
+
+.sh-soft-mist {
+    background-image: var(--sh-gradient-mist);
+}
+
+.sh-soft-fade {
+    background-image: var(--sh-gradient-soft);
 }
 
 .container {
@@ -362,6 +440,7 @@ body {
 header {
     position: relative;
     background: var(--bg-raised);
+    background-image: var(--sh-gradient-mist);
     padding: 32px 32px 24px 32px;
     border-radius: var(--radius-lg);
     margin-bottom: 24px;
@@ -2769,7 +2848,9 @@ a:hover {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 24px;
     align-items: center;
-    background: var(--sh-gradient-surface);
+    background-color: var(--bg-raised);
+    background-image: var(--sh-gradient-soft), var(--pattern-dot-grid);
+    background-size: auto, var(--pattern-dot-size);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     padding: 24px;
@@ -3548,6 +3629,204 @@ a:hover {
 
 
 /* =========================================================
+   ALPR+ INTERACTION LAYER
+   Scoped styles reuse existing Sighthound tokens and Redactor patterns.
+   ========================================================= */
+.alpr-control-panel {
+    margin: 18px 0 22px;
+}
+
+.alpr-filter-status,
+.alpr-gated-message {
+    margin: 10px 0 18px;
+    color: var(--fg-3);
+    font-size: 0.92em;
+    line-height: 1.5;
+}
+
+.alpr-gated-message {
+    background: var(--bg-surface);
+    border: 1px dashed var(--border-default);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-weight: 600;
+}
+
+.alpr-gated-message.active {
+    background: var(--bg-raised);
+    border-style: solid;
+}
+
+.alpr-action-row {
+    margin-top: 16px;
+}
+
+.alpr-action-row .btn-calc {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sh-blurple);
+    color: var(--sh-white);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+.alpr-action-row .btn-calc:hover {
+    background: var(--sh-blurple-700);
+}
+
+.alpr-action-row .btn-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--fg-3);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 11px 20px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-button);
+    cursor: pointer;
+}
+
+.alpr-action-row .btn-reset:hover {
+    background: var(--bg-raised);
+    color: var(--fg-2);
+}
+
+.alpr-accordion-header {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    text-align: left;
+}
+
+.alpr-accordion-title {
+    display: block;
+    flex: 1;
+}
+
+.alpr-accordion-title small {
+    display: block;
+    color: var(--fg-3);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+    text-transform: uppercase;
+}
+
+.alpr-accordion-content {
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 14px;
+    padding-top: 14px;
+}
+
+.alpr-persona-card.active {
+    box-shadow: var(--shadow-sm);
+}
+
+.alpr-comparison-tool,
+.alpr-pricing-tool,
+.alpr-discovery-generator,
+.alpr-calculator-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow-xs);
+}
+
+.alpr-comparison-result,
+.alpr-pricing-result,
+.alpr-calculator-output {
+    margin-top: 16px;
+}
+
+.alpr-pricing-result:empty,
+.alpr-comparison-result:empty,
+.alpr-calculator-output:empty {
+    display: none;
+}
+
+.alpr-generated-table td,
+.alpr-generated-table th {
+    vertical-align: top;
+}
+
+.alpr-pricing-card dl {
+    display: grid;
+    gap: 10px;
+}
+
+.alpr-pricing-card dl > div {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 10px;
+}
+
+.alpr-pricing-card dt {
+    color: var(--fg-3);
+    font-size: 0.78em;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.alpr-pricing-card dd {
+    color: var(--fg-2);
+    line-height: 1.55;
+    margin: 0;
+}
+
+.alpr-pricing-view-actions {
+    margin-top: 18px;
+}
+
+.alpr-resource-hero {
+    margin-top: 22px;
+}
+
+.alpr-resource-generated {
+    margin-top: 18px;
+}
+
+#alprResourceSourceContent[hidden],
+#alprResourceTableView[hidden],
+#alprPricingCardView[hidden],
+#alprPricingModelTableWrapper[hidden] {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    .alpr-comparison-tool,
+    .alpr-pricing-tool,
+    .alpr-discovery-generator,
+    .alpr-calculator-panel {
+        padding: 14px;
+    }
+
+    .alpr-accordion-header {
+        gap: 10px;
+    }
+}
+
+/* =========================================================
    PRODUCT SWITCHER + ALPR+ HUB
    ========================================================= */
 .product-header {
@@ -3677,7 +3956,9 @@ a:hover {
     display: grid;
     gap: 16px;
     padding: 24px;
-    background: linear-gradient(135deg, var(--sh-blurple-50) 0%, #ffffff 58%, rgba(249, 159, 37, 0.08) 100%);
+    background-color: var(--bg-raised);
+    background-image: var(--sh-gradient-soft), var(--pattern-detection);
+    background-size: auto, var(--pattern-dot-size);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
 }
@@ -3704,7 +3985,9 @@ a:hover {
     gap: 32px;
     align-items: center;
     padding: 32px;
-    background: #ffffff;
+    background-color: #ffffff;
+    background-image: var(--sh-gradient-mist), var(--pattern-square-grid);
+    background-size: auto, var(--pattern-square-size);
     border: 1px solid var(--border-subtle);
     border-radius: 20px;
     box-shadow: var(--shadow-md);

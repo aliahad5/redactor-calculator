@@ -4,7 +4,7 @@ var ALPR_PROMPTS = [
     tab: "Executive Summary",
     objective: "Generate a data-backed executive summary for the Sighthound ALPR+ competitive landscape covering market positioning, key segments, and top competitive scenarios for sales and marketing leadership.",
     context: [
-      "Product: Sighthound ALPR+ — sighthound.com/products/alpr",
+      "Product: Sighthound ALPR+ — sighthound.com/products/alpr and sighthound.com/products/alpr-plus/",
       "Gen 6 AI engine; self-reported 99% accuracy; up to 160 FPS on GPU; 1B+ images/year",
       "Key differentiator: MMCG analytics (make, model, color, generation) — no public competitor documents equivalent depth for US/CA/EU vehicles since 1991",
       "Deployment: on-premise, cloud, edge, Docker, Windows + Linux",
@@ -32,15 +32,15 @@ var ALPR_PROMPTS = [
     tab: "Product Updates",
     objective: "Generate a current capability brief for Sighthound ALPR+ for use by sales reps and channel partners when explaining the platform's technical differentiation.",
     context: [
-      "All capabilities must be sourced from sighthound.com/products/alpr and dev.sighthound.com",
-      "Gen 6 AI; LPR for 100+ countries; MMCG for US/CA/EU vehicles since 1991",
+      "All capabilities must be sourced from sighthound.com/products/alpr, sighthound.com/products/alpr-plus/, and dev.sighthound.com",
+      "Gen 6 AI; LPR reads alphanumeric plates globally; MMCG vehicle-recognition models are primarily trained for US, Canada, and EU vehicle markets",
       "Deployment: on-premise, cloud, edge, Docker, Windows + Linux",
-      "API: REST, RTSP, webhooks, RabbitMQ, OpenAPI spec",
+      "API and integration paths: REST image API, hosted preview, self-hosted Docker gateway, SIO pipelines, RTSP input, RabbitMQ/Aqueduct control, and Python pipeline extensions",
       "Hardware: Sighthound Compute Camera (IP67) + Compute Node",
-      "Pricing: NOT publicly listed — 2023 press release reference ($29/camera/month ALPR Pro) may be outdated"
+      "Current ALPR+ pricing is not publicly listed in verified official public pages; direct pricing questions to Sighthound sales"
     ],
     instructions: [
-      "Write a 3-sentence product overview suitable for a technical buyer",
+      "Write a 3-sentence product overview suitable for a technical buyer, with facts and recommendations clearly labeled",
       "List all published ALPR capabilities with one-line explanations (LPR, MMCG, object detection, tracking, vehicle orientation)",
       "List all deployment modes with a one-line description of when each is the right fit",
       "Describe the API and integration ecosystem using technical terminology",
@@ -48,8 +48,8 @@ var ALPR_PROMPTS = [
       "Close with the developer portal URL and free test drive URL as recommended first steps"
     ],
     constraints: [
-      "Do not add capabilities not documented on sighthound.com/products/alpr or dev.sighthound.com",
-      "Do not present self-reported accuracy benchmarks (99%, 160 FPS) without noting they are vendor-published",
+      "Do not add capabilities not documented on official Sighthound product pages or dev.sighthound.com",
+      "Do not include performance or accuracy benchmarks unless the exact current official source and caveat are included",
       "Do not claim the product is certified under CJIS, FedRAMP, or any compliance framework — reference architecture only",
       "Do not include pricing — current ALPR+ pricing is not publicly listed",
       "Do not mention Sighthound Redactor or other Sighthound products under any circumstances",
@@ -115,13 +115,13 @@ var ALPR_PROMPTS = [
     tab: "Feature Comparison",
     objective: "Generate an accurate side-by-side feature comparison matrix for Sighthound ALPR+ vs. 2-4 named competitors across ALPR depth, analytics, deployment, and integration dimensions.",
     context: [
-      "Sighthound ALPR+ documented features: LPR (100+ countries), MMCG, object detection, real-time processing, on-prem/cloud/edge/Docker, REST API, RTSP, webhooks, RabbitMQ, OpenAPI spec",
-      "MMCG is the primary feature gap — most competitors provide plate reads only, not full make/model/color/generation",
-      "Deployment flexibility (on-prem + cloud + edge + air-gapped) is the secondary differentiator",
+      "Sighthound ALPR+ documented features: global alphanumeric plate recognition with US/Canada/EU region recognition, MMCG, object detection, real-time processing, on-prem/cloud/edge/Docker, REST API, RTSP, RabbitMQ, and SIO pipeline documentation",
+      "MMCG is a primary comparison area; compare each competitor from official documentation for plate data, make/model/color/generation, vehicle type, and other documented attributes",
+      "Deployment flexibility (on-prem + cloud + edge + Docker/self-hosted options) is the secondary differentiator",
       "Three feature states to use: Yes (documented on official site), Partial (limited or module-only), No (not offered), ? (not publicly documented)"
     ],
     instructions: [
-      "Define comparison categories: LPR coverage, MMCG analytics, object detection, real-time processing, on-premise, cloud, edge/IoT, air-gapped, REST API, Docker, 100+ country plates",
+      "Define comparison categories: LPR coverage, MMCG analytics, object detection, real-time processing, on-premise, cloud, edge/IoT, deployment isolation, REST API, Docker, and global alphanumeric plate support",
       "Populate each competitor's column from official product documentation only",
       "Use Yes / Partial / No / ? states consistently — never guess",
       "Include source URLs for each competitor's feature claims in a footnotes section",
@@ -143,8 +143,8 @@ var ALPR_PROMPTS = [
     context: [
       "Sighthound ALPR+ current pricing: NOT publicly listed on the official website as of May 2026",
       "2023 press release reference (potentially outdated): ALPR Pro from $29/camera/month; ALPR Free tier available",
-      "Competitor models: per-lookup (Plate Recognizer), per-camera sub (Rekor, ~$12/cam/mo per third-party reports), hardware bundles (Flock, Leonardo, Jenoptik), government contracts (Kapsch, Perceptics, NDI), not listed (most others)",
-      "All pricing figures must be verified from official sources or explicitly flagged as unverified estimates"
+      "Competitor models: official per-lookup/per-camera pricing where published (Plate Recognizer, Rekor Scout Basic/Pro), hardware bundles or managed networks (Flock, Leonardo, Jenoptik), government contracts (Kapsch, Perceptics, NDI), and quote-led pricing where no official public pricing exists",
+      "All pricing figures must come from official pricing pages or current vendor quotes; do not use third-party pricing snippets as evidence"
     ],
     instructions: [
       "For each competitor, state their pricing model type with source and date",
@@ -642,7 +642,7 @@ function getAlprPromptText(index) {
         '',
         'EXPECTED OUTPUT',
         '- Complete draft content for the "' + prompt.tab + '" section of the Sighthound ALPR+ Competitive Intelligence Hub.',
-        '- Use sourced, verifiable claims only and clearly flag any estimates or unverified competitor data.',
+        '- Use sourced, verifiable claims only and omit unverified competitor data.',
         '- Keep the output ready to paste into the corresponding ALPR+ tab without referencing Sighthound Redactor.'
     ].join('\n');
 }
@@ -4608,6 +4608,630 @@ function initGlobalSearch() {
     buildGlobalSearchIndex();
     observeGlobalSearchDom();
 }
+
+// ═══════════════════════════════════════════════════════
+// ALPR+ FUNCTIONALITY ALIGNMENT
+// Scoped helpers for the ALPR+ hub. These read existing DOM content
+// instead of re-authoring ALPR+ copy.
+// ═══════════════════════════════════════════════════════
+var alprPricingView = 'table';
+var alprResourceView = 'card';
+
+function normalizeAlprKey(text) {
+    return String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function setAlprDisplay(element, shouldShow) {
+    if (!element) { return; }
+    element.style.display = shouldShow ? '' : 'none';
+}
+
+function getAlprHeading(section, text) {
+    if (!section) { return null; }
+    var needle = String(text || '').toLowerCase();
+    return Array.prototype.slice.call(section.querySelectorAll('h3')).find(function(heading) {
+        return heading.textContent.toLowerCase().indexOf(needle) !== -1;
+    }) || null;
+}
+
+function getAlprProductGroups() {
+    var section = document.getElementById('alpr-product-updates');
+    var configs = [
+        { value: 'published', label: 'Published Capabilities', heading: 'Published ALPR+ Capabilities' },
+        { value: 'deployment', label: 'Deployment Modes & Fit', heading: 'Deployment Modes & Fit' },
+        { value: 'api', label: 'API & Integration Ecosystem', heading: 'API & Integration Ecosystem' },
+        { value: 'hardware', label: 'Hardware Options & Fit', heading: 'Hardware Options & Fit' },
+        { value: 'first-steps', label: 'Recommended First Steps', heading: 'Recommended First Steps for Technical Evaluators' }
+    ];
+    return configs.map(function(config) {
+        var heading = getAlprHeading(section, config.heading);
+        var elements = [];
+        if (heading) {
+            elements.push(heading);
+            var cursor = heading.nextElementSibling;
+            while (cursor && !(cursor.tagName && cursor.tagName.toLowerCase() === 'h3')) {
+                if (cursor.tagName && cursor.tagName.toLowerCase() === 'p' && cursor.querySelector('small')) { break; }
+                elements.push(cursor);
+                cursor = cursor.nextElementSibling;
+            }
+        }
+        return {
+            value: config.value,
+            label: config.label,
+            elements: elements
+        };
+    });
+}
+
+function updateAlprProductCategory() {
+    var selector = document.getElementById('alprProductCategorySelector');
+    var status = document.getElementById('alprProductCategoryStatus');
+    if (!selector) { return; }
+    var selected = selector.value || 'published';
+    var groups = getAlprProductGroups();
+    groups.forEach(function(group) {
+        var show = selected === 'all' || selected === group.value;
+        group.elements.forEach(function(element) { setAlprDisplay(element, show); });
+    });
+    if (status) {
+        var selectedGroup = groups.find(function(group) { return group.value === selected; });
+        status.textContent = selected === 'all' ? 'Showing all capability groups.' : 'Showing ' + (selectedGroup ? selectedGroup.label : 'selected capability group') + '.';
+    }
+    refreshLucideIcons();
+}
+
+var alprPersonaRoleLabels = {
+    'budget-owner': 'Budget owner',
+    'operational-recommender': 'Operational recommender',
+    'technical-gatekeeper': 'Technical gatekeeper'
+};
+var alprPersonaVerticalLabels = {
+    'law-enforcement': 'Law enforcement & public safety',
+    'parking-ev': 'Parking, EV & access control',
+    'smart-city': 'Smart city, ITS & tolling',
+    'retail-qsr': 'Retail, QSR & automotive services',
+    'transportation-logistics': 'Transportation & logistics',
+    'developer-integrator': 'Developer, OEM & systems integrator'
+};
+
+function initializeAlprPersonaAccordions() {
+    Array.prototype.forEach.call(document.querySelectorAll('#alprPersonaGrid .alpr-persona-card'), function(card) {
+        if (card.getAttribute('data-alpr-accordion-ready') === 'true') { return; }
+        var heading = card.querySelector('h4');
+        if (!heading) { return; }
+        var content = document.createElement('div');
+        content.className = 'alpr-accordion-content';
+        content.hidden = true;
+        while (heading.nextSibling) {
+            content.appendChild(heading.nextSibling);
+        }
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'alpr-accordion-header';
+        button.setAttribute('aria-expanded', 'false');
+        button.onclick = function() { toggleAlprPersonaCard(button); };
+        var vertical = alprPersonaVerticalLabels[card.getAttribute('data-vertical')] || '';
+        var role = alprPersonaRoleLabels[card.getAttribute('data-buyer-role')] || '';
+        button.innerHTML = '<span class="alpr-accordion-title">' + heading.innerHTML + '<small>' + escapeHtml(vertical) + ' · ' + escapeHtml(role) + '</small></span><span class="accordion-toggle">▼</span>';
+        card.removeChild(heading);
+        card.insertBefore(button, card.firstChild);
+        card.appendChild(content);
+        card.setAttribute('data-alpr-accordion-ready', 'true');
+    });
+}
+
+function toggleAlprPersonaCard(button) {
+    var card = button ? button.closest('.alpr-persona-card') : null;
+    var content = card ? card.querySelector('.alpr-accordion-content') : null;
+    if (!card || !content) { return; }
+    var expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    content.hidden = expanded;
+    card.classList.toggle('active', !expanded);
+}
+
+function filterAlprPersonas() {
+    initializeAlprPersonaAccordions();
+    var vertical = (document.getElementById('alprPersonaVerticalFilter') || {}).value || 'all';
+    var role = (document.getElementById('alprPersonaRoleFilter') || {}).value || 'all';
+    var count = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('#alprPersonaGrid .alpr-persona-card'), function(card) {
+        var match = (vertical === 'all' || card.getAttribute('data-vertical') === vertical) &&
+            (role === 'all' || card.getAttribute('data-buyer-role') === role);
+        setAlprDisplay(card, match);
+        if (match) { count += 1; }
+    });
+    var status = document.getElementById('alprPersonaFilterStatus');
+    if (status) { status.textContent = count + ' persona' + (count === 1 ? '' : 's') + ' shown.'; }
+    refreshLucideIcons();
+}
+
+function getAlprCompetitorName(profile) {
+    var heading = profile ? profile.querySelector('h4') : null;
+    return heading ? heading.textContent.trim() : 'Competitor';
+}
+
+function populateAlprCompetitorSelector() {
+    var selector = document.getElementById('alprCompetitorSelector');
+    if (!selector || selector.getAttribute('data-alpr-populated') === 'true') { return; }
+    Array.prototype.forEach.call(document.querySelectorAll('#alpr-competitor-profiles .competitor-profile[data-competitor]'), function(profile) {
+        var option = document.createElement('option');
+        option.value = profile.getAttribute('data-competitor');
+        option.textContent = getAlprCompetitorName(profile);
+        selector.appendChild(option);
+    });
+    selector.setAttribute('data-alpr-populated', 'true');
+}
+
+function filterAlprCompetitorProfiles() {
+    populateAlprCompetitorSelector();
+    var selector = document.getElementById('alprCompetitorSelector');
+    if (!selector) { return; }
+    var selected = selector.value || 'all';
+    var count = 0;
+    var selectedName = '';
+    Array.prototype.forEach.call(document.querySelectorAll('#alpr-competitor-profiles .competitor-profile[data-competitor]'), function(profile) {
+        var match = selected === 'all' || profile.getAttribute('data-competitor') === selected;
+        setAlprDisplay(profile, match);
+        if (match) {
+            count += 1;
+            selectedName = getAlprCompetitorName(profile);
+        }
+    });
+    var status = document.getElementById('alprCompetitorStatus');
+    if (status) { status.textContent = selected === 'all' ? 'Showing all ' + count + ' competitors.' : 'Showing ' + selectedName + '.'; }
+    refreshLucideIcons();
+}
+
+function getAlprHeaderLabel(header) {
+    var clone = header.cloneNode(true);
+    Array.prototype.forEach.call(clone.querySelectorAll('sup'), function(sup) { sup.remove(); });
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+}
+
+function getAlprFeatureSolutions() {
+    var table = document.getElementById('alprFeatureMatrix');
+    if (!table) { return []; }
+    var headers = Array.prototype.slice.call(table.querySelectorAll('thead th'));
+    return headers.slice(1, -1).map(function(header, index) {
+        var label = getAlprHeaderLabel(header);
+        return { id: normalizeAlprKey(label), label: label, columnIndex: index + 1 };
+    });
+}
+
+function populateAlprFeatureSelectors() {
+    var solutions = getAlprFeatureSolutions();
+    ['alprCompareA', 'alprCompareB', 'alprFeatureSolutionFilter'].forEach(function(id) {
+        var selector = document.getElementById(id);
+        if (!selector || selector.getAttribute('data-alpr-populated') === 'true') { return; }
+        if (id !== 'alprFeatureSolutionFilter') { selector.innerHTML = ''; }
+        solutions.forEach(function(solution, index) {
+            var option = document.createElement('option');
+            option.value = solution.id;
+            option.textContent = solution.label;
+            if (id === 'alprCompareA' && index === 0) { option.selected = true; }
+            if (id === 'alprCompareB' && index === 1) { option.selected = true; }
+            selector.appendChild(option);
+        });
+        selector.setAttribute('data-alpr-populated', 'true');
+    });
+}
+
+function getAlprFeatureRows() {
+    var table = document.getElementById('alprFeatureMatrix');
+    var solutions = getAlprFeatureSolutions();
+    if (!table) { return []; }
+    return Array.prototype.map.call(table.querySelectorAll('tbody tr'), function(row) {
+        var cells = Array.prototype.slice.call(row.children);
+        var values = {};
+        solutions.forEach(function(solution) {
+            values[solution.id] = cells[solution.columnIndex] ? cells[solution.columnIndex].innerHTML : '';
+        });
+        return {
+            feature: cells[0] ? cells[0].innerHTML : '',
+            values: values,
+            advantage: cells[cells.length - 1] ? cells[cells.length - 1].innerHTML : ''
+        };
+    });
+}
+
+function updateAlprFeatureComparison() {
+    populateAlprFeatureSelectors();
+    var selectorA = document.getElementById('alprCompareA');
+    var selectorB = document.getElementById('alprCompareB');
+    var output = document.getElementById('alprFeatureComparisonResult');
+    if (!selectorA || !selectorB || !output) { return; }
+    var solutions = getAlprFeatureSolutions();
+    var solutionA = solutions.find(function(solution) { return solution.id === selectorA.value; }) || solutions[0];
+    var solutionB = solutions.find(function(solution) { return solution.id === selectorB.value; }) || solutions[1] || solutions[0];
+    if (!solutionA || !solutionB) { return; }
+    output.innerHTML = '<div class="table-wrapper"><table class="comparison-table alpr-generated-table"><thead><tr><th>Feature</th><th>' + escapeHtml(solutionA.label) + '</th><th>' + escapeHtml(solutionB.label) + '</th><th>Sighthound Advantage</th></tr></thead><tbody>' + getAlprFeatureRows().map(function(row) {
+        return '<tr><td>' + row.feature + '</td><td>' + (row.values[solutionA.id] || '') + '</td><td>' + (row.values[solutionB.id] || '') + '</td><td>' + row.advantage + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+    refreshLucideIcons();
+}
+
+function filterAlprFeatureSolution() {
+    populateAlprFeatureSelectors();
+    var selector = document.getElementById('alprFeatureSolutionFilter');
+    var table = document.getElementById('alprFeatureMatrix');
+    if (!selector || !table) { return; }
+    var selected = selector.value || 'all';
+    var solutions = getAlprFeatureSolutions();
+    var selectedSolution = solutions.find(function(solution) { return solution.id === selected; });
+    var headers = Array.prototype.slice.call(table.querySelectorAll('thead th'));
+    headers.forEach(function(header, index) {
+        setAlprDisplay(header, selected === 'all' || index === 0 || index === headers.length - 1 || (selectedSolution && index === selectedSolution.columnIndex));
+    });
+    Array.prototype.forEach.call(table.querySelectorAll('tbody tr'), function(row) {
+        Array.prototype.forEach.call(row.children, function(cell, index) {
+            setAlprDisplay(cell, selected === 'all' || index === 0 || index === row.children.length - 1 || (selectedSolution && index === selectedSolution.columnIndex));
+        });
+    });
+    var status = document.getElementById('alprFeatureFilterStatus');
+    if (status) { status.textContent = selected === 'all' ? 'Showing all solution columns.' : 'Showing ' + (selectedSolution ? selectedSolution.label : 'selected solution') + ' with feature and advantage columns.'; }
+}
+
+function getAlprPricingRows() {
+    var table = document.getElementById('alprPricingModelTable');
+    if (!table) { return []; }
+    return Array.prototype.map.call(table.querySelectorAll('tbody tr'), function(row) {
+        var cells = Array.prototype.slice.call(row.children);
+        var name = cells[0] ? cells[0].textContent.replace(/\s+/g, ' ').trim() : 'Vendor';
+        return {
+            id: normalizeAlprKey(name),
+            name: name,
+            cells: cells.map(function(cell) { return cell.innerHTML; })
+        };
+    });
+}
+
+function populateAlprPricingSelectors() {
+    var rows = getAlprPricingRows();
+    ['alprPricingCompareA', 'alprPricingCompareB', 'alprPricingSummarySelect'].forEach(function(id) {
+        var selector = document.getElementById(id);
+        if (!selector || selector.getAttribute('data-alpr-populated') === 'true') { return; }
+        selector.innerHTML = id === 'alprPricingSummarySelect' ? '<option value="">Select a vendor summary</option>' : '<option value="">Select a competitor</option>';
+        rows.forEach(function(row, index) {
+            var option = document.createElement('option');
+            option.value = row.id;
+            option.textContent = row.name;
+            if (id === 'alprPricingCompareA' && index === 0) { option.selected = true; }
+            if (id === 'alprPricingCompareB' && index === 1) { option.selected = true; }
+            selector.appendChild(option);
+        });
+        selector.setAttribute('data-alpr-populated', 'true');
+    });
+}
+
+function renderAlprPricingPanel(row) {
+    if (!row) { return '<p class="pricing-dropdown-placeholder">No pricing details are available for the selected vendor.</p>'; }
+    return '<article class="pricing-summary-card alpr-pricing-card"><h5>' + escapeHtml(row.name) + '</h5><dl>' +
+        '<div><dt>Pricing model type</dt><dd>' + (row.cells[1] || '') + '</dd></div>' +
+        '<div><dt>Public pricing status / figures</dt><dd>' + (row.cells[2] || '') + '</dd></div>' +
+        '<div><dt>Source URL and access date</dt><dd>' + (row.cells[3] || '') + '</dd></div>' +
+        '<div><dt>Sales-use note</dt><dd>' + (row.cells[4] || '') + '</dd></div>' +
+        '</dl></article>';
+}
+
+function handleAlprPricingSelectionChange() {
+    populateAlprPricingSelectors();
+    var output = document.getElementById('alprPricingComparisonResult');
+    if (output) { output.innerHTML = ''; }
+    var message = document.getElementById('alprPricingCompareMessage');
+    if (message) { message.textContent = 'Select two competitors, then choose Compare to view pricing details side by side.'; }
+}
+
+function compareAlprPricingCompetitors() {
+    populateAlprPricingSelectors();
+    var rows = getAlprPricingRows();
+    var firstValue = (document.getElementById('alprPricingCompareA') || {}).value || '';
+    var secondValue = (document.getElementById('alprPricingCompareB') || {}).value || '';
+    var output = document.getElementById('alprPricingComparisonResult');
+    var message = document.getElementById('alprPricingCompareMessage');
+    if (!output) { return; }
+    if (!firstValue || !secondValue || firstValue === secondValue) {
+        if (message) { message.textContent = firstValue === secondValue ? 'Please select two different competitors to compare.' : 'Please select two competitors to compare.'; }
+        output.innerHTML = '';
+        return;
+    }
+    var first = rows.find(function(row) { return row.id === firstValue; });
+    var second = rows.find(function(row) { return row.id === secondValue; });
+    output.innerHTML = '<div class="pricing-comparison-grid"><div class="pricing-comparison-column">' + renderAlprPricingPanel(first) + '</div><div class="pricing-comparison-column">' + renderAlprPricingPanel(second) + '</div></div>';
+    if (message) { message.textContent = 'Comparison shown. Preserve all caveats and verify current quotes before use.'; }
+    refreshLucideIcons();
+}
+
+function updateAlprPricingSummary() {
+    populateAlprPricingSelectors();
+    var selector = document.getElementById('alprPricingSummarySelect');
+    var output = document.getElementById('alprPricingSummaryDetails');
+    if (!selector || !output) { return; }
+    var row = getAlprPricingRows().find(function(item) { return item.id === selector.value; });
+    output.innerHTML = selector.value ? renderAlprPricingPanel(row) : '<p class="pricing-dropdown-placeholder">Select a summary item to view pricing-model details.</p>';
+    refreshLucideIcons();
+}
+
+function setAlprPricingView(view) {
+    alprPricingView = view === 'card' ? 'card' : 'table';
+    var cardView = document.getElementById('alprPricingCardView');
+    var tableWrapper = document.getElementById('alprPricingModelTableWrapper');
+    var summary = document.getElementById('alprPricingViewSummary');
+    if (!cardView || !tableWrapper) { return; }
+    cardView.innerHTML = getAlprPricingRows().map(renderAlprPricingPanel).join('');
+    cardView.hidden = alprPricingView !== 'card';
+    tableWrapper.hidden = alprPricingView !== 'table';
+    document.querySelectorAll('#alpr-pricing-analysis .resource-toggle').forEach(function(button) {
+        if (button.id === 'alprPricingCardViewBtn' || button.id === 'alprPricingTableViewBtn') {
+            button.classList.toggle('active', (button.id === 'alprPricingCardViewBtn') === (alprPricingView === 'card'));
+        }
+    });
+    if (summary) { summary.textContent = 'Showing ' + (alprPricingView === 'card' ? 'card' : 'table') + ' view.'; }
+    refreshLucideIcons();
+}
+
+function filterAlprPositioningScenario() {
+    var selector = document.getElementById('alprPositioningScenarioSelector');
+    if (!selector) { return; }
+    var selected = selector.value || 'all';
+    var count = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('#alpr-positioning-strategy [data-alpr-scenario]'), function(block) {
+        var match = selected === 'all' || block.getAttribute('data-alpr-scenario') === selected;
+        setAlprDisplay(block, match);
+        if (match) { count += 1; }
+    });
+    var status = document.getElementById('alprPositioningScenarioStatus');
+    if (status) { status.textContent = selected === 'all' ? 'Showing all scenario-specific win themes and talk tracks.' : 'Showing ' + count + ' scenario-specific block' + (count === 1 ? '' : 's') + '.'; }
+    refreshLucideIcons();
+}
+
+var alprDiscoveryLabels = {
+    'law-enforcement': 'Law Enforcement',
+    'parking-ev': 'Parking & EV',
+    'smart-city': 'Smart City / ITS',
+    'retail-qsr': 'Retail / QSR',
+    'developer-integrator': 'Developer / Integrator',
+    'budget-owner': 'Budget owner',
+    'operational-recommender': 'Operational recommender',
+    'technical-gatekeeper': 'Technical gatekeeper',
+    'deployment-control': 'Deployment control',
+    'mmcg-validation': 'MMCG validation',
+    'pricing-tco': 'Pricing / TCO'
+};
+
+function updateAlprDiscoveryGenerator() {
+    var vertical = (document.getElementById('alprDiscoveryVertical') || {}).value || '';
+    var role = (document.getElementById('alprDiscoveryRole') || {}).value || '';
+    var scenario = (document.getElementById('alprDiscoveryScenario') || {}).value || '';
+    var ready = !!(vertical && role && scenario);
+    Array.prototype.forEach.call(document.querySelectorAll('#alpr-discovery-questions .alpr-discovery-card'), function(card) {
+        card.hidden = !ready || card.getAttribute('data-alpr-vertical') !== vertical;
+    });
+    var message = document.getElementById('alprDiscoveryGateMessage');
+    if (message) {
+        message.textContent = ready
+            ? 'Generated questions for ' + alprDiscoveryLabels[vertical] + ' · ' + alprDiscoveryLabels[role] + ' · ' + alprDiscoveryLabels[scenario] + '. Buyer Role and Scenario act as gates because the existing question text is organized by vertical.'
+            : 'Select Vertical, Buyer Role, and Scenario / Pricing Context before generating questions.';
+        message.classList.toggle('active', ready);
+    }
+    refreshLucideIcons();
+}
+
+function getAlprCalcSelections() {
+    return {
+        cameraCount: parseInt((document.getElementById('alprCalcCameraCount') || {}).value, 10) || 25,
+        deployment: (document.getElementById('alprCalcDeployment') || {}).value || 'edge',
+        vertical: (document.getElementById('alprCalcVertical') || {}).value || 'parking',
+        tier: (document.getElementById('alprCalcTier') || {}).value || 'pro'
+    };
+}
+
+function getAlprCalcTierLabel(tier) {
+    if (tier === 'engine') { return 'Engine (OEM/developer)'; }
+    if (tier === 'free') { return 'Free (limited)'; }
+    return 'Pro (per-camera subscription)';
+}
+
+function calculateAlprPricing() {
+    var selections = getAlprCalcSelections();
+    var output = document.getElementById('alprCalcOutput');
+    if (!output) { return; }
+    var cameras = selections.cameraCount;
+    var isEnterprise = selections.tier === 'engine' || cameras >= 500 || selections.deployment === 'air-gapped' || selections.vertical === 'developer';
+    var alprAnnual = selections.tier === 'pro' && !isEnterprise ? cameras * 29 * 12 : NaN;
+    var plateRecognizerAnnual = cameras * 45 * 12;
+    var rekorAnnual = cameras * 12 * 12;
+    var alprCostLabel = isFinite(alprAnnual)
+        ? '$' + alprAnnual.toLocaleString('en-US') + '/year [ESTIMATE; 2023 press release — may be outdated; verify with sales team]'
+        : 'Custom quote required; no current public ALPR+ figure [ESTIMATE]';
+    var rows = [
+        ['Sighthound ALPR+', getAlprCalcTierLabel(selections.tier), alprCostLabel, 'Current pricing is not publicly listed; verify with sales team before use.'],
+        ['Plate Recognizer Stream + MMC', 'Per-camera benchmark', '$' + plateRecognizerAnnual.toLocaleString('en-US') + '/year [ESTIMATE]', 'Modeled as ' + cameras + ' × $45/camera/month × 12 from the existing pricing source snapshot.'],
+        ['Rekor Scout Basic', 'Official Basic per-camera plan', '$' + rekorAnnual.toLocaleString('en-US') + '/year [ESTIMATE from official Rekor Scout Basic plan]', 'Official Rekor docs list Basic at $12/camera/month; verify current scope, retention, hosting, and Enterprise terms with Rekor.']
+    ];
+    output.hidden = false;
+    output.innerHTML = '<div class="comparison-wrap"><div class="comparison-title">How Sighthound ALPR+ Compares</div><div class="pricing-recommendation-card"><div class="recommendation-kicker">Illustrative estimate only</div><h4>' + cameras + '-camera ' + escapeHtml(selections.deployment) + ' deployment · ' + escapeHtml(getAlprCalcTierLabel(selections.tier)) + '</h4><p>All outputs preserve the existing caveat: ALPR+ current pricing is not publicly listed, and every figure must be verified with the sales team before use.</p></div><table class="comparison-table alpr-generated-table"><thead><tr><th>Tool</th><th>Pricing Basis</th><th>Estimated Annual Cost</th><th>Caveat</th></tr></thead><tbody>' + rows.map(function(row) {
+        return '<tr><td data-label="Tool" class="tool-name">' + escapeHtml(row[0]) + '</td><td data-label="Pricing Basis">' + escapeHtml(row[1]) + '</td><td data-label="Estimated Annual Cost">' + escapeHtml(row[2]) + '</td><td data-label="Caveat">' + escapeHtml(row[3]) + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+    refreshLucideIcons();
+}
+
+function resetAlprPricingCalculator() {
+    var defaults = {
+        alprCalcCameraCount: '25',
+        alprCalcDeployment: 'edge',
+        alprCalcVertical: 'parking',
+        alprCalcTier: 'pro'
+    };
+    Object.keys(defaults).forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.value = defaults[id]; }
+    });
+    var output = document.getElementById('alprCalcOutput');
+    if (output) {
+        output.innerHTML = '';
+        output.hidden = true;
+    }
+}
+
+function getAlprNearestHeadingText(element, root) {
+    var current = element;
+    while (current && current !== root) {
+        var previous = current.previousElementSibling;
+        while (previous) {
+            if (previous.matches && previous.matches('h3')) { return previous.textContent.trim(); }
+            var nestedHeading = previous.querySelector && previous.querySelector('h3');
+            if (nestedHeading) { return nestedHeading.textContent.trim(); }
+            previous = previous.previousElementSibling;
+        }
+        current = current.parentElement;
+    }
+    return '';
+}
+
+function getAlprResourceCategory(element, root) {
+    if (element.closest('.alpr-resource-group') || element.closest('.alpr-design-system-hero')) { return 'design-system'; }
+    var heading = getAlprNearestHeadingText(element, root).toLowerCase();
+    if (heading.indexOf('primary top-of-funnel') !== -1) { return 'primary-cta'; }
+    if (heading.indexOf('official alpr') !== -1) { return 'official-pages'; }
+    if (heading.indexOf('solution pages') !== -1) { return 'solution-pages'; }
+    if (heading.indexOf('technical') !== -1 || heading.indexOf('developer') !== -1) { return 'developer-docs'; }
+    if (heading.indexOf('datasheet') !== -1 || heading.indexOf('pdf') !== -1) { return 'datasheets-pdfs'; }
+    if (heading.indexOf('content gaps') !== -1 || heading.indexOf('pricing reference') !== -1) { return 'content-gaps'; }
+    return 'official-pages';
+}
+
+function getAlprResourceCategoryLabel(category) {
+    var labels = {
+        'design-system': 'Design-system File Catalog',
+        'official-pages': 'Official Product Pages',
+        'developer-docs': 'Developer Documentation',
+        'datasheets-pdfs': 'Datasheets & PDFs',
+        'solution-pages': 'Solution Pages by Vertical',
+        'primary-cta': 'Primary CTA',
+        'content-gaps': 'Content Gaps'
+    };
+    return labels[category] || 'Resource';
+}
+
+function collectAlprResourceItems() {
+    var root = document.getElementById('alprResourceSourceContent');
+    if (!root) { return []; }
+    var seen = {};
+    var items = [];
+    function addItem(element, title, url, description) {
+        var cleanTitle = String(title || '').replace(/\s+/g, ' ').trim();
+        var cleanUrl = String(url || '').trim();
+        var key = cleanTitle + '|' + cleanUrl;
+        if (!element || !cleanTitle || seen[key]) { return; }
+        seen[key] = true;
+        items.push({
+            element: element,
+            title: cleanTitle,
+            url: cleanUrl,
+            description: String(description || element.textContent || '').replace(/\s+/g, ' ').trim(),
+            category: getAlprResourceCategory(element, root)
+        });
+    }
+    Array.prototype.forEach.call(root.querySelectorAll('.alpr-file-grid a'), function(link) {
+        addItem(link, link.textContent, link.getAttribute('href'), link.textContent);
+    });
+    Array.prototype.forEach.call(root.querySelectorAll('.positioning-grid .card'), function(card) {
+        var heading = card.querySelector('h4');
+        var link = card.querySelector('a[href]');
+        addItem(card, heading ? heading.textContent : card.textContent, link ? link.getAttribute('href') : '', card.textContent);
+    });
+    Array.prototype.forEach.call(root.querySelectorAll('.table-wrapper tbody tr'), function(row) {
+        var firstCell = row.querySelector('td');
+        var link = row.querySelector('a[href]');
+        addItem(row, firstCell ? firstCell.textContent : row.textContent, link ? link.getAttribute('href') : '', row.textContent);
+    });
+    Array.prototype.forEach.call(root.querySelectorAll('.strength-box, .weakness-box'), function(box) {
+        var heading = box.querySelector('h3, h4, strong');
+        var link = box.querySelector('a[href]');
+        addItem(box, heading ? heading.textContent : box.textContent, link ? link.getAttribute('href') : '', box.textContent);
+    });
+    return items;
+}
+
+function getFilteredAlprResources() {
+    var query = ((document.getElementById('alprResourceSearch') || {}).value || '').toLowerCase().trim();
+    var category = (document.getElementById('alprResourceCategoryFilter') || {}).value || 'all';
+    return collectAlprResourceItems().filter(function(item) {
+        var categoryMatch = category === 'all' || item.category === category;
+        var queryMatch = !query || [item.title, item.url, item.description, getAlprResourceCategoryLabel(item.category)].join(' ').toLowerCase().indexOf(query) !== -1;
+        return categoryMatch && queryMatch;
+    });
+}
+
+function renderAlprResourceTable(items) {
+    var tableView = document.getElementById('alprResourceTableView');
+    if (!tableView) { return; }
+    if (!items.length) {
+        tableView.innerHTML = '<div class="resource-empty">No ALPR+ resources match the current filters.</div>';
+        return;
+    }
+    tableView.innerHTML = '<div class="resource-table-wrapper"><table class="resource-table"><thead><tr><th>Title</th><th>URL</th><th>Category</th><th>Description</th></tr></thead><tbody>' + items.map(function(item) {
+        var url = item.url ? '<a href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener">' + escapeHtml(item.url) + '</a>' : '—';
+        return '<tr><td>' + escapeHtml(item.title) + '</td><td><p class="resource-url">' + url + '</p></td><td>' + escapeHtml(getAlprResourceCategoryLabel(item.category)) + '</td><td>' + escapeHtml(item.description.slice(0, 220)) + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+
+function renderAlprResources() {
+    var source = document.getElementById('alprResourceSourceContent');
+    var tableView = document.getElementById('alprResourceTableView');
+    if (!source || !tableView) { return; }
+    var allItems = collectAlprResourceItems();
+    var filtered = getFilteredAlprResources();
+    var filteredElements = filtered.map(function(item) { return item.element; });
+    allItems.forEach(function(item) {
+        setAlprDisplay(item.element, alprResourceView === 'card' && filteredElements.indexOf(item.element) !== -1);
+    });
+    source.hidden = alprResourceView !== 'card';
+    tableView.hidden = alprResourceView !== 'table';
+    if (alprResourceView === 'table') { renderAlprResourceTable(filtered); }
+    var total = document.getElementById('alprResourceTotalCount');
+    var summary = document.getElementById('alprResourceSummary');
+    if (total) { total.textContent = String(filtered.length); }
+    if (summary) { summary.textContent = 'Showing ' + filtered.length + ' of ' + allItems.length + ' resources'; }
+    document.querySelectorAll('#alpr-key-marketing-resources .resource-toggle').forEach(function(button) {
+        if (button.id === 'alprResourceCardViewBtn' || button.id === 'alprResourceTableViewBtn') {
+            button.classList.toggle('active', (button.id === 'alprResourceCardViewBtn') === (alprResourceView === 'card'));
+        }
+    });
+    refreshLucideIcons();
+}
+
+function setAlprResourceView(view) {
+    alprResourceView = view === 'table' ? 'table' : 'card';
+    renderAlprResources();
+}
+
+function resetAlprResourceFilters() {
+    var search = document.getElementById('alprResourceSearch');
+    var category = document.getElementById('alprResourceCategoryFilter');
+    if (search) { search.value = ''; }
+    if (category) { category.value = 'all'; }
+    alprResourceView = 'card';
+    renderAlprResources();
+}
+
+function initAlprFunctionality() {
+    updateAlprProductCategory();
+    filterAlprPersonas();
+    filterAlprCompetitorProfiles();
+    populateAlprFeatureSelectors();
+    updateAlprFeatureComparison();
+    filterAlprFeatureSolution();
+    populateAlprPricingSelectors();
+    handleAlprPricingSelectionChange();
+    updateAlprPricingSummary();
+    setAlprPricingView(alprPricingView);
+    filterAlprPositioningScenario();
+    updateAlprDiscoveryGenerator();
+    resetAlprPricingCalculator();
+    renderAlprResources();
+}
 // Expose functions to global scope so inline onclick handlers can find them
 // (This is redundant when loaded as a regular script, but ensures reliability.)
 if (typeof window !== 'undefined') {
@@ -4616,6 +5240,23 @@ if (typeof window !== 'undefined') {
     window.switchAlprTab = switchAlprTab;
     window.toggleAlprPrompt = toggleAlprPrompt;
     window.copyAlprPrompt = copyAlprPrompt;
+    window.updateAlprProductCategory = updateAlprProductCategory;
+    window.filterAlprPersonas = filterAlprPersonas;
+    window.toggleAlprPersonaCard = toggleAlprPersonaCard;
+    window.filterAlprCompetitorProfiles = filterAlprCompetitorProfiles;
+    window.updateAlprFeatureComparison = updateAlprFeatureComparison;
+    window.filterAlprFeatureSolution = filterAlprFeatureSolution;
+    window.handleAlprPricingSelectionChange = handleAlprPricingSelectionChange;
+    window.compareAlprPricingCompetitors = compareAlprPricingCompetitors;
+    window.updateAlprPricingSummary = updateAlprPricingSummary;
+    window.setAlprPricingView = setAlprPricingView;
+    window.filterAlprPositioningScenario = filterAlprPositioningScenario;
+    window.updateAlprDiscoveryGenerator = updateAlprDiscoveryGenerator;
+    window.calculateAlprPricing = calculateAlprPricing;
+    window.resetAlprPricingCalculator = resetAlprPricingCalculator;
+    window.renderAlprResources = renderAlprResources;
+    window.setAlprResourceView = setAlprResourceView;
+    window.resetAlprResourceFilters = resetAlprResourceFilters;
     window.toggleAccordion = toggleAccordion;
     window.filterIcp = filterIcp;
     window.filterCompetitorProfiles = filterCompetitorProfiles;
@@ -4663,6 +5304,7 @@ if (typeof window !== 'undefined') {
         try { initFoiaContractPricing(); } catch (e) {}
         try { initPricingCalculator(); } catch (e) {}
         try { initMarketingResources(); } catch (e) {}
+        try { initAlprFunctionality(); } catch (e) {}
         try { initGlobalSearch(); } catch (e) {}
         if (typeof window.lucide !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
             try { window.lucide.createIcons(); } catch (e) {}
